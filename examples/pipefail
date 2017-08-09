@@ -1,0 +1,2 @@
+#!/bin/bash -euo pipefail
+echo "Hello"

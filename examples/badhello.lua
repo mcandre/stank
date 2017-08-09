@@ -1,0 +1,2 @@
+#!lua
+print("Hello")
