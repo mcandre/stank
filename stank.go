@@ -80,6 +80,8 @@ type Smell struct {
 	POSIXy      bool
 }
 
+// Fairly exhaustive.
+// Newly minted extensions can be added by stank contributors.
 var LOWER_EXTENSIONS_TO_POSIXyNESS = map[string]bool{
 	".sh":         true,
 	".bash":       true,
@@ -151,6 +153,8 @@ var LOWER_EXTENSIONS_TO_POSIXyNESS = map[string]bool{
 	".ds_store":   false,
 }
 
+// Fairly exhaustive. Newly minted config filenames
+// can be added by stank contributors.
 var LOWER_FILENAMES_TO_POSIXyNESS = map[string]bool{
 	"profile":       true,
 	".profile":      true,
@@ -168,13 +172,14 @@ var LOWER_FILENAMES_TO_POSIXyNESS = map[string]bool{
 	"csh.logout":    false,
 	"tcsh.login":    false,
 	"tcsh.logout":   false,
-	"ionrc":         false,
 	"makefile":      false,
 	"readme":        false,
 	"changelog":     false,
 	"thumbs.db":     false,
 }
 
+// Fairly exhaustive, for the POSIX shells.
+// Newly minted interpreters can be added by stank contributors.
 var INTERPRETERS_TO_POSIXyNESS = map[string]bool{
 	"sh":     true,
 	"bash":   true,
@@ -218,18 +223,26 @@ var INTERPRETERS_TO_POSIXyNESS = map[string]bool{
 // If an I/O problem occurs during analysis, an error value will be set.
 // Otherwise, the error value will be nil.
 func Stink(pth string) (Smell, error) {
-	filename := path.Base(pth)
+	// Attempt to short-circuit for directories
+	fi, err := os.Stat(pth)
 
-	smell := Smell{
-		Path:      pth,
-		Filename:  filename,
-		Basename:  filepath.Base(filename),
-		Extension: filepath.Ext(filename),
+	smell := Smell{Path: pth}
+
+	if err != nil {
+		return smell, err
 	}
+
+	switch mode := fi.Mode(); {
+	case mode.IsDir():
+		return smell, nil
+	}
+
+	smell.Filename = path.Base(pth)
+	smell.Basename = filepath.Base(smell.Filename)
+	smell.Extension = filepath.Ext(smell.Filename)
 
 	// Attempt to short-circuit for Emacs swap files
 	if strings.HasSuffix(smell.Filename, "~") {
-		smell.POSIXy = false
 		return smell, nil
 	}
 
@@ -304,7 +317,6 @@ func Stink(pth string) (Smell, error) {
 	// undertaking to account for minor infractions in POSIX shell scripts,
 	// quick tests for obvious, but honestly secondary, signs of POSIXyness.
 	if !strings.HasPrefix(line, "#!") {
-		smell.POSIXy = false
 		return smell, err
 	}
 
@@ -333,17 +345,18 @@ func Stink(pth string) (Smell, error) {
 
 	commandParts := strings.Split(command, " ")
 
-	// Strip /usr/bin/env, if present.
+	// Strip /usr/bin/env, if present
 	if commandParts[0] == "/usr/bin/env" {
 		commandParts = commandParts[1:]
 	}
 
-	// Identify the interpreter, if any.
+	// Identify the interpreter, or blank
 	smell.Interpreter = commandParts[0]
 
-	// Strip out directory path, if any.
+	// Strip out directory path, if any
 	interpreterFilename := filepath.Base(smell.Interpreter)
 
+	// Compare interpreter against common POSIX and nonPOSIX names
 	smell.POSIXy = INTERPRETERS_TO_POSIXyNESS[interpreterFilename]
 
 	return smell, nil
