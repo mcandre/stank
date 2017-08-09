@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+const Version = "0.0.1"
+
 // Smell describes the overall impression of a file's POSIXyness,
 // using several factors to determine with a reasonably high accuracy
 // whether or not the file is a POSIX compatible shell script.
@@ -210,19 +212,19 @@ var INTERPRETERS_TO_POSIXyNESS = map[string]bool{
 	"ion":    false,
 }
 
-// Stink analyzes the holistic smell of a given file path,
+// Sniff analyzes the holistic smell of a given file path,
 // returning a Smell record of key indicators tending towards either POSIX compliance or noncompliance,
 // including a flag for the final "POSIXy" trace scent of the file.
 //
 // For performance, if the scent of one or more attributes obviously indicates POSIX or nonPOSIX,
-// Stink() may short-circuit, setting the POSIXy flag and returning a record
+// Sniff() may short-circuit, setting the POSIXy flag and returning a record
 // with some attributes set to zero value.
 //
-// Polyglot and multiline shebangs are technically possible in languages that do not support native POSIX-style shebang comments ( see https://rosettacode.org/wiki/Multiline_shebang ). However, Stink() can reliably identify only ^#!.+$ POSIX-style shebangs, and will populate the Shebang field accordingly.
+// Polyglot and multiline shebangs are technically possible in languages that do not support native POSIX-style shebang comments ( see https://rosettacode.org/wiki/Multiline_shebang ). However, Sniff() can reliably identify only ^#!.+$ POSIX-style shebangs, and will populate the Shebang field accordingly.
 //
 // If an I/O problem occurs during analysis, an error value will be set.
 // Otherwise, the error value will be nil.
-func Stink(pth string) (Smell, error) {
+func Sniff(pth string) (Smell, error) {
 	// Attempt to short-circuit for directories
 	fi, err := os.Stat(pth)
 
@@ -247,13 +249,13 @@ func Stink(pth string) (Smell, error) {
 	}
 
 	// Attempt to short-circuit by extension
-	if posixy, ok := LOWER_EXTENSIONS_TO_POSIXyNESS[smell.Extension.Lower()]; ok {
+	if posixy, ok := LOWER_EXTENSIONS_TO_POSIXyNESS[strings.ToLower(smell.Extension)]; ok {
 		smell.POSIXy = posixy
 		return smell, nil
 	}
 
 	// Attempt to short-circuit by filename
-	if posixy, ok := LOWER_FILENAMES_TO_POSIXyNESS[smell.Filename.Lower()]; ok {
+	if posixy, ok := LOWER_FILENAMES_TO_POSIXyNESS[strings.ToLower(smell.Filename)]; ok {
 		smell.POSIXy = posixy
 		return smell, nil
 	}
@@ -261,17 +263,17 @@ func Stink(pth string) (Smell, error) {
 	fd, err := os.Open(pth)
 
 	if err != nil {
-		return nil, err
+		return smell, err
 	}
 
-	defer close(fd)
+	defer fd.Close()
 
 	br := bufio.NewReader(fd)
 
 	r, _, err := br.ReadRune()
 
 	if err != nil {
-		return nil, err
+		return smell, err
 	}
 
 	// Check for BOM.
@@ -281,7 +283,7 @@ func Stink(pth string) (Smell, error) {
 		br.UnreadRune()
 	}
 
-	LF := 0x0A
+	LF := byte('\n')
 
 	// Attempt to find the first occurence of a line feed.
 	// CR-ended files and binary files will be read in their entirety.
@@ -320,7 +322,7 @@ func Stink(pth string) (Smell, error) {
 		return smell, err
 	}
 
-	smell.Shebang = strings.TrimRight(line)
+	smell.Shebang = strings.TrimRight(line, "\r\n")
 
 	// shebang minus the #! prefix.
 	command := smell.Shebang[2:]
