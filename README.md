@@ -121,6 +121,10 @@ examples/hooks/post-update.sample
 
 The included `examples/` directory demonstrates many edge cases, such as empty scripts, shebang-less scripts, extensioned and extensionless scripts, and various Hello World applications in across many programming languages. Some files, such as `examples/goodbye` may contain 100% valid POSIX shell script content, but fail to self-identify with either shebangs or relevant file extensions. In a large project, such files may be mistakenly treated as whoknowswhat format, or simply plain text. Perhaps statistical methods could help identify POSIX grammars, but even an empty file is technically POSIX, which is unhelpful from a reliable classification standpoint. In any case, `examples/` hopefully covers the more common edge cases.
 
+# DOWNLOADS
+
+https://github.com/mcandre/stank/releases
+
 # REQUIREMENTS
 
 The `stink` and `stank` applications have no special runtime requirements.
