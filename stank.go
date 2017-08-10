@@ -47,7 +47,7 @@ const Version = "0.0.2"
 // NonUTF-8 encodings such as UTF-16, UTF-32, and even nonUnicode encodings like EBCDIC, Latin1, and KOI8-R
 // usually indicate a nonPOSIX shell script, even a localization file or other nonscript. These encodings
 // are encountered less often than ASCII and UTF-8, and are generally considered legacy formats.
-// For performance reasons, the stank library will not attempt to discern the exact encoding of a file, but merely report whether the file leads with 0xFEFF, the Unicode Byte Order Marker (BOM). If BOM, then the file is Unicode, which may lead to a stank warning, as POSIX shell scripts are best written in pure ASCII, for maximum cross-platform compatibliity. BOMs are outside of the 127 max integer range for ASCII values, so a file with a BOM is likely not a POSIX shell script, while a file without a BOM may be a POSIX shell script.
+// For performance reasons, the stank library will not attempt to discern the exact encoding of a file, but merely report whether the file leads with a byte order marker such as 0xEFBBBF (UTF-8) or 0xFEFF (UTF-16, UTF-32). If BOM, then the file is Unicode, which may lead to a stank warning, as POSIX shell scripts are best written in pure ASCII, for maximum cross-platform compatibliity. BOMs are outside of the 127 max integer range for ASCII values, so a file with a BOM is likely not a POSIX shell script, while a file without a BOM may be a POSIX shell script.
 //
 // Line endings for POSIX shell scripts should LF="\n" in C-style notation. Alternative line endings such as CRLF="\r\n",
 // ancient Macintosh CR="\r", and bizarre forms like vertical tab (ASCII code 0x0B) or form feed (ASCII code 0x0C)
@@ -182,6 +182,26 @@ var LOWERFILENAMES2POSIXyNESS = map[string]bool{
 	"thumbs.db":     false,
 }
 
+// BOMS acts as a registry set of known Byte Order mark sequences.
+// See https://en.wikipedia.org/wiki/Byte_order_mark for more information.
+var BOMS = map[string]bool{
+	"\uFFBBBF":   true,
+	"\uFEFF":     true,
+	"\uFFFE":     true,
+	"\u0000FEFF": true,
+	"\uFFFE0000": true,
+	"\u2B2F7638": true,
+	"\u2B2F7639": true,
+	"\u2B2F762B": true,
+	"\u2B2F762F": true,
+	// {byte(0x2B), byte(0x2F), byte(0x76), byte(0x38), byte(0x3D)}: true,
+	// {byte(0xF7), byte(0x64), byte(0x4C)}:                         true,
+	// {byte(0xDD), byte(0x73), byte(0x66), byte(0x73)}:             true,
+	// {byte(0x0E), byte(0xFE), byte(0xFF)}:                         true,
+	// {byte(0xFB), byte(0xEE), byte(0x28)}:                         true,
+	// {byte(0x84), byte(0x31), byte(0x95), byte(0x33)}:             true,
+}
+
 // INTERPRETERS2POSIXyNESS is a fairly exhaustivemap of interpreters to whether or not the interpreter is a POSIX compatible shell.
 // Newly minted interpreters can be added by stank contributors.
 var INTERPRETERS2POSIXyNESS = map[string]bool{
@@ -276,23 +296,24 @@ func Sniff(pth string) (Smell, error) {
 		}
 	}()
 
+	// Check for BOMs
 	br := bufio.NewReader(fd)
 
-	r, _, err := br.ReadRune()
+	bs, err := br.Peek(5)
 
 	if err != nil {
 		return smell, err
 	}
 
-	// Check for BOM.
-	if r == '\uFEFF' {
-		smell.BOM = true
-	} else {
-		err := br.UnreadRune()
-
-		if err != nil {
-			log.Panic(err)
+	for i := 2; i < 6; i++ {
+		if BOMS[string(bs[:i])] {
+			smell.BOM = true
+			break
 		}
+	}
+
+	if smell.BOM {
+		return smell, nil
 	}
 
 	LF := byte('\n')
