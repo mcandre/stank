@@ -6,7 +6,63 @@ stank is a library and collection of command line utilities for sniffing files t
 
 # EXAMPLES
 
-The included `stink` application accepts file and directory names as argument inputs, recursively reporting analytics per-path. Note that some fields are zero valued, not filled in, if one of the fields stands out as obviously a POSIX shell script.
+The stank system includes the stank Go library as well as three command line utilities for convenience. `rosy` recursively searches directory trees for POSIX shell scripts, recommending that they be rewritten in safer general purpose languages like Ruby, Python, Node.js, etc.
+
+```console
+$ rosy examples/hooks
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/post-update
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/post-update.sample
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-applypatch
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-applypatch.sample
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-commit
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-commit.sample
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-push
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-push.sample
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-rebase
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-rebase.sample
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/update
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/update.sample
+$ echo "$?"
+1
+
+$ rosy examples/just-python
+$ echo "$?"
+0
+
+$ rosy -help
+  -help
+        Show usage information
+  -version
+        Show version information
+```
+
+The `stank` application prints paths to POSIX shell scripts, designed for use in combination with `xargs` to help per-file shell static analysis applications lint large projects.
+
+```console
+$ stank examples
+examples/.profile
+examples/.zshrc
+examples/blank.bash
+examples/globs.bash
+examples/goodbye.sh
+examples/greetings.bash
+examples/hello
+examples/hello.sh
+examples/hooks/post-update
+examples/hooks/post-update.sample
+
+$ stank examples/hooks | xargs checkbashisms
+error: examples/hooks/pre-rebase: Unterminated quoted string found, EOF reached. Wanted: <'>, opened in line 133
+error: examples/hooks/pre-rebase.sample: Unterminated quoted string found, EOF reached. Wanted: <'>, opened in line 133
+
+$ stank -help
+  -help
+        Show usage information
+  -version
+        Show version information
+```
+
+Finally, `stink` prints a record of each file's POSIXyness, including any interesting fields it identified along the way. Note that some fields may be zero valued if the stench of POSIX or rosy waft of nonPOSIX is overwhelming, short-circuiting analysis. This short-circuiting feature dramatically speeds up how `stank` and `rosy` search large projects.
 
 ```console
 $ cat examples/hello
@@ -46,40 +102,6 @@ $ stink -pp examples/hello.py
   "POSIXy": false
 }
 
-$ cat examples/wednesday
-#!/bin/bash
-echo -e "Óðinn!\n(I am Odin.)"
-
-$ stink -pp examples/wednesday
-{
-  "Path": "examples/wednesday",
-  "Filename": "wednesday",
-  "Basename": "wednesday",
-  "Extension": "",
-  "BOM": false,
-  "Shebang": "#!/bin/bash",
-  "Interpreter": "/bin/bash",
-  "LineEnding": "\n",
-  "POSIXy": true
-}
-
-$ cat examples/lo
-#!/bin/csh
-echo "Lo"
-
-$ stink -pp examples/lo
-{
-  "Path": "examples/lo",
-  "Filename": "lo",
-  "Basename": "lo",
-  "Extension": "",
-  "BOM": false,
-  "Shebang": "#!/bin/csh",
-  "Interpreter": "/bin/csh",
-  "LineEnding": "\n",
-  "POSIXy": false
-}
-
 $ stink -help
   -help
         Show usage information
@@ -87,36 +109,6 @@ $ stink -help
         Prettyprint smell records
   -version
         Show version information
-```
-
-And so on. Basically, `#!.*sh.*` or `\..*sh` tends to yield "POSIXy" true, whereas csh, tcsh, fish, python, ruby, lua, node.js crap, and animated GIFs tend to yeidl "POSIXy" false.
-
-A second included application, `stank`, accepts file and directory names, recursively selecting just the POSIX shell script paths and printing these. nonPOSIX paths are omitted.
-
-```console
-$ ls examples | head
-CHANGELOG
-README
-badhello.lua
-badhello.py
-blank.bash
-globs.bash
-goodbye
-goodbye.sh
-greetings.bash
-hello
-
-$ stank examples | head
-examples/.profile
-examples/.zshrc
-examples/blank.bash
-examples/globs.bash
-examples/goodbye.sh
-examples/greetings.bash
-examples/hello
-examples/hello.sh
-examples/hooks/post-update
-examples/hooks/post-update.sample
 ```
 
 The included `examples/` directory demonstrates many edge cases, such as empty scripts, shebang-less scripts, extensioned and extensionless scripts, and various Hello World applications in across many programming languages. Some files, such as `examples/goodbye` may contain 100% valid POSIX shell script content, but fail to self-identify with either shebangs or relevant file extensions. In a large project, such files may be mistakenly treated as whoknowswhat format, or simply plain text. Perhaps statistical methods could help identify POSIX grammars, but even an empty file is technically POSIX, which is unhelpful from a reliable classification standpoint. In any case, `examples/` hopefully covers the more common edge cases.
