@@ -167,6 +167,9 @@ These bad bois help to shore up ur shell scripts. Though they're designed to wor
 * [bashate](https://pypi.python.org/pypi/bashate)
 * [shlint](https://rubygems.org/gems/shlint)
 * [ShellCheck](https://hackage.haskell.org/package/ShellCheck)
+* [editorconfig-cli](https://github.com/amyboyd/editorconfig-cli)
+* [shfmt](https://github.com/mvdan/sh)
+* [astyle](http://astyle.sourceforge.net)
 
 ## Honorable mentions
 
