@@ -125,6 +125,10 @@ The included `examples/` directory demonstrates many edge cases, such as empty s
 
 https://github.com/mcandre/stank/releases
 
+# DOCUMENTATION
+
+http://godoc.org/github.com/mcandre/stank
+
 # REQUIREMENTS
 
 The `stink` and `stank` applications have no special runtime requirements.
