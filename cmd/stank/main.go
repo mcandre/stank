@@ -13,6 +13,9 @@ import (
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 
+// StankWalk sniffs a file system node for POSIXyness.
+// If the file smells sufficiently POSIXy, the path is printed.
+// Otherwise, the path is omitted.
 func StankWalk(pth string, info os.FileInfo, err error) error {
 	smell, err := stank.Sniff(pth)
 	if err != nil {

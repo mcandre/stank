@@ -2,12 +2,14 @@ package stank
 
 import (
 	"bufio"
+	"log"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 )
 
+// Version is semver.
 const Version = "0.0.1"
 
 // Smell describes the overall impression of a file's POSIXyness,
@@ -82,9 +84,9 @@ type Smell struct {
 	POSIXy      bool
 }
 
-// Fairly exhaustive.
+// LOWEREXTENSIONS2POSIXyNESS is a fairly exhaustive map of lowercase file extensions to whether or not they represent POSIX shell scripts.
 // Newly minted extensions can be added by stank contributors.
-var LOWER_EXTENSIONS_TO_POSIXyNESS = map[string]bool{
+var LOWEREXTENSIONS2POSIXyNESS = map[string]bool{
 	".sh":         true,
 	".bash":       true,
 	".zsh":        true,
@@ -155,9 +157,9 @@ var LOWER_EXTENSIONS_TO_POSIXyNESS = map[string]bool{
 	".ds_store":   false,
 }
 
-// Fairly exhaustive. Newly minted config filenames
-// can be added by stank contributors.
-var LOWER_FILENAMES_TO_POSIXyNESS = map[string]bool{
+// LOWERFILENAMES2POSIXyNESS is a fairly exhaustive map of lowercase filenames to whether or not they represent POSIX shell scripts.
+// Newly minted config filenames can be added by stank contributors.
+var LOWERFILENAMES2POSIXyNESS = map[string]bool{
 	"profile":       true,
 	".profile":      true,
 	".login":        true,
@@ -180,9 +182,9 @@ var LOWER_FILENAMES_TO_POSIXyNESS = map[string]bool{
 	"thumbs.db":     false,
 }
 
-// Fairly exhaustive, for the POSIX shells.
+// INTERPRETERS2POSIXyNESS is a fairly exhaustivemap of interpreters to whether or not the interpreter is a POSIX compatible shell.
 // Newly minted interpreters can be added by stank contributors.
-var INTERPRETERS_TO_POSIXyNESS = map[string]bool{
+var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"sh":     true,
 	"bash":   true,
 	"zsh":    true,
@@ -249,13 +251,13 @@ func Sniff(pth string) (Smell, error) {
 	}
 
 	// Attempt to short-circuit by extension
-	if posixy, ok := LOWER_EXTENSIONS_TO_POSIXyNESS[strings.ToLower(smell.Extension)]; ok {
+	if posixy, ok := LOWEREXTENSIONS2POSIXyNESS[strings.ToLower(smell.Extension)]; ok {
 		smell.POSIXy = posixy
 		return smell, nil
 	}
 
 	// Attempt to short-circuit by filename
-	if posixy, ok := LOWER_FILENAMES_TO_POSIXyNESS[strings.ToLower(smell.Filename)]; ok {
+	if posixy, ok := LOWERFILENAMES2POSIXyNESS[strings.ToLower(smell.Filename)]; ok {
 		smell.POSIXy = posixy
 		return smell, nil
 	}
@@ -280,7 +282,11 @@ func Sniff(pth string) (Smell, error) {
 	if r == '\uFEFF' {
 		smell.BOM = true
 	} else {
-		br.UnreadRune()
+		err := br.UnreadRune()
+
+		if err != nil {
+			log.Panic(err)
+		}
 	}
 
 	LF := byte('\n')
@@ -359,7 +365,7 @@ func Sniff(pth string) (Smell, error) {
 	interpreterFilename := filepath.Base(smell.Interpreter)
 
 	// Compare interpreter against common POSIX and nonPOSIX names
-	smell.POSIXy = INTERPRETERS_TO_POSIXyNESS[interpreterFilename]
+	smell.POSIXy = INTERPRETERS2POSIXyNESS[interpreterFilename]
 
 	return smell, nil
 }

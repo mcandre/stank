@@ -37,10 +37,12 @@ func StinkWalkFair(pth string, info os.FileInfo, err error, pp bool) error {
 	return err
 }
 
+// StinkWalk sniffs a file system node for POSIXyness and prints the smell record to STDOUT.
 func StinkWalk(pth string, info os.FileInfo, err error) error {
 	return StinkWalkFair(pth, info, err, false)
 }
 
+// StinkWalkPretty sniffs a file system node for POSIXyness and prettyprints the smell record to STDOUT.
 func StinkWalkPretty(pth string, info os.FileInfo, err error) error {
 	return StinkWalkFair(pth, info, err, true)
 }
