@@ -128,6 +128,8 @@ The `stink` and `stank` applications have no special runtime requirements.
 ## Development
 
 * [Go](https://golang.org) 1.7+
+* [gox](https://github.com/mitchellh/gox)
+* [zipc](https://github.com/mcandre/zipc)
 * [coreutils](https://www.gnu.org/software/coreutils/coreutils.html)
 * [findutils](https://www.gnu.org/software/findutils/)
 * [make](https://www.gnu.org/software/make/)
@@ -141,6 +143,12 @@ The `stink` and `stank` applications have no special runtime requirements.
 
 ```console
 $ make lint
+```
+
+# PORT
+
+```console
+$ make port
 ```
 
 # Shell script linters

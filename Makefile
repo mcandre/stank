@@ -25,3 +25,16 @@ editorconfig:
 	flcl . | xargs -n 100 editorconfig-cli check
 
 lint: govet golint gofmt goimports errcheck editorconfig
+
+port: archive-ports
+
+archive-ports: bin
+	zipc -chdir bin "stank-$(VERSION).zip" "stank-$(VERSION)"
+
+bin:
+	gox -output="bin/stank-$(VERSION)/{{.OS}}/{{.Arch}}/{{.Dir}}" ./cmd...
+
+clean: clean-ports
+
+clean-ports:
+	rm -rf bin
