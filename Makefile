@@ -13,7 +13,7 @@ golint:
 gofmt:
 	find . -path '*/vendor/*' -prune -o -name '*.go' -type f -exec gofmt -s -w {} \;
 
-goimport:
+goimports:
 	find . -path '*/vendor/*' -prune -o -name '*.go' -type f -exec goimports -w {} \;
 
 errcheck:
@@ -24,4 +24,4 @@ errcheck:
 editorconfig:
 	flcl . | xargs -n 100 editorconfig-cli check
 
-lint: govet golint gofmt goimport errcheck editorconfig
+lint: govet golint gofmt goimports errcheck editorconfig

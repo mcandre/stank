@@ -121,6 +121,28 @@ examples/hooks/post-update.sample
 
 The included `examples/` directory demonstrates many edge cases, such as empty scripts, shebang-less scripts, extensioned and extensionless scripts, and various Hello World applications in across many programming languages. Some files, such as `examples/goodbye` may contain 100% valid POSIX shell script content, but fail to self-identify with either shebangs or relevant file extensions. In a large project, such files may be mistakenly treated as whoknowswhat format, or simply plain text. Perhaps statistical methods could help identify POSIX grammars, but even an empty file is technically POSIX, which is unhelpful from a reliable classification standpoint. In any case, `examples/` hopefully covers the more common edge cases.
 
+# REQUIREMENTS
+
+The `stink` and `stank` applications have no special runtime requirements.
+
+## Development
+
+* [Go](https://golang.org) 1.7+
+* [coreutils](https://www.gnu.org/software/coreutils/coreutils.html)
+* [findutils](https://www.gnu.org/software/findutils/)
+* [make](https://www.gnu.org/software/make/)
+* [golint](https://github.com/golang/lint)
+* [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports)
+* [errcheck](https://github.com/kisielk/errcheck)
+* [flcl](https://github.com/mcandre/flcl)
+* [editorconfig-cli](https://github.com/amyboyd/editorconfig-cli)
+
+# LINT
+
+```console
+$ make lint
+```
+
 # Shell script linters
 
 These bad bois help to shore up ur shell scripts. Though they're designed to work on individual files, so be sure to stank-ify larger projects and pipe the results to `xargs checkbashisms`, yo!
