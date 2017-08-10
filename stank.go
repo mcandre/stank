@@ -268,7 +268,13 @@ func Sniff(pth string) (Smell, error) {
 		return smell, err
 	}
 
-	defer fd.Close()
+	defer func() {
+		err := fd.Close()
+
+		if err != nil {
+			log.Panic(err)
+		}
+	}()
 
 	br := bufio.NewReader(fd)
 
