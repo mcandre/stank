@@ -10,7 +10,7 @@ import (
 )
 
 // Version is semver.
-const Version = "0.0.2"
+const Version = "0.0.3"
 
 // Smell describes the overall impression of a file's POSIXyness,
 // using several factors to determine with a reasonably high accuracy
