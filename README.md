@@ -139,6 +139,39 @@ The `stink` and `stank` applications have no special runtime requirements.
 * [flcl](https://github.com/mcandre/flcl)
 * [editorconfig-cli](https://github.com/amyboyd/editorconfig-cli)
 
+# WARNING ON FALSE POSITIVES
+
+Some rather obscure files, such as Common Lisp source code with multiline, polyglot shebangs and no file extension, may falsely trigger the stank library, and the rosy, stink, and stank applications, which short-circuit on the first line of the hacky shebang. Such files may be falsely identified as "POSIX" code, which is actually the intended behavior! This is because the polyglot shebang is a hack to work around limitations in the Common Lisp language, which ordinarily does not accept POSIX shebang comments, in order to get Common Lisp scripts to be dot-slashable in bash. For this situation, it is best to supply a proper file extension to such files.
+
+```console
+$ head examples/i-should-have-an-extension
+#!/usr/bin/env sh
+#|
+exec clisp -q -q $0 $0 ${1+"$@"}
+|#
+
+(defun hello-main (args)
+  (format t "Hello from main!~%"))
+
+;;; With help from Francois-Rene Rideau
+;;; http://tinyurl.com/cli-args
+
+$ stink -pp examples/i-should-have-an-extension
+{
+  "Path": "examples/i-should-have-an-extension",
+  "Filename": "i-should-have-an-extension",
+  "Basename": "i-should-have-an-extension",
+  "Extension": "",
+  "BOM": false,
+  "Shebang": "#!/usr/bin/env sh",
+  "Interpreter": "sh",
+  "LineEnding": "\n",
+  "POSIXy": true
+}
+```
+
+Perhaps append a `.lisp` extension to such files. Or separate the modulino into clear library vs. command line modules. Or extract the shell interaction into a dedicated script. Or convince the language maintainers to treat shebangs as comments. Write your congressman. However you resolve this, know that the current situation is far outside the norm, and likely to break in a suitably arcane and dramatic fashion. With wyverns and flaming seas and portents of all ill manner.
+
 # LINT
 
 ```console
