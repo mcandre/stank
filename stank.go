@@ -118,6 +118,7 @@ var LOWEREXTENSIONS2POSIXyNESS = map[string]bool{
 	".rb":         false,
 	".lua":        false,
 	".js":         false,
+	".lisp":       false,
 	".mf":         false,
 	".exe":        false,
 	".bin":        false,
