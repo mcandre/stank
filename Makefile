@@ -19,12 +19,18 @@ goimports:
 errcheck:
 	errcheck -blank
 
-# stank would be a fantastic candidate for replacing the find exclusions in bashate, shlint, checkbashisms, and shellcheck. However, this would result in the development setup for stank depending on itself, which is no bueno. Other projects are encouraged to run stank | xargs bashate, etc. but the stank project itself will continue to leverage more traditional tools for build system portability.
+opennota-check:
+	aligncheck
+	structcheck
+	varcheck
+
+megacheck:
+	megacheck
 
 editorconfig:
 	flcl . | xargs -n 100 editorconfig-cli check
 
-lint: govet golint gofmt goimports errcheck editorconfig
+lint: govet golint gofmt goimports errcheck opennota-check megacheck editorconfig
 
 port: archive-ports
 

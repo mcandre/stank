@@ -136,6 +136,8 @@ The `stink` and `stank` applications have no special runtime requirements.
 * [golint](https://github.com/golang/lint)
 * [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports)
 * [errcheck](https://github.com/kisielk/errcheck)
+* [opennota/check](https://github.com/opennota/check) (e.g. `go get github.com/opennota/check/cmd/...`)
+* [megacheck](https://github.com/dominikh/go-tools/tree/master/cmd/megacheck) (e.g. `go get github.com/dominikh/go-tools/cmd/megacheck`)
 * [flcl](https://github.com/mcandre/flcl)
 * [editorconfig-cli](https://github.com/amyboyd/editorconfig-cli)
 

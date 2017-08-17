@@ -77,10 +77,10 @@ type Smell struct {
 	Filename    string
 	Basename    string
 	Extension   string
-	BOM         bool
 	Shebang     string
 	Interpreter string
 	LineEnding  string
+	BOM         bool
 	POSIXy      bool
 }
 
