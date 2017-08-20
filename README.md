@@ -53,7 +53,6 @@ examples/hooks/post-update.sample
 
 $ stank examples/hooks | xargs checkbashisms
 error: examples/hooks/pre-rebase: Unterminated quoted string found, EOF reached. Wanted: <'>, opened in line 133
-error: examples/hooks/pre-rebase.sample: Unterminated quoted string found, EOF reached. Wanted: <'>, opened in line 133
 
 $ stank -help
   -help
