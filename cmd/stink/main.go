@@ -16,16 +16,21 @@ var flagPrettyPrint = flag.Bool("pp", false, "Prettyprint smell records")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 
-// StinkWalkFair sniffs a path,
+// Stinker holds configuration for a stinky walk.
+type Stinker struct {
+	PrettyPrint bool
+}
+
+// Walk sniffs a path,
 // printing the smell of the script.
 //
-// If pp is true, the smell record is prettyprinted.
-func StinkWalkFair(pth string, info os.FileInfo, err error, pp bool) error {
+// If PrettyPrint is false, then the smell is minified.
+func (o Stinker) Walk(pth string, info os.FileInfo, err error) error {
 	smell, err := stank.Sniff(pth)
 
 	var smellBytes []byte
 
-	if pp {
+	if o.PrettyPrint {
 		smellBytes, _ = json.MarshalIndent(smell, "", "  ")
 	} else {
 		smellBytes, _ = json.Marshal(smell)
@@ -38,24 +43,14 @@ func StinkWalkFair(pth string, info os.FileInfo, err error, pp bool) error {
 	return err
 }
 
-// StinkWalk sniffs a file system node for POSIXyness and prints the smell record to STDOUT.
-func StinkWalk(pth string, info os.FileInfo, err error) error {
-	return StinkWalkFair(pth, info, err, false)
-}
-
-// StinkWalkPretty sniffs a file system node for POSIXyness and prettyprints the smell record to STDOUT.
-func StinkWalkPretty(pth string, info os.FileInfo, err error) error {
-	return StinkWalkFair(pth, info, err, true)
-}
-
 func main() {
 	flag.Parse()
 
-	var pp bool
+	stinker := Stinker{}
 
 	switch {
 	case *flagPrettyPrint:
-		pp = true
+		stinker.PrettyPrint = true
 	case *flagVersion:
 		fmt.Println(stank.Version)
 		os.Exit(0)
@@ -69,11 +64,7 @@ func main() {
 	var err error
 
 	for _, pth := range paths {
-		if pp {
-			err = filepath.Walk(pth, StinkWalkPretty)
-		} else {
-			err = filepath.Walk(pth, StinkWalk)
-		}
+		err = filepath.Walk(pth, stinker.Walk)
 
 		if err != nil && err != io.EOF {
 			log.Print(err)

@@ -4,10 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
-	"path"
+	"path/filepath"
 
 	"github.com/mcandre/stank"
 )
@@ -15,37 +14,12 @@ import (
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 
-// PointWalkFunc is any function that operates on a path and boolean pointer.
-// For example, a linting function may have the pointer point to true to signify
-// the tripping of a linter warning.
-type PointWalkFunc func(pth string, p *bool)
-
-// PointWalk recursivly applies the given PointWalkFunc to each
-// nondirectory node in a given path.
-func PointWalk(pth string, fn PointWalkFunc, p *bool) {
-	fi, err := os.Stat(pth)
-
-	if err != nil {
-		log.Panic(err)
-	}
-
-	switch mode := fi.Mode(); {
-	case mode.IsDir():
-		fis, err := ioutil.ReadDir(pth)
-
-		if err != nil {
-			log.Panic(err)
-		}
-
-		for _, fi := range fis {
-			PointWalk(path.Join(pth, fi.Name()), fn, p)
-		}
-	default:
-		fn(pth, p)
-	}
+// Rose holds configuration for a rosy walk.
+type Rose struct {
+	FoundPOSIXy bool
 }
 
-func RosyWalk(pth string, p *bool) {
+func (o Rose) Walk(pth string, info os.FileInfo, err error) error {
 	smell, err := stank.Sniff(pth)
 
 	if err != nil && err != io.EOF {
@@ -54,8 +28,10 @@ func RosyWalk(pth string, p *bool) {
 
 	if smell.POSIXy {
 		fmt.Printf("Rewrite POSIX script in Ruby or other safer general purpose scripting language: %s\n", pth)
-		*p = true
+		o.FoundPOSIXy = true
 	}
+
+	return err
 }
 
 func main() {
@@ -72,13 +48,13 @@ func main() {
 
 	paths := flag.Args()
 
-	var foundPOSIX bool
+	rose := Rose{}
 
 	for _, pth := range paths {
-		PointWalk(pth, RosyWalk, &foundPOSIX)
+		filepath.Walk(pth, rose.Walk)
 	}
 
-	if foundPOSIX {
+	if rose.FoundPOSIXy {
 		os.Exit(1)
 	}
 }
