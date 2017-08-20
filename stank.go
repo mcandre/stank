@@ -90,6 +90,7 @@ var LOWEREXTENSIONS2POSIXyNESS = map[string]bool{
 	".sh":         true,
 	".bash":       true,
 	".zsh":        true,
+	".lksh":       false,
 	".ksh":        true,
 	".pdksh":      true,
 	".ksh93":      true,
@@ -233,6 +234,7 @@ var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"sh":     true,
 	"bash":   true,
 	"zsh":    true,
+	"lksh":   false,
 	"ksh":    true,
 	"pdksh":  true,
 	"ksh93":  true,
@@ -410,11 +412,13 @@ func Sniff(pth string) (Smell, error) {
 		commandParts = commandParts[1:]
 	}
 
-	// Identify the interpreter, or blank
-	smell.Interpreter = commandParts[0]
+	interpreterPath := commandParts[0]
 
 	// Strip out directory path, if any
-	interpreterFilename := filepath.Base(smell.Interpreter)
+	interpreterFilename := filepath.Base(interpreterPath)
+
+	// Identify the interpreter, or blank
+	smell.Interpreter = interpreterFilename
 
 	// Compare interpreter against common POSIX and nonPOSIX names
 	smell.POSIXy = INTERPRETERS2POSIXyNESS[interpreterFilename]
