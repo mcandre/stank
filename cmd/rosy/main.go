@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -47,8 +48,8 @@ func PointWalk(pth string, fn PointWalkFunc, p *bool) {
 func RosyWalk(pth string, p *bool) {
 	smell, err := stank.Sniff(pth)
 
-	if err != nil {
-		log.Panic(err)
+	if err != nil && err != io.EOF {
+		log.Print(err)
 	}
 
 	if smell.POSIXy {

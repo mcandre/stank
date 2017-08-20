@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -18,7 +19,7 @@ var flagVersion = flag.Bool("version", false, "Show version information")
 // Otherwise, the path is omitted.
 func StankWalk(pth string, info os.FileInfo, err error) error {
 	smell, err := stank.Sniff(pth)
-	if err != nil {
+	if err != nil && err != io.EOF {
 		log.Print(err)
 	}
 

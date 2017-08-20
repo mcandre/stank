@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -74,7 +75,7 @@ func main() {
 			err = filepath.Walk(pth, StinkWalk)
 		}
 
-		if err != nil {
+		if err != nil && err != io.EOF {
 			log.Print(err)
 		}
 	}
