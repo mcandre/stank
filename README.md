@@ -141,6 +141,22 @@ The `stink` and `stank` applications have no special runtime requirements.
 * [flcl](https://github.com/mcandre/flcl)
 * [editorconfig-cli](https://github.com/amyboyd/editorconfig-cli)
 
+# INSTALL FROM REMOTE GIT REPOSITORY
+
+```console
+$ go get github.com/mcandre/stank/...
+```
+
+# INSTALL FROM LOCAL GIT REPOSITORY
+
+```console
+$ mkdir -p $GOPATH/src/github.com/mcandre
+$ git clone git@github.com:mcandre/stank.git $GOPATH/src/github.com/stank
+$ sh -c "cd $GOPATH/src/github.com/mcandre/stank/cmd/stink && go install"
+$ sh -c "cd $GOPATH/src/github.com/mcandre/stank/cmd/stank && go install"
+$ sh -c "cd $GOPATH/src/github.com/mcandre/stank/cmd/rosy && go install"
+```
+
 # WARNING ON FALSE POSITIVES
 
 Some rather obscure files, such as Common Lisp source code with multiline, polyglot shebangs and no file extension, may falsely trigger the stank library, and the rosy, stink, and stank applications, which short-circuit on the first line of the hacky shebang. Such files may be falsely identified as "POSIX" code, which is actually the intended behavior! This is because the polyglot shebang is a hack to work around limitations in the Common Lisp language, which ordinarily does not accept POSIX shebang comments, in order to get Common Lisp scripts to be dot-slashable in bash. For this situation, it is best to supply a proper file extension to such files.
