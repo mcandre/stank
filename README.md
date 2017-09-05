@@ -32,6 +32,7 @@ Rewrite POSIX script in Ruby or other safer general purpose scripting language: 
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/salutations.bash
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/salutations.sh
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/salutations4.bash
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/sample.envrc
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/wednesday
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/welcome
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/welcome.sh
@@ -80,6 +81,7 @@ examples/pipefail
 examples/salutations.bash
 examples/salutations.sh
 examples/salutations4.bash
+examples/sample.envrc
 examples/wednesday
 examples/welcome
 examples/welcome.sh
@@ -101,6 +103,7 @@ examples/hooks/pre-rebase
 examples/hooks/update
 examples/howdy.zsh
 examples/i-should-have-an-extension
+examples/sample.envrc
 
 $ stank -help
   -help

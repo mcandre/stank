@@ -24,7 +24,8 @@ type Funk struct {
 // Otherwise, CheckShebangs returns false.
 func CheckShebangs(smell stank.Smell) bool {
 	// Empty extension and .sh are valid for POSIX scripts.
-	if smell.Extension == "" || smell.Extension == ".sh" {
+	// .envrc is also common for direnv-triggered shell scripts.
+	if smell.Extension == "" || smell.Extension == ".sh" || smell.Extension == ".envrc" {
 		return false
 	}
 
