@@ -74,6 +74,7 @@ const Version = "0.0.6"
 // machine code, and other nonUTF-8, nonASCII content.
 type Smell struct {
 	Path        string
+	Directory   bool
 	Filename    string
 	Basename    string
 	Extension   string
@@ -87,103 +88,108 @@ type Smell struct {
 // LOWEREXTENSIONS2POSIXyNESS is a fairly exhaustive map of lowercase file extensions to whether or not they represent POSIX shell scripts.
 // Newly minted extensions can be added by stank contributors.
 var LOWEREXTENSIONS2POSIXyNESS = map[string]bool{
-	".sh":         true,
-	".bash":       true,
-	".zsh":        true,
-	".lksh":       false,
-	".ksh":        true,
-	".pdksh":      true,
-	".ksh93":      true,
-	".mksh":       true,
-	".dash":       true,
-	".posh":       true,
-	".ash":        true,
-	".shrc":       true,
-	".bashrc":     true,
-	".kshrc":      true,
-	".zshenv":     true,
-	".zprofile":   true,
-	".zshrc":      true,
-	".zlogin":     true,
-	".zlogout":    true,
-	".csh":        false,
-	".cshrc":      false,
-	".tcsh":       false,
-	".tcshrc":     false,
-	".fish":       false,
-	".rc":         false,
-	".ionrc":      false,
-	".py":         false,
-	".pyw":        false,
-	".pl":         false,
-	".rb":         false,
-	".lua":        false,
-	".js":         false,
-	".lisp":       false,
-	".mf":         false,
-	".exe":        false,
-	".bin":        false,
-	".cmd":        false,
-	".bat":        false,
-	".psh":        false,
-	".vbs":        false,
-	".ada":        false,
-	".c":          false,
-	".cl":         false,
-	".e":          false,
-	".erl":        false,
-	".escript":    false,
-	".fth":        false,
-	".groovy":     false,
-	".j":          false,
-	".pike":       false,
-	".rkt":        false,
-	".scala":      false,
-	".sf":         false,
-	".txr":        false,
-	".zkl":        false,
-	".txt":        false,
-	".md":         false,
-	".markdown":   false,
-	".doc":        false,
-	".docx":       false,
-	".pdf":        false,
-	".log":        false,
-	".gitignore":  false,
-	".gitmodules": false,
-	".gitkeep":    false,
-	".xml":        false,
-	".json":       false,
-	".yml":        false,
-	".yaml":       false,
-	".conf":       false,
-	".properties": false,
-	".svg":        false,
-	".gif":        false,
-	".jpg":        false,
-	".jpeg":       false,
-	".png":        false,
-	".bmp":        false,
-	".tiff":       false,
-	".mp3":        false,
-	".wav":        false,
-	".mp4":        false,
-	".mov":        false,
-	".flv":        false,
-	".swp":        false,
-	".ds_store":   false,
+	".sh":           true,
+	".bash":         true,
+	".zsh":          true,
+	".lksh":         false,
+	".ksh":          true,
+	".pdksh":        true,
+	".ksh93":        true,
+	".mksh":         true,
+	".dash":         true,
+	".posh":         true,
+	".ash":          true,
+	".shrc":         true,
+	".shinit":       true,
+	".profile":      true,
+	".bash_profile": true,
+	".bashrc":       true,
+	".bash_login":   true,
+	".bash_logout":  true,
+	".kshrc":        true,
+	".zshenv":       true,
+	".zprofile":     true,
+	".zshrc":        true,
+	".zlogin":       true,
+	".zlogout":      true,
+	".csh":          false,
+	".cshrc":        false,
+	".tcsh":         false,
+	".tcshrc":       false,
+	".fish":         false,
+	".rc":           false,
+	".ionrc":        false,
+	".py":           false,
+	".pyw":          false,
+	".pl":           false,
+	".rb":           false,
+	".lua":          false,
+	".js":           false,
+	".lisp":         false,
+	".mf":           false,
+	".exe":          false,
+	".bin":          false,
+	".cmd":          false,
+	".bat":          false,
+	".psh":          false,
+	".vbs":          false,
+	".ada":          false,
+	".c":            false,
+	".cl":           false,
+	".e":            false,
+	".erl":          false,
+	".escript":      false,
+	".fth":          false,
+	".groovy":       false,
+	".j":            false,
+	".pike":         false,
+	".rkt":          false,
+	".scala":        false,
+	".sf":           false,
+	".txr":          false,
+	".zkl":          false,
+	".txt":          false,
+	".md":           false,
+	".markdown":     false,
+	".doc":          false,
+	".docx":         false,
+	".pdf":          false,
+	".log":          false,
+	".gitignore":    false,
+	".gitmodules":   false,
+	".gitkeep":      false,
+	".xml":          false,
+	".json":         false,
+	".yml":          false,
+	".yaml":         false,
+	".conf":         false,
+	".properties":   false,
+	".svg":          false,
+	".gif":          false,
+	".jpg":          false,
+	".jpeg":         false,
+	".png":          false,
+	".bmp":          false,
+	".tiff":         false,
+	".mp3":          false,
+	".wav":          false,
+	".mp4":          false,
+	".mov":          false,
+	".flv":          false,
+	".swp":          false,
+	".ds_store":     false,
 }
 
 // LOWERFILENAMES2POSIXyNESS is a fairly exhaustive map of lowercase filenames to whether or not they represent POSIX shell scripts.
 // Newly minted config filenames can be added by stank contributors.
 var LOWERFILENAMES2POSIXyNESS = map[string]bool{
+	"shrc":                      true,
+	"shinit":                    true,
 	"profile":                   true,
-	".profile":                  true,
-	".login":                    true,
-	".logout":                   true,
-	".bash_profile":             true,
-	".bash_login":               true,
-	".bash_logout":              true,
+	"login":                     true,
+	"logout":                    true,
+	"bash_login":                true,
+	"bash_logout":               true,
 	"zshenv":                    true,
 	"zprofile":                  true,
 	"zshrc":                     true,
@@ -206,6 +212,75 @@ var LOWERFILENAMES2POSIXyNESS = map[string]bool{
 	"prepare-commit-msg.sample": false,
 	"update.sample":             false,
 	"thumbs.db":                 false,
+}
+
+// LOWEREXTENSIONS2INTERPRETER is a fairly exhaustive map of lowercase file extensions to their corresponding interpreters.
+// Newly minted config extensions can be added by stank contributors.
+var LOWEREXTENSIONS2INTERPRETER = map[string]string{
+	".shrc":         "sh",
+	".shinit":       "sh",
+	".bashrc":       "bash",
+	".zshrc":        "zsh",
+	".lkshrc":       "lksh",
+	".kshrc":        "ksh",
+	".pdkshrc":      "pdksh",
+	".ksh93rc":      "ksh93",
+	".mkshrc":       "mksh",
+	".dashrc":       "dash",
+	".poshrc":       "posh",
+	".ashrc":        "ash",
+	".zshenv":       "zsh",
+	".zprofile":     "zsh",
+	".zlogin":       "zsh",
+	".zlogout":      "zsh",
+	".cshrc":        "csh",
+	".tcshrc":       "tcsh",
+	".fishrc":       "fish",
+	".rcrc":         "rc",
+	".ionrc":        "ion",
+	".profile":      "sh",
+	".bash_profile": "bash",
+	".bash_login":   "bash",
+	".bash_logout":  "bash",
+	".zshprofile":   "zsh",
+}
+
+// LOWERFILENAMES2INTERPRETER is a fairly exhaustive map of lowercase filenames to their corresponding interpreters.
+// Newly minted config filenames can be added by stank contributors.
+var LOWERFILENAMES2INTERPRETER = map[string]string{
+	".shrc":       "sh",
+	".shinit":     "sh",
+	".bashrc":     "bash",
+	".zshrc":      "zsh",
+	".lkshrc":     "lksh",
+	".kshrc":      "ksh",
+	".pdkshrc":    "pdksh",
+	".ksh93rc":    "ksh93",
+	".mkshrc":     "mksh",
+	".dashrc":     "dash",
+	".poshrc":     "posh",
+	".ashrc":      "ash",
+	".zshenv":     "zsh",
+	".zprofile":   "zsh",
+	".zlogin":     "zsh",
+	".zlogout":    "zsh",
+	".cshrc":      "csh",
+	".tcshrc":     "tcsh",
+	".fishrc":     "fish",
+	".rcrc":       "rc",
+	".ionrc":      "ion",
+	"profile":     "sh",
+	".login":      "sh",
+	".logout":     "sh",
+	"zshenv":      "zsh",
+	"zprofile":    "zsh",
+	"zshrc":       "zsh",
+	"zlogin":      "zsh",
+	"zlogout":     "zsh",
+	"csh.login":   "csh",
+	"csh.logout":  "csh",
+	"tcsh.login":  "tcsh",
+	"tcsh.logout": "tcsh",
 }
 
 // BOMS acts as a registry set of known Byte Order mark sequences.
@@ -285,6 +360,8 @@ func Sniff(pth string) (Smell, error) {
 
 	switch mode := fi.Mode(); {
 	case mode.IsDir():
+		smell.Directory = true
+
 		return smell, nil
 	}
 
@@ -297,16 +374,16 @@ func Sniff(pth string) (Smell, error) {
 		return smell, nil
 	}
 
-	// Attempt to short-circuit by extension
-	if posixy, ok := LOWEREXTENSIONS2POSIXyNESS[strings.ToLower(smell.Extension)]; ok {
-		smell.POSIXy = posixy
-		return smell, nil
+	extensionPOSIXy, extensionPOSIXyOK := LOWEREXTENSIONS2POSIXyNESS[strings.ToLower(smell.Extension)]
+
+	if extensionPOSIXyOK {
+		smell.POSIXy = extensionPOSIXy
 	}
 
-	// Attempt to short-circuit by filename
-	if posixy, ok := LOWERFILENAMES2POSIXyNESS[strings.ToLower(smell.Filename)]; ok {
-		smell.POSIXy = posixy
-		return smell, nil
+	filenamePOSIXy, filenamePOSIXyOK := LOWERFILENAMES2POSIXyNESS[strings.ToLower(smell.Filename)]
+
+	if filenamePOSIXyOK {
+		smell.POSIXy = filenamePOSIXy
 	}
 
 	fd, err := os.Open(pth)
@@ -323,7 +400,10 @@ func Sniff(pth string) (Smell, error) {
 		}
 	}()
 
+	//
 	// Check for BOMs
+	//
+
 	br := bufio.NewReader(fd)
 
 	bs, err := br.Peek(5)
@@ -366,20 +446,20 @@ func Sniff(pth string) (Smell, error) {
 		smell.LineEnding = "\n"
 	}
 
-	// Absent a shebang, at this point we have no evidence at all
-	// that the file would be a POSIX shell script. We could almost
-	// run statistical or grammatical analysis on the remainder of
-	// the file contents (a la GitHub Linguist), but that kind of
-	// processing is slow, unreliable, and there appears to be no
-	// Go library for this, but merely external Ruby processes.
-	// If your shell script omits both an extension and a shebang,
-	// you fucked up. If your shebang line begins !#, you fucked up.
-	// In short, shebang lines are the primary mechanism for operating
-	// with shell scripts, and the above analysis is merely a polite
-	// undertaking to account for minor infractions in POSIX shell scripts,
-	// quick tests for obvious, but honestly secondary, signs of POSIXyness.
+	filenameInterpreter, filenameInterpreterOK := LOWERFILENAMES2INTERPRETER[strings.ToLower(smell.Filename)]
+
+	if filenameInterpreterOK {
+		smell.Interpreter = filenameInterpreter
+	}
+
+	// Recognize poorly written shell scripst that feature
+	// a POSIXy filename but lack a proper shebang line.
 	if !strings.HasPrefix(line, "#!") {
-		return smell, err
+		if smell.POSIXy && !filenameInterpreterOK {
+			smell.Interpreter = "generic-sh"
+		}
+
+		return smell, nil
 	}
 
 	smell.Shebang = strings.TrimRight(line, "\r\n")
@@ -417,11 +497,27 @@ func Sniff(pth string) (Smell, error) {
 	// Strip out directory path, if any
 	interpreterFilename := filepath.Base(interpreterPath)
 
-	// Identify the interpreter, or blank
-	smell.Interpreter = interpreterFilename
+	extensionInterpreter, extensionInterpreterOK := LOWEREXTENSIONS2INTERPRETER[strings.ToLower(smell.Extension)]
 
-	// Compare interpreter against common POSIX and nonPOSIX names
-	smell.POSIXy = INTERPRETERS2POSIXyNESS[interpreterFilename]
+	// Identify the interpreter, or mark as generic, unknown sh interpreter.
+	if interpreterFilename == "" {
+		if extensionInterpreterOK {
+			smell.Interpreter = extensionInterpreter
+		} else if filenameInterpreterOK {
+			smell.Interpreter = filenameInterpreter
+		} else {
+			smell.Interpreter = "generic-sh"
+		}
+	} else {
+		smell.Interpreter = interpreterFilename
+	}
+
+	// Compare interpreter against common POSIX and nonPOSIX names.
+	interpreterPOSIXy := INTERPRETERS2POSIXyNESS[interpreterFilename]
+
+	if interpreterPOSIXy && (!extensionPOSIXyOK || extensionPOSIXy) && (!filenamePOSIXyOK || filenamePOSIXy) {
+		smell.POSIXy = true
+	}
 
 	return smell, nil
 }

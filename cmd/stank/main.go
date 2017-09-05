@@ -11,19 +11,25 @@ import (
 	"github.com/mcandre/stank"
 )
 
+var flagSh = flag.Bool("sh", false, "Limit results to specifically bare POSIX sh scripts")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
+
+// Stanker holds configuration for a stanky walk
+type Stanker struct {
+	PureSh bool
+}
 
 // StankWalk sniffs a file system node for POSIXyness.
 // If the file smells sufficiently POSIXy, the path is printed.
 // Otherwise, the path is omitted.
-func StankWalk(pth string, info os.FileInfo, err error) error {
+func (o Stanker) Walk(pth string, info os.FileInfo, err error) error {
 	smell, err := stank.Sniff(pth)
 	if err != nil && err != io.EOF {
 		log.Print(err)
 	}
 
-	if smell.POSIXy {
+	if smell.POSIXy && (!o.PureSh || smell.Interpreter == "sh" || smell.Interpreter == "generic-sh") {
 		fmt.Println(smell.Path)
 	}
 
@@ -33,7 +39,11 @@ func StankWalk(pth string, info os.FileInfo, err error) error {
 func main() {
 	flag.Parse()
 
+	stanker := Stanker{}
+
 	switch {
+	case *flagSh:
+		stanker.PureSh = true
 	case *flagVersion:
 		fmt.Println(stank.Version)
 		os.Exit(0)
@@ -48,7 +58,7 @@ func main() {
 	var err error
 
 	for _, pth := range paths {
-		err = filepath.Walk(pth, StankWalk)
+		err = filepath.Walk(pth, stanker.Walk)
 
 		if err != nil {
 			log.Print(err)

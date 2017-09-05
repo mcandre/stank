@@ -11,17 +11,11 @@ The stank system includes the stank Go library as well as three command line uti
 ```console
 $ rosy examples/hooks
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/post-update
-Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/post-update.sample
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-applypatch
-Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-applypatch.sample
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-commit
-Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-commit.sample
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-push
-Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-push.sample
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-rebase
-Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-rebase.sample
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/update
-Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/update.sample
 $ echo "$?"
 1
 
@@ -49,14 +43,45 @@ examples/greetings.bash
 examples/hello
 examples/hello.sh
 examples/hooks/post-update
-examples/hooks/post-update.sample
+examples/hooks/pre-applypatch
+examples/hooks/pre-commit
+examples/hooks/pre-push
+examples/hooks/pre-rebase
+examples/hooks/update
+examples/howdy
+examples/howdy.zsh
+examples/i-should-have-an-extension
+examples/just-eol.bash
+examples/just-shebang.bash
+examples/pipefail
+examples/salutations.bash
+examples/wednesday
+examples/welcome
+examples/welcome.sh
 
 $ stank examples/hooks | xargs checkbashisms
 error: examples/hooks/pre-rebase: Unterminated quoted string found, EOF reached. Wanted: <'>, opened in line 133
 
+$ stank -sh examples
+examples/.profile
+examples/goodbye.sh
+examples/greetings.bash
+examples/hello
+examples/hello.sh
+examples/hooks/post-update
+examples/hooks/pre-applypatch
+examples/hooks/pre-commit
+examples/hooks/pre-push
+examples/hooks/pre-rebase
+examples/hooks/update
+examples/howdy.zsh
+examples/i-should-have-an-extension
+
 $ stank -help
   -help
         Show usage information
+  -sh
+        Limit results to specifically bare POSIX sh scripts
   -version
         Show version information
 ```
@@ -64,40 +89,35 @@ $ stank -help
 Finally, `stink` prints a record of each file's POSIXyness, including any interesting fields it identified along the way. Note that some fields may be zero valued if the stench of POSIX or rosy waft of nonPOSIX is overwhelming, short-circuiting analysis. This short-circuiting feature dramatically speeds up how `stank` and `rosy` search large projects.
 
 ```console
-$ cat examples/hello
-#!/bin/sh
-echo "Hello"
-
 $ stink examples/hello
-{"Path":"examples/hello","Filename":"hello","Basename":"hello","Extension":"","BOM":false,"Shebang":"#!/bin/sh","Interpreter":"/bin/sh","LineEnding":"\n","POSIXy":true}
+{"Path":"examples/hello","Directory":false,"Filename":"hello","Basename":"hello","Extension":"","Shebang":"#!/bin/sh","Interpreter":"sh","LineEnding":"\n","BOM":false,"POSI
+Xy":true}
 
 $ stink -pp examples/hello
 {
   "Path": "examples/hello",
+  "Directory": false,
   "Filename": "hello",
   "Basename": "hello",
   "Extension": "",
-  "BOM": false,
   "Shebang": "#!/bin/sh",
-  "Interpreter": "/bin/sh",
+  "Interpreter": "sh",
   "LineEnding": "\n",
+  "BOM": false,
   "POSIXy": true
 }
-
-$ cat examples/hello.py
-#!/usr/bin/env python
-print "Hello"
 
 $ stink -pp examples/hello.py
 {
   "Path": "examples/hello.py",
+  "Directory": false,
   "Filename": "hello.py",
   "Basename": "hello.py",
   "Extension": ".py",
+  "Shebang": "#!/usr/bin/env python",
+  "Interpreter": "python",
+  "LineEnding": "\n",
   "BOM": false,
-  "Shebang": "",
-  "Interpreter": "",
-  "LineEnding": "",
   "POSIXy": false
 }
 
