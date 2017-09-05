@@ -140,21 +140,21 @@ Note that permissions are relayed as decimals, due to constraints on JSON intege
 
 ```console
 $ stink examples/hello
-{"Path":"examples/hello","Directory":false,"Permissions":509,"OwnerExecutable":true,"Filename":"hello","Basename":"hello","Extension":"","Shebang":"#!/bin/sh","Interpreter"
-:"sh","LineEnding":"\n","BOM":false,"POSIXy":true}
+{"Path":"examples/hello","Filename":"hello","Basename":"hello","Extension":"","Shebang":"#!/bin/sh","Interpreter":"sh","LineEnding":"\n","Permissions":509,"Directory":false
+,"OwnerExecutable":true,"BOM":false,"POSIXy":true}
 
 $ stink -pp examples/hello
 {
   "Path": "examples/hello",
-  "Directory": false,
-  "Permissions": 509,
-  "OwnerExecutable": true,
   "Filename": "hello",
   "Basename": "hello",
   "Extension": "",
   "Shebang": "#!/bin/sh",
   "Interpreter": "sh",
   "LineEnding": "\n",
+  "Permissions": 509,
+  "Directory": false,
+  "OwnerExecutable": true,
   "BOM": false,
   "POSIXy": true
 }
@@ -162,15 +162,15 @@ $ stink -pp examples/hello
 $ stink -pp examples/hello.py
 {
   "Path": "examples/hello.py",
-  "Directory": false,
-  "Permissions": 420,
-  "OwnerExecutable": false,
   "Filename": "hello.py",
   "Basename": "hello.py",
   "Extension": ".py",
   "Shebang": "#!/usr/bin/env python",
   "Interpreter": "python",
   "LineEnding": "\n",
+  "Permissions": 420,
+  "Directory": false,
+  "OwnerExecutable": false,
   "BOM": false,
   "POSIXy": false
 }
