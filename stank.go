@@ -74,15 +74,15 @@ const Version = "0.0.7"
 // machine code, and other nonUTF-8, nonASCII content.
 type Smell struct {
 	Path            string
-	Directory       bool
-	Permissions     os.FileMode
-	OwnerExecutable bool
 	Filename        string
 	Basename        string
 	Extension       string
 	Shebang         string
 	Interpreter     string
 	LineEnding      string
+	Permissions     os.FileMode
+	Directory       bool
+	OwnerExecutable bool
 	BOM             bool
 	POSIXy          bool
 }

@@ -20,6 +20,7 @@ type Rose struct {
 	FoundPOSIXy bool
 }
 
+// Walk is a callback for filepath.Walk to scan for shell scripts.
 func (o *Rose) Walk(pth string, info os.FileInfo, err error) error {
 	smell, err := stank.Sniff(pth)
 

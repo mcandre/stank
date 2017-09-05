@@ -33,9 +33,9 @@ func CheckShebangs(smell stank.Smell) bool {
 		if smell.Shebang != "" {
 			fmt.Printf("Configuration features shebang: %s\n", smell.Path)
 			return true
-		} else {
-			return false
 		}
+
+		return false
 	}
 
 	if smell.Shebang == "" {
@@ -59,7 +59,7 @@ func CheckShebangs(smell stank.Smell) bool {
 	return false
 }
 
-// CheckExecutableBits analyzes POSIXy scripts for some file permission oddities. If an oddity is found, CheckPermissions prints a warning and returns true.
+// CheckPermissions analyzes POSIXy scripts for some file permission oddities. If an oddity is found, CheckPermissions prints a warning and returns true.
 // Otherwise, CheckPermissions returns false.
 func CheckPermissions(smell stank.Smell) bool {
 	if smell.Permissions&0100 == 0 && smell.Permissions&0010 == 0 && smell.Permissions&0001 == 0 {
@@ -83,6 +83,7 @@ func FunkyCheck(smell stank.Smell) bool {
 	return res1 || res2
 }
 
+// Walk is a callback for filepath.Walk to lint shell scripts.
 func (o *Funk) Walk(pth string, info os.FileInfo, err error) error {
 	smell, err := stank.Sniff(pth)
 
