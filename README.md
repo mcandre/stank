@@ -9,13 +9,33 @@ stank is a library and collection of command line utilities for sniffing files t
 The stank system includes the stank Go library as well as three command line utilities for convenience. `rosy` recursively searches directory trees for POSIX shell scripts, recommending that they be rewritten in safer general purpose languages like Ruby, Python, Node.js, etc.
 
 ```console
-$ rosy examples/hooks
+$ rosy examples
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/blank.bash
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/derp.zsh
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/globs.bash
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/goodbye.sh
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/greetings.bash
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hello
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hello.sh
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/post-update
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-applypatch
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-commit
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-push
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-rebase
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/update
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/howdy
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/howdy.zsh
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/i-should-have-an-extension
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/just-eol.bash
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/just-shebang.bash
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/pipefail
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/salutations.bash
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/salutations.sh
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/salutations4.bash
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/wednesday
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/welcome
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/welcome.sh
+
 $ echo "$?"
 1
 
@@ -37,7 +57,9 @@ $ stank examples
 examples/.profile
 examples/.zshrc
 examples/badconfigs/.bash_profile
+examples/badconfigs/zprofile
 examples/blank.bash
+examples/derp.zsh
 examples/globs.bash
 examples/goodbye.sh
 examples/greetings.bash
@@ -85,6 +107,29 @@ $ stank -help
         Show usage information
   -sh
         Limit results to specifically bare POSIX sh scripts
+  -version
+        Show version information
+```
+
+The `funk` linter reports strange odors emanating from scripts, such as missing shebangs.
+
+Note that funk cannot reliably warn for missing shebangs if the extension is also missing; typically, script authors use one or the other to mark files as shell scripts. In any case, know that the shebang is requisite for ensuring your scripts are properly interpreted.
+
+Note that funk may fail to present permissions warnings if the scripts are housed on non*nix file systems such as NTFS, where executable bits are often missing from the file metadata altogether. When storing shell scripts, be sure to set the appropriate file permissions, and transfer files as a bundle in a tarball or similar to safeguard against dropped permissions.
+
+```console
+$ funk examples
+Configuration features shebang: examples/badconfigs/.bash_profile
+Configuration features executable permissions: examples/badconfigs/zprofile
+Missing shebang: examples/blank.bash
+Interpreter mismatch between shebang and extension: examples/derp.zsh
+Missing shebang: examples/greetings.bash
+Missing shebang: examples/howdy.zsh
+Missing shebang: examples/just-eol.bash
+
+$ funk -help
+  -help
+        Show usage information
   -version
         Show version information
 ```

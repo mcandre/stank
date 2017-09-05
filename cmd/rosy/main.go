@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/mcandre/stank"
 )
@@ -19,19 +20,19 @@ type Rose struct {
 	FoundPOSIXy bool
 }
 
-func (o Rose) Walk(pth string, info os.FileInfo, err error) error {
+func (o *Rose) Walk(pth string, info os.FileInfo, err error) error {
 	smell, err := stank.Sniff(pth)
 
 	if err != nil && err != io.EOF {
 		log.Print(err)
 	}
 
-	if smell.POSIXy {
+	if smell.POSIXy && !(stank.LOWEREXTENSIONS2CONFIG[strings.ToLower(smell.Extension)] || stank.LOWERFILENAMES2CONFIG[strings.ToLower(smell.Filename)]) {
 		fmt.Printf("Rewrite POSIX script in Ruby or other safer general purpose scripting language: %s\n", pth)
 		o.FoundPOSIXy = true
 	}
 
-	return err
+	return nil
 }
 
 func main() {

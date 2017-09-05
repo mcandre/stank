@@ -1,0 +1,1 @@
+echo "Loading zsh config"

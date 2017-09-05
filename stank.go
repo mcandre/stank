@@ -183,6 +183,33 @@ var LOWEREXTENSIONS2POSIXyNESS = map[string]bool{
 	".ds_store":     false,
 }
 
+// LOWEREXTENSIONS2CONFIG is a fairly exhaustive map of lowercase file extensions to whether or not they represent shell script configurations.
+// Newly minted extensions can be added by stank contributors.
+var LOWEREXTENSIONS2CONFIG = map[string]bool{
+	".shrc":         true,
+	".shinit":       true,
+	".profile":      true,
+	".bash_profile": true,
+	".bashrc":       true,
+	".bash_login":   true,
+	".bash_logout":  true,
+	".ashrc":        true,
+	".dashrc":       true,
+	".kshrc":        true,
+	".zshenv":       true,
+	".zprofile":     true,
+	".zshrc":        true,
+	".zlogin":       true,
+	".zlogout":      true,
+	".csh":          true,
+	".cshrc":        true,
+	".tcsh":         true,
+	".tcshrc":       true,
+	".fish":         true,
+	".rc":           true,
+	".ionrc":        true,
+}
+
 // LOWERFILENAMES2POSIXyNESS is a fairly exhaustive map of lowercase filenames to whether or not they represent POSIX shell scripts.
 // Newly minted config filenames can be added by stank contributors.
 var LOWERFILENAMES2POSIXyNESS = map[string]bool{
@@ -202,6 +229,7 @@ var LOWERFILENAMES2POSIXyNESS = map[string]bool{
 	"csh.logout":                false,
 	"tcsh.login":                false,
 	"tcsh.logout":               false,
+	"rcrc":                      false,
 	"makefile":                  false,
 	"readme":                    false,
 	"changelog":                 false,
@@ -215,6 +243,28 @@ var LOWERFILENAMES2POSIXyNESS = map[string]bool{
 	"prepare-commit-msg.sample": false,
 	"update.sample":             false,
 	"thumbs.db":                 false,
+}
+
+// LOWERFILENAMES2CONFIG is a fairly exhaustive map of lowercase filenames to whether or not they represent shell script configurations.
+// Newly minted config filenames can be added by stank contributors.
+var LOWERFILENAMES2CONFIG = map[string]bool{
+	"shrc":        true,
+	"shinit":      true,
+	"profile":     true,
+	"login":       true,
+	"logout":      true,
+	"bash_login":  true,
+	"bash_logout": true,
+	"zshenv":      true,
+	"zprofile":    true,
+	"zshrc":       true,
+	"zlogin":      true,
+	"zlogout":     true,
+	"csh.login":   true,
+	"csh.logout":  true,
+	"tcsh.login":  true,
+	"tcsh.logout": true,
+	"rcrc":        true,
 }
 
 // LOWEREXTENSIONS2INTERPRETER is a fairly exhaustive map of lowercase file extensions to their corresponding interpreters.
