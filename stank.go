@@ -476,6 +476,7 @@ func Sniff(pth string) (Smell, error) {
 	// * #!/usr/local/bin/bash
 	// * #!/usr/bin/env python
 	// * #!/usr/bin/env MathKernel -script
+	// * #!/bin/busybox python
 	// * #!someapplication
 	//
 	// Let's break these down.
@@ -491,6 +492,11 @@ func Sniff(pth string) (Smell, error) {
 
 	// Strip /usr/bin/env, if present
 	if commandParts[0] == "/usr/bin/env" {
+		commandParts = commandParts[1:]
+	}
+
+	// Strip /bin/busybox, if present
+	if commandParts[0] == "/bin/busybox" {
 		commandParts = commandParts[1:]
 	}
 
