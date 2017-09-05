@@ -90,6 +90,7 @@ type Smell struct {
 var LOWEREXTENSIONS2POSIXyNESS = map[string]bool{
 	".sh":           true,
 	".bash":         true,
+	".bash4":        true,
 	".zsh":          true,
 	".lksh":         false,
 	".ksh":          true,
@@ -308,6 +309,7 @@ var BOMS = map[string]bool{
 var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"sh":     true,
 	"bash":   true,
+	"bash4":  true,
 	"zsh":    true,
 	"lksh":   false,
 	"ksh":    true,

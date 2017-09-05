@@ -36,6 +36,7 @@ The `stank` application prints paths to POSIX shell scripts, designed for use in
 $ stank examples
 examples/.profile
 examples/.zshrc
+examples/badconfigs/.bash_profile
 examples/blank.bash
 examples/globs.bash
 examples/goodbye.sh
@@ -55,6 +56,8 @@ examples/just-eol.bash
 examples/just-shebang.bash
 examples/pipefail
 examples/salutations.bash
+examples/salutations.sh
+examples/salutations4.bash
 examples/wednesday
 examples/welcome
 examples/welcome.sh
