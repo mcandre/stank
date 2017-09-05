@@ -91,15 +91,19 @@ $ stank -help
 
 Finally, `stink` prints a record of each file's POSIXyness, including any interesting fields it identified along the way. Note that some fields may be zero valued if the stench of POSIX or rosy waft of nonPOSIX is overwhelming, short-circuiting analysis. This short-circuiting feature dramatically speeds up how `stank` and `rosy` search large projects.
 
+Note that permissions are relayed as decimals, due to constraints on JSON integer formatting (we didn't want to use a custom octal string field). Use `echo 'obase=8;<some integer> | bc` to display these values in octal.
+
 ```console
 $ stink examples/hello
-{"Path":"examples/hello","Directory":false,"Filename":"hello","Basename":"hello","Extension":"","Shebang":"#!/bin/sh","Interpreter":"sh","LineEnding":"\n","BOM":false,"POSI
-Xy":true}
+{"Path":"examples/hello","Directory":false,"Permissions":509,"OwnerExecutable":true,"Filename":"hello","Basename":"hello","Extension":"","Shebang":"#!/bin/sh","Interpreter"
+:"sh","LineEnding":"\n","BOM":false,"POSIXy":true}
 
 $ stink -pp examples/hello
 {
   "Path": "examples/hello",
   "Directory": false,
+  "Permissions": 509,
+  "OwnerExecutable": true,
   "Filename": "hello",
   "Basename": "hello",
   "Extension": "",
@@ -114,6 +118,8 @@ $ stink -pp examples/hello.py
 {
   "Path": "examples/hello.py",
   "Directory": false,
+  "Permissions": 420,
+  "OwnerExecutable": false,
   "Filename": "hello.py",
   "Basename": "hello.py",
   "Extension": ".py",

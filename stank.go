@@ -73,16 +73,18 @@ const Version = "0.0.6"
 // also encompasses nonscript files such as multimedia images, audio, rich text documents,
 // machine code, and other nonUTF-8, nonASCII content.
 type Smell struct {
-	Path        string
-	Directory   bool
-	Filename    string
-	Basename    string
-	Extension   string
-	Shebang     string
-	Interpreter string
-	LineEnding  string
-	BOM         bool
-	POSIXy      bool
+	Path            string
+	Directory       bool
+	Permissions     os.FileMode
+	OwnerExecutable bool
+	Filename        string
+	Basename        string
+	Extension       string
+	Shebang         string
+	Interpreter     string
+	LineEnding      string
+	BOM             bool
+	POSIXy          bool
 }
 
 // LOWEREXTENSIONS2POSIXyNESS is a fairly exhaustive map of lowercase file extensions to whether or not they represent POSIX shell scripts.
@@ -360,13 +362,16 @@ func Sniff(pth string) (Smell, error) {
 		return smell, err
 	}
 
-	switch mode := fi.Mode(); {
-	case mode.IsDir():
+	mode := fi.Mode()
+
+	if mode.IsDir() {
 		smell.Directory = true
 
 		return smell, nil
 	}
 
+	smell.Permissions = mode.Perm()
+	smell.OwnerExecutable = smell.Permissions&0100 != 0
 	smell.Filename = path.Base(pth)
 	smell.Basename = filepath.Base(smell.Filename)
 	smell.Extension = filepath.Ext(smell.Filename)
