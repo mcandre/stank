@@ -120,6 +120,8 @@ Note that funk cannot reliably warn for missing shebangs if the extension is als
 
 Note that funk may fail to present permissions warnings if the scripts are housed on non*nix file systems such as NTFS, where executable bits are often missing from the file metadata altogether. When storing shell scripts, be sure to set the appropriate file permissions, and transfer files as a bundle in a tarball or similar to safeguard against dropped permissions.
 
+Note that funk may warn of interpreter mismatches for scripts with extraneous dots in the filename. Rather than `.envrc.sample`, name the file `sample.envrc`. Rather than `wget-google.com`, name the file `wget-google-com`. Appending `.sh` is also an option, so `update.es.cluster` renames to `update.es.cluster.sh`.
+
 ```console
 $ funk examples
 Configuration features shebang: examples/badconfigs/.bash_profile
