@@ -196,7 +196,7 @@ http://godoc.org/github.com/mcandre/stank
 
 # REQUIREMENTS
 
-The `stink` and `stank` applications have no special runtime requirements.
+Each of the applications in the stank suite are standalone, with no requirements other than deploying to a suitable operating system.
 
 ## Development
 
