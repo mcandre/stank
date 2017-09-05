@@ -93,7 +93,7 @@ func (o *Funk) Walk(pth string, info os.FileInfo, err error) error {
 	}
 
 	if smell.POSIXy {
-		if !FunkyCheck(smell) {
+		if FunkyCheck(smell) {
 			o.FoundOdor = true
 		}
 	}
