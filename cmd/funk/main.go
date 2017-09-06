@@ -51,6 +51,11 @@ func CheckShebangs(smell stank.Smell) bool {
 		return false
 	}
 
+	// .ksh is valid for ksh derivatives, even the nonPOSIX lksh.
+	if strings.Contains(smell.Interpreter, "ksh") && extensionSansDot == "ksh" {
+		return false
+	}
+
 	// Mismatched shebangs and extensions result in a script being sent to the wrong parser depending on whether it is loaded as `<interpreter> <path>` vs. `./<path>`.
 	if smell.Interpreter != extensionSansDot {
 		fmt.Printf("Interpreter mismatch between shebang and extension: %s\n", smell.Path)
