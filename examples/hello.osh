@@ -1,0 +1,2 @@
+#!/bin/osh
+echo "Hello World"
