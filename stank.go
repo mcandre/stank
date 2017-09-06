@@ -104,7 +104,6 @@ var LOWEREXTENSIONS2POSIXyNESS = map[string]bool{
 	".ash":          true,
 	".shrc":         true,
 	".shinit":       true,
-	".profile":      true,
 	".bash_profile": true,
 	".bashrc":       true,
 	".bash_login":   true,
@@ -215,6 +214,7 @@ var LOWEREXTENSIONS2CONFIG = map[string]bool{
 var LOWERFILENAMES2POSIXyNESS = map[string]bool{
 	"shrc":                      true,
 	"shinit":                    true,
+	".profile":                  true,
 	"profile":                   true,
 	"login":                     true,
 	"logout":                    true,

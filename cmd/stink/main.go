@@ -28,7 +28,9 @@ type Stinker struct {
 func (o Stinker) Walk(pth string, info os.FileInfo, err error) error {
 	smell, err := stank.Sniff(pth)
 
-	if err != nil {
+	if err != nil && err != io.EOF {
+		log.Print(err)
+
 		return err
 	}
 
