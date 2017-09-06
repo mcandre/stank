@@ -131,6 +131,7 @@ Interpreter mismatch between shebang and extension: examples/derp.zsh
 Missing shebang: examples/greetings.bash
 Missing shebang: examples/howdy.zsh
 Missing shebang: examples/just-eol.bash
+Leading BOM reduces portability: examples/wednesday-bom
 
 $ funk -help
   -help

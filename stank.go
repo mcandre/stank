@@ -486,12 +486,9 @@ func Sniff(pth string) (Smell, error) {
 	for i := 2; i < 6; i++ {
 		if BOMS[string(bs[:i])] {
 			smell.BOM = true
+			br.Discard(i)
 			break
 		}
-	}
-
-	if smell.BOM {
-		return smell, nil
 	}
 
 	LF := byte('\n')

@@ -20,6 +20,18 @@ type Funk struct {
 	FoundOdor bool
 }
 
+// CheckBOMs analyzes POSIXy scripts for byte order markers. If a BOM is found, CheckBOMs prints a warning and returns true.
+// Otherwise, CheckBOMs returns false.
+func CheckBOMs(smell stank.Smell) bool {
+	if smell.BOM {
+		fmt.Printf("Leading BOM reduces portability: %s\n", smell.Path)
+
+		return true
+	}
+
+	return false
+}
+
 // CheckShebangs analyzes POSIXy scripts for some shebang oddities. If an oddity is found, CheckShebangs prints a warning and returns true.
 // Otherwise, CheckShebangs returns false.
 func CheckShebangs(smell stank.Smell) bool {
@@ -83,10 +95,11 @@ func CheckPermissions(smell stank.Smell) bool {
 // FunkyCheck analyzes POSIXy scripts for some oddities. If an oddity is found, FunkyCheck prints a warning and returns true.
 // Otherwise, FunkyCheck returns false.
 func FunkyCheck(smell stank.Smell) bool {
+	res0 := CheckBOMs(smell)
 	res1 := CheckShebangs(smell)
 	res2 := CheckPermissions(smell)
 
-	return res1 || res2
+	return res0 || res1 || res2
 }
 
 // Walk is a callback for filepath.Walk to lint shell scripts.
