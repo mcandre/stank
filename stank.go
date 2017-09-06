@@ -91,6 +91,8 @@ type Smell struct {
 // Newly minted extensions can be added by stank contributors.
 var LOWEREXTENSIONS2POSIXyNESS = map[string]bool{
 	".sh":           true,
+	".tsh":          false,
+	".etsh":         false,
 	".bash":         true,
 	".bash4":        true,
 	".bosh":         true,
@@ -365,6 +367,8 @@ var BOMS = map[string]bool{
 // Newly minted interpreters can be added by stank contributors.
 var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"sh":     true,
+	"tsh":    false,
+	"etsh":   false,
 	"bash":   true,
 	"bash4":  true,
 	"bosh":   true,
