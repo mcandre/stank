@@ -80,6 +80,7 @@ type Smell struct {
 	Shebang         string
 	Interpreter     string
 	LineEnding      string
+	FinalEOL        bool
 	Permissions     os.FileMode
 	Directory       bool
 	OwnerExecutable bool
@@ -416,7 +417,7 @@ var INTERPRETERS2POSIXyNESS = map[string]bool{
 //
 // If an I/O problem occurs during analysis, an error value will be set.
 // Otherwise, the error value will be nil.
-func Sniff(pth string) (Smell, error) {
+func Sniff(pth string, eolCheck bool) (Smell, error) {
 	// Attempt to short-circuit for directories
 	fi, err := os.Stat(pth)
 
@@ -477,13 +478,19 @@ func Sniff(pth string) (Smell, error) {
 
 	br := bufio.NewReader(fd)
 
-	bs, err := br.Peek(5)
+	maxBOMCheckLength := 5
+
+	if fi.Size() < 5 {
+		maxBOMCheckLength = int(fi.Size())
+	}
+
+	bs, err := br.Peek(maxBOMCheckLength)
 
 	if err != nil {
 		return smell, err
 	}
 
-	for i := 2; i < 6; i++ {
+	for i := 2; i < 6 && i < maxBOMCheckLength; i++ {
 		if BOMS[string(bs[:i])] {
 			smell.BOM = true
 			br.Discard(i)
@@ -497,6 +504,10 @@ func Sniff(pth string) (Smell, error) {
 	// CR-ended files and binary files will be read in their entirety.
 	line, err := br.ReadString(LF)
 
+	if err != nil {
+		return smell, err
+	}
+
 	// An error occurred while attempting to find the first occurence of a line feed in the file.
 	// This could mean one of several things:
 	//
@@ -507,17 +518,56 @@ func Sniff(pth string) (Smell, error) {
 	// * The file consists of a single line, without a line ending sequence.
 	//
 	// Only the cases of an empty file or single line without an ending could reasonably considered candidates for POSIX shell scripts. The former can only be evidenced as POSIX if a POSIXy extension is present, in which case the previous analysis instructions above would have short-circuited POSIXy: true. So we can now ignore the former and only check the latter.
+	//
+	// Note that stank currently ignores mixed line ending styles within a file.
+	//
 
 	if strings.HasSuffix(line, "\r\n") {
 		smell.LineEnding = "\r\n"
 	} else if strings.HasSuffix(line, "\n") {
 		smell.LineEnding = "\n"
+	} else if strings.HasSuffix(line, "\r") {
+		smell.LineEnding = "\r"
 	}
 
 	filenameInterpreter, filenameInterpreterOK := LOWERFILENAMES2INTERPRETER[strings.ToLower(smell.Filename)]
 
 	if filenameInterpreterOK {
 		smell.Interpreter = filenameInterpreter
+	}
+
+	//
+	// Read the entire script in order to assess the presence/absence of a final POSIX end of line (\n) sequence.
+	//
+	if eolCheck && fi.Size() > 0 {
+		fd2, err := os.Open(pth)
+
+		if err != nil {
+			log.Print(err)
+			return smell, nil
+		}
+
+		defer func() {
+			err := fd2.Close()
+
+			if err != nil {
+				log.Panic(err)
+			}
+		}()
+
+		maxEOLSequenceLength := int64(2)
+
+		if fi.Size() < 2 {
+			maxEOLSequenceLength = 1
+		}
+
+		eolBuf := make([]byte, maxEOLSequenceLength)
+
+		fd2.ReadAt(eolBuf, fi.Size()-maxEOLSequenceLength)
+
+		if eolBuf[maxEOLSequenceLength-1] == byte('\n') && (maxEOLSequenceLength < 2 || eolBuf[0] != byte('\r')) {
+			smell.FinalEOL = true
+		}
 	}
 
 	// Recognize poorly written shell scripst that feature

@@ -12,12 +12,24 @@ import (
 	"github.com/mcandre/stank"
 )
 
+var flagEOL = flag.Bool("eol", true, "Report presence/absence of final end of line sequence")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 
 // Funk holds configuration for a funky walk.
 type Funk struct {
+	EOLCheck  bool
 	FoundOdor bool
+}
+
+// CheckEOL analyzes POSIXy scripts for the presence/absence of a final end of line sequence such as \n at the end of a file, \r\n, etc.
+func CheckEOL(smell stank.Smell) bool {
+	if !smell.FinalEOL {
+		fmt.Printf("Missing final end of line sequence: %s\n", smell.Path)
+		return true
+	}
+
+	return false
 }
 
 // CheckBOMs analyzes POSIXy scripts for byte order markers. If a BOM is found, CheckBOMs prints a warning and returns true.
@@ -94,24 +106,30 @@ func CheckPermissions(smell stank.Smell) bool {
 
 // FunkyCheck analyzes POSIXy scripts for some oddities. If an oddity is found, FunkyCheck prints a warning and returns true.
 // Otherwise, FunkyCheck returns false.
-func FunkyCheck(smell stank.Smell) bool {
+func (o Funk) FunkyCheck(smell stank.Smell) bool {
+	var res_1 bool
+
+	if o.EOLCheck {
+		res_1 = CheckEOL(smell)
+	}
+
 	res0 := CheckBOMs(smell)
 	res1 := CheckShebangs(smell)
 	res2 := CheckPermissions(smell)
 
-	return res0 || res1 || res2
+	return res_1 || res0 || res1 || res2
 }
 
 // Walk is a callback for filepath.Walk to lint shell scripts.
 func (o *Funk) Walk(pth string, info os.FileInfo, err error) error {
-	smell, err := stank.Sniff(pth)
+	smell, err := stank.Sniff(pth, o.EOLCheck)
 
 	if err != nil && err != io.EOF {
 		log.Print(err)
 	}
 
 	if smell.POSIXy {
-		if FunkyCheck(smell) {
+		if o.FunkyCheck(smell) {
 			o.FoundOdor = true
 		}
 	}
@@ -121,6 +139,12 @@ func (o *Funk) Walk(pth string, info os.FileInfo, err error) error {
 
 func main() {
 	flag.Parse()
+
+	funk := Funk{}
+
+	if *flagEOL {
+		funk.EOLCheck = true
+	}
 
 	switch {
 	case *flagVersion:
@@ -132,8 +156,6 @@ func main() {
 	}
 
 	paths := flag.Args()
-
-	funk := Funk{}
 
 	for _, pth := range paths {
 		filepath.Walk(pth, funk.Walk)

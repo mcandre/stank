@@ -126,14 +126,18 @@ Note that funk may warn of interpreter mismatches for scripts with extraneous do
 $ funk examples
 Configuration features shebang: examples/badconfigs/.bash_profile
 Configuration features executable permissions: examples/badconfigs/zprofile
+Missing final end of line sequence: examples/blank.bash
 Missing shebang: examples/blank.bash
 Interpreter mismatch between shebang and extension: examples/derp.zsh
 Missing shebang: examples/greetings.bash
+Missing final end of line sequence: examples/hello-crlf.sh
 Missing shebang: examples/howdy.zsh
 Missing shebang: examples/just-eol.bash
 Leading BOM reduces portability: examples/wednesday-bom
 
 $ funk -help
+  -eol
+        Report presence/absence of final end of line sequence
   -help
         Show usage information
   -version
@@ -186,6 +190,8 @@ $ stink -pp examples/hello.py
 }
 
 $ stink -help
+  -eol
+        Report presence/absence of final end of line sequence
   -help
         Show usage information
   -pp
