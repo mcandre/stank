@@ -125,7 +125,7 @@ func CheckModulino(smell stank.Smell) bool {
 	}
 
 	if (smell.Extension == "" && !smell.OwnerExecutable) || (smell.Extension != "" && (smell.Permissions&0100 != 0 || smell.Permissions&0010 != 0 || smell.Permissions&0001 != 0)) {
-		fmt.Printf("Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: %s\n", smell.Path)
+		fmt.Printf("Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: %s\n", smell.Path)
 		return true
 	}
 

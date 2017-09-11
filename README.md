@@ -192,16 +192,16 @@ Interpreter mismatch between shebang and extension: examples/derp.zsh
 Missing shebang: examples/greetings.bash
 Missing final end of line sequence: examples/hello-crlf.sh
 NonPOSIX CR/CRLF line ending detected: examples/hello-crlf.sh
-Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: examples/hello-crlf.sh
-Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: examples/howdy
+Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/hello-crlf.sh
+Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/howdy
 Missing shebang: examples/howdy.zsh
 Missing shebang: examples/just-eol.bash
-Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: examples/pipefail
-Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: examples/shout.sh
-Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: examples/wednesday
+Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/pipefail
+Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/shout.sh
+Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/wednesday
 Leading BOM reduces portability: examples/wednesday-bom
-Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: examples/wednesday-bom
-Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: examples/welcome
+Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/wednesday-bom
+Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/welcome
 
 $ funk -help
   -cr
