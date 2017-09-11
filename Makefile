@@ -2,7 +2,27 @@ VERSION=0.0.9
 
 .PHONY: port clean clean-ports
 
-all: port
+all: install
+
+install-stink:
+	sh -c 'cd cmd/stink && go install'
+
+install-stank:
+	sh -c 'cd cmd/stank && go install'
+
+install-rosy:
+	sh -c 'cd cmd/rosy && go install'
+
+install-funk:
+	sh -c 'cd cmd/funk && go install'
+
+install: install-stink install-stank install-rosy install-funk
+
+uninstall:
+	-rm "$$GOPATH/bin/funk"
+	-rm "$$GOPATH/bin/rosy"
+	-rm "$$GOPATH/bin/stank"
+	-rm "$$GOPATH/bin/stink"
 
 govet:
 	find . -path "*/vendor*" -prune -o -name "*.go" -type f -exec go tool vet -shadow {} \;

@@ -14,14 +14,16 @@ import (
 
 var flagEOL = flag.Bool("eol", true, "Report presence/absence of final end of line sequence")
 var flagCR = flag.Bool("cr", true, "Report presence/absence of final end of line sequence")
+var flagModulino = flag.Bool("modulino", false, "Enforce strict separation of application scripts vs. library scripts")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 
 // Funk holds configuration for a funky walk.
 type Funk struct {
-	EOLCheck  bool
-	CRCheck   bool
-	FoundOdor bool
+	EOLCheck      bool
+	CRCheck       bool
+	ModulinoCheck bool
+	FoundOdor     bool
 }
 
 // CheckEOL analyzes POSIXy scripts for the presence/absence of a final end of line sequence such as \n at the end of a file, \r\n, etc.
@@ -147,12 +149,17 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 		resCR = CheckCR(smell)
 	}
 
+	var resModulino bool
+
+	if o.ModulinoCheck {
+		resModulino = CheckModulino(smell)
+	}
+
 	resBOM := CheckBOMs(smell)
 	resShebang := CheckShebangs(smell)
 	resPerms := CheckPermissions(smell)
-	resModulino := CheckModulino(smell)
 
-	return resEOL || resCR || resBOM || resShebang || resPerms || resModulino
+	return resEOL || resCR || resBOM || resModulino || resShebang || resPerms
 }
 
 // Walk is a callback for filepath.Walk to lint shell scripts.
@@ -183,6 +190,10 @@ func main() {
 
 	if *flagCR {
 		funk.CRCheck = true
+	}
+
+	if *flagModulino {
+		funk.ModulinoCheck = true
 	}
 
 	switch {

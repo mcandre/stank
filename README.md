@@ -192,6 +192,19 @@ Interpreter mismatch between shebang and extension: examples/derp.zsh
 Missing shebang: examples/greetings.bash
 Missing final end of line sequence: examples/hello-crlf.sh
 NonPOSIX CR/CRLF line ending detected: examples/hello-crlf.sh
+Missing shebang: examples/howdy.zsh
+Missing shebang: examples/just-eol.bash
+Leading BOM reduces portability: examples/wednesday-bom
+
+$ funk -modulino examples
+Configuration features shebang: examples/badconfigs/.bash_profile
+Configuration features executable permissions: examples/badconfigs/zprofile
+Missing final end of line sequence: examples/blank.bash
+Missing shebang: examples/blank.bash
+Interpreter mismatch between shebang and extension: examples/derp.zsh
+Missing shebang: examples/greetings.bash
+Missing final end of line sequence: examples/hello-crlf.sh
+NonPOSIX CR/CRLF line ending detected: examples/hello-crlf.sh
 Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/hello-crlf.sh
 Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/howdy
 Missing shebang: examples/howdy.zsh
@@ -199,8 +212,8 @@ Missing shebang: examples/just-eol.bash
 Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/pipefail
 Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/shout.sh
 Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/wednesday
-Leading BOM reduces portability: examples/wednesday-bom
 Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/wednesday-bom
+Leading BOM reduces portability: examples/wednesday-bom
 Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/welcome
 
 $ funk -help
@@ -210,6 +223,8 @@ $ funk -help
         Report presence/absence of final end of line sequence (default true)
   -help
         Show usage information
+  -modulino
+        Enforce strict separation of application scripts vs. library scripts
   -version
         Show version information
 ```
