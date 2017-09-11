@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -55,12 +56,6 @@ var USAGIINTERPRETERS = map[string]bool{
 	"zsh":   true,
 }
 
-// CheckRose accepts a POSIXy smell and warns the user to rewrite in a safer language.
-func CheckRose(smell stank.Smell) bool {
-	fmt.Printf("Rewrite POSIX script in Ruby or other safer general purpose scripting language: %s\n", smell.Path)
-	return true
-}
-
 // CheckShebang warns on POSIXy scripts that lack a shebang line to distinguish which interpreter should be used.
 func CheckShebang(smell stank.Smell) bool {
 	if smell.Interpreter == "generic-sh" {
@@ -69,6 +64,24 @@ func CheckShebang(smell stank.Smell) bool {
 	}
 
 	return false
+}
+
+// CheckJavaShim analyzes a POSIXy script's path, returning false if the script is housed in a conventional Java project.
+// Otherwise, CheckJavaShim returns true.
+func CheckJavaShim(smell stank.Smell) bool {
+	parent := path.Base(path.Dir(smell.Path))
+
+	if parent == "bin" {
+		return false
+	}
+
+	return true
+}
+
+// CheckRose accepts a POSIXy smell and warns the user to rewrite in a safer language.
+func CheckRose(smell stank.Smell) bool {
+	fmt.Printf("Rewrite POSIX script in Ruby or other safer general purpose scripting language: %s\n", smell.Path)
+	return true
 }
 
 // CheckKame accepts a POSIXy smell and warns the user to rewrite in faster shells.
@@ -99,7 +112,11 @@ func (o *Rose) Walk(pth string, info os.FileInfo, err error) error {
 		log.Print(err)
 	}
 
-	if smell.POSIXy && !(stank.LOWEREXTENSIONS2CONFIG[strings.ToLower(smell.Extension)] || stank.LOWERFILENAMES2CONFIG[strings.ToLower(smell.Filename)]) && !CheckShebang(smell) {
+	if smell.POSIXy &&
+		!(stank.LOWEREXTENSIONS2CONFIG[strings.ToLower(smell.Extension)] || stank.LOWERFILENAMES2CONFIG[strings.ToLower(smell.Filename)]) &&
+		!CheckShebang(smell) &&
+		CheckJavaShim(smell) {
+
 		switch o.Mode {
 		case ModeRose:
 			o.FoundWarning = CheckRose(smell)

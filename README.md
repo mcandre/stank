@@ -109,6 +109,8 @@ $ rosy -help
         Show version information
 ```
 
+Note that rosy ignores scripts housed in a `bin` directory, as these tend to connote shims for running JAR's as command line applications. These shims are ideally written in pure POSIX sh for maximum portability.
+
 The `stank` application prints paths to POSIX shell scripts, designed for use in combination with `xargs` to help per-file shell static analysis applications lint large projects.
 
 ```console
