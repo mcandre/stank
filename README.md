@@ -6,17 +6,26 @@ stank is a library and collection of command line utilities for sniffing files t
 
 # EXAMPLES
 
-The stank system includes the stank Go library as well as three command line utilities for convenience. `rosy` recursively searches directory trees for POSIX shell scripts, recommending that they be rewritten in safer general purpose languages like Ruby, Python, Node.js, etc.
+The stank system includes the stank Go library as well as three command line utilities for convenience. `rosy` recursively searches directory trees for POSIX shell scripts. By default, rosy recommends that results be rewritten in safer general purpose languages like Ruby, Python, Node.js, etc. Rosy also offers a `-kame` flag for recommending faster shells like sh, ksh, dash, and posh; or an `-usagi` flag for recommending more robust shells that support `set -euo pipefail` like ksh, bash, and zsh.
 
 ```console
 $ rosy examples
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/blank.bash
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/derp.zsh
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/globs.bash
-Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/goodbye.sh
-Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/greetings.bash
+Clarify interpreter with a shebang line: examples/goodbye.sh
+Clarify interpreter with a shebang line: examples/greetings.bash
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hello
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hello-crlf.sh
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hello-ksh88.ksh
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hello-mksh.ksh
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hello.bosh
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hello.ksh
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hello.ksh88
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hello.oksh
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hello.pdksh
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hello.sh
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hello.yash
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/post-update
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-applypatch
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-commit
@@ -24,9 +33,9 @@ Rewrite POSIX script in Ruby or other safer general purpose scripting language: 
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/pre-rebase
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/hooks/update
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/howdy
-Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/howdy.zsh
+Clarify interpreter with a shebang line: examples/howdy.zsh
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/i-should-have-an-extension
-Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/just-eol.bash
+Clarify interpreter with a shebang line: examples/just-eol.bash
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/just-shebang.bash
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/pipefail
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/salutations.bash
@@ -34,6 +43,7 @@ Rewrite POSIX script in Ruby or other safer general purpose scripting language: 
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/salutations4.bash
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/sample.envrc
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/wednesday
+Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/wednesday-bom
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/welcome
 Rewrite POSIX script in Ruby or other safer general purpose scripting language: examples/welcome.sh
 
@@ -44,9 +54,57 @@ $ rosy examples/just-python
 $ echo "$?"
 0
 
+$ rosy -kame examples
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/blank.bash
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/derp.zsh
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/globs.bash
+Clarify interpreter with a shebang line: examples/goodbye.sh
+Clarify interpreter with a shebang line: examples/greetings.bash
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/hello.bosh
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/hello.yash
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/howdy
+Clarify interpreter with a shebang line: examples/howdy.zsh
+Clarify interpreter with a shebang line: examples/just-eol.bash
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/just-shebang.bash
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/pipefail
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/salutations.bash
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/salutations.sh
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/salutations4.bash
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/wednesday
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/wednesday-bom
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/welcome
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/welcome.sh
+
+$ rosy -usagi examples
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/blank.bash
+Clarify interpreter with a shebang line: examples/goodbye.sh
+Clarify interpreter with a shebang line: examples/greetings.bash
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/hello
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/hello-crlf.sh
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/hello.bosh
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/hello.oksh
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/hello.sh
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/hello.yash
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/hooks/post-update
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/hooks/pre-applypatch
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/hooks/pre-commit
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/hooks/pre-push
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/hooks/pre-rebase
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/hooks/update
+Clarify interpreter with a shebang line: examples/howdy.zsh
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/i-should-have-an-extension
+Clarify interpreter with a shebang line: examples/just-eol.bash
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/salutations.sh
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/salutations4.bash
+Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/sample.envrc
+
 $ rosy -help
   -help
         Show usage information
+  -kame
+        Recommend faster shells
+  -usagi
+        Recommend more robust shells
   -version
         Show version information
 ```
