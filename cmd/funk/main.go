@@ -116,6 +116,22 @@ func CheckPermissions(smell stank.Smell) bool {
 	return false
 }
 
+// CheckModulino warns when a smell features some aspects of an application, such as executable bits, and simultaneously some aspects of a library, such as a non-empty file extension.
+// If the file is a pure application or library, CheckModulino returns false.
+// Otherwise, CheckModulino returns true.
+func CheckModulino(smell stank.Smell) bool {
+	if stank.LOWEREXTENSIONS2CONFIG[strings.ToLower(smell.Extension)] || stank.LOWERFILENAMES2CONFIG[strings.ToLower(smell.Filename)] {
+		return false
+	}
+
+	if (smell.Extension == "" && !smell.OwnerExecutable) || (smell.Extension != "" && (smell.Permissions&0100 != 0 || smell.Permissions&0010 != 0 || smell.Permissions&0001 != 0)) {
+		fmt.Printf("Modulino ambiguity, either add owner executable permission or else rename with a .lib.sh extension: %s\n", smell.Path)
+		return true
+	}
+
+	return false
+}
+
 // FunkyCheck analyzes POSIXy scripts for some oddities. If an oddity is found, FunkyCheck prints a warning and returns true.
 // Otherwise, FunkyCheck returns false.
 func (o Funk) FunkyCheck(smell stank.Smell) bool {
@@ -134,8 +150,9 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 	resBOM := CheckBOMs(smell)
 	resShebang := CheckShebangs(smell)
 	resPerms := CheckPermissions(smell)
+	resModulino := CheckModulino(smell)
 
-	return resEOL || resCR || resBOM || resShebang || resPerms
+	return resEOL || resCR || resBOM || resShebang || resPerms || resModulino
 }
 
 // Walk is a callback for filepath.Walk to lint shell scripts.
