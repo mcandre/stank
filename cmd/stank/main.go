@@ -24,7 +24,7 @@ type Stanker struct {
 // If the file smells sufficiently POSIXy, the path is printed.
 // Otherwise, the path is omitted.
 func (o Stanker) Walk(pth string, info os.FileInfo, err error) error {
-	smell, err := stank.Sniff(pth, false)
+	smell, err := stank.Sniff(pth, stank.SniffConfig{})
 	if err != nil && err != io.EOF {
 		log.Print(err)
 	}

@@ -81,6 +81,7 @@ type Smell struct {
 	Interpreter     string
 	LineEnding      string
 	FinalEOL        bool
+	ContainsCR      bool
 	Permissions     os.FileMode
 	Directory       bool
 	OwnerExecutable bool
@@ -405,6 +406,12 @@ var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"ion":    false,
 }
 
+// SniffConfig bundles together the various options when sniffing files for POSIXyNESS.
+type SniffConfig struct {
+	EOLCheck bool
+	CRCheck  bool
+}
+
 // Sniff analyzes the holistic smell of a given file path,
 // returning a Smell record of key indicators tending towards either POSIX compliance or noncompliance,
 // including a flag for the final "POSIXy" trace scent of the file.
@@ -417,7 +424,7 @@ var INTERPRETERS2POSIXyNESS = map[string]bool{
 //
 // If an I/O problem occurs during analysis, an error value will be set.
 // Otherwise, the error value will be nil.
-func Sniff(pth string, eolCheck bool) (Smell, error) {
+func Sniff(pth string, config SniffConfig) (Smell, error) {
 	// Attempt to short-circuit for directories
 	fi, err := os.Stat(pth)
 
@@ -539,7 +546,7 @@ func Sniff(pth string, eolCheck bool) (Smell, error) {
 	//
 	// Read the entire script in order to assess the presence/absence of a final POSIX end of line (\n) sequence.
 	//
-	if eolCheck && fi.Size() > 0 {
+	if config.EOLCheck && fi.Size() > 0 {
 		fd2, err := os.Open(pth)
 
 		if err != nil {
@@ -641,6 +648,30 @@ func Sniff(pth string, eolCheck bool) (Smell, error) {
 
 	if interpreterPOSIXy && (!extensionPOSIXyOK || extensionPOSIXy) && (!filenamePOSIXyOK || filenamePOSIXy) {
 		smell.POSIXy = true
+	}
+
+	if smell.POSIXy && config.CRCheck {
+		fd3, err := os.Open(pth)
+
+		defer func() {
+			err := fd3.Close()
+
+			if err != nil {
+				log.Panic(err)
+			}
+		}()
+
+		if err != nil {
+			return smell, err
+		}
+
+		br2 := bufio.NewReader(fd3)
+
+		CR := byte('\r')
+
+		_, err = br2.ReadString(CR)
+
+		smell.ContainsCR = err == nil
 	}
 
 	return smell, nil

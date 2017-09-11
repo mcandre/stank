@@ -131,13 +131,16 @@ Missing shebang: examples/blank.bash
 Interpreter mismatch between shebang and extension: examples/derp.zsh
 Missing shebang: examples/greetings.bash
 Missing final end of line sequence: examples/hello-crlf.sh
+NonPOSIX CR/CRLF line ending detected: examples/hello-crlf.sh
 Missing shebang: examples/howdy.zsh
 Missing shebang: examples/just-eol.bash
 Leading BOM reduces portability: examples/wednesday-bom
 
 $ funk -help
+  -cr
+        Report presence/absence of final end of line sequence (default true)
   -eol
-        Report presence/absence of final end of line sequence
+        Report presence/absence of final end of line sequence (default true)
   -help
         Show usage information
   -version
@@ -154,8 +157,8 @@ Similarly, the old Bourne shell AKA "sh" AKA "bsh" presents language identificat
 
 ```console
 $ stink examples/hello
-{"Path":"examples/hello","Filename":"hello","Basename":"hello","Extension":"","Shebang":"#!/bin/sh","Interpreter":"sh","LineEnding":"\n","Permissions":509,"Directory":false
-,"OwnerExecutable":true,"BOM":false,"POSIXy":true}
+{"Path":"examples/hello","Filename":"hello","Basename":"hello","Extension":"","Shebang":"#!/bin/sh","Interpreter":"sh","LineEnding":"\n","FinalEOL":false,"ContainsCR":false
+,"Permissions":509,"Directory":false,"OwnerExecutable":true,"BOM":false,"POSIXy":true}
 
 $ stink -pp examples/hello
 {
@@ -166,6 +169,8 @@ $ stink -pp examples/hello
   "Shebang": "#!/bin/sh",
   "Interpreter": "sh",
   "LineEnding": "\n",
+  "FinalEOL": false,
+  "ContainsCR": false,
   "Permissions": 509,
   "Directory": false,
   "OwnerExecutable": true,
@@ -182,6 +187,8 @@ $ stink -pp examples/hello.py
   "Shebang": "#!/usr/bin/env python",
   "Interpreter": "python",
   "LineEnding": "\n",
+  "FinalEOL": false,
+  "ContainsCR": false,
   "Permissions": 420,
   "Directory": false,
   "OwnerExecutable": false,
@@ -190,6 +197,8 @@ $ stink -pp examples/hello.py
 }
 
 $ stink -help
+  -cr
+        Report presence/absence of any CR/CRLF's
   -eol
         Report presence/absence of final end of line sequence
   -help

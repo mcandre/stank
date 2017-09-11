@@ -14,12 +14,14 @@ import (
 
 var flagPrettyPrint = flag.Bool("pp", false, "Prettyprint smell records")
 var flagEOL = flag.Bool("eol", false, "Report presence/absence of final end of line sequence")
+var flagCR = flag.Bool("cr", false, "Report presence/absence of any CR/CRLF's")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 
 // Stinker holds configuration for a stinky walk.
 type Stinker struct {
 	EOLCheck    bool
+	CRCheck     bool
 	PrettyPrint bool
 }
 
@@ -28,7 +30,7 @@ type Stinker struct {
 //
 // If PrettyPrint is false, then the smell is minified.
 func (o Stinker) Walk(pth string, info os.FileInfo, err error) error {
-	smell, err := stank.Sniff(pth, o.EOLCheck)
+	smell, err := stank.Sniff(pth, stank.SniffConfig{EOLCheck: o.EOLCheck, CRCheck: o.CRCheck})
 
 	if err != nil && err != io.EOF {
 		log.Print(err)
@@ -66,6 +68,10 @@ func main() {
 
 	if *flagEOL {
 		stinker.EOLCheck = true
+	}
+
+	if *flagCR {
+		stinker.CRCheck = true
 	}
 
 	switch {

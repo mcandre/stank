@@ -13,12 +13,14 @@ import (
 )
 
 var flagEOL = flag.Bool("eol", true, "Report presence/absence of final end of line sequence")
+var flagCR = flag.Bool("cr", true, "Report presence/absence of final end of line sequence")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 
 // Funk holds configuration for a funky walk.
 type Funk struct {
 	EOLCheck  bool
+	CRCheck   bool
 	FoundOdor bool
 }
 
@@ -26,6 +28,16 @@ type Funk struct {
 func CheckEOL(smell stank.Smell) bool {
 	if !smell.FinalEOL {
 		fmt.Printf("Missing final end of line sequence: %s\n", smell.Path)
+		return true
+	}
+
+	return false
+}
+
+// CheckCR analyzes POSIXy scripts for the presence/absence of a CR/CRLF line ending sequence.
+func CheckCR(smell stank.Smell) bool {
+	if smell.ContainsCR {
+		fmt.Printf("NonPOSIX CR/CRLF line ending detected: %s\n", smell.Path)
 		return true
 	}
 
@@ -107,22 +119,28 @@ func CheckPermissions(smell stank.Smell) bool {
 // FunkyCheck analyzes POSIXy scripts for some oddities. If an oddity is found, FunkyCheck prints a warning and returns true.
 // Otherwise, FunkyCheck returns false.
 func (o Funk) FunkyCheck(smell stank.Smell) bool {
-	var res_1 bool
+	var resEOL bool
 
 	if o.EOLCheck {
-		res_1 = CheckEOL(smell)
+		resEOL = CheckEOL(smell)
 	}
 
-	res0 := CheckBOMs(smell)
-	res1 := CheckShebangs(smell)
-	res2 := CheckPermissions(smell)
+	var resCR bool
 
-	return res_1 || res0 || res1 || res2
+	if o.CRCheck {
+		resCR = CheckCR(smell)
+	}
+
+	resBOM := CheckBOMs(smell)
+	resShebang := CheckShebangs(smell)
+	resPerms := CheckPermissions(smell)
+
+	return resEOL || resCR || resBOM || resShebang || resPerms
 }
 
 // Walk is a callback for filepath.Walk to lint shell scripts.
 func (o *Funk) Walk(pth string, info os.FileInfo, err error) error {
-	smell, err := stank.Sniff(pth, o.EOLCheck)
+	smell, err := stank.Sniff(pth, stank.SniffConfig{EOLCheck: o.EOLCheck, CRCheck: o.CRCheck})
 
 	if err != nil && err != io.EOF {
 		log.Print(err)
@@ -144,6 +162,10 @@ func main() {
 
 	if *flagEOL {
 		funk.EOLCheck = true
+	}
+
+	if *flagCR {
+		funk.CRCheck = true
 	}
 
 	switch {
