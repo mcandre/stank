@@ -183,7 +183,7 @@ Note that funk may fail to present permissions warnings if the scripts are house
 Note that funk may warn of interpreter mismatches for scripts with extraneous dots in the filename. Rather than `.envrc.sample`, name the file `sample.envrc`. Rather than `wget-google.com`, name the file `wget-google-com`. Appending `.sh` is also an option, so `update.es.cluster` renames to `update.es.cluster.sh`.
 
 ```console
-$ funk examples/
+$ funk examples
 Configuration features shebang: examples/badconfigs/.bash_profile
 Configuration features executable permissions: examples/badconfigs/zprofile
 Missing final end of line sequence: examples/blank.bash
@@ -192,16 +192,16 @@ Interpreter mismatch between shebang and extension: examples/derp.zsh
 Missing shebang: examples/greetings.bash
 Missing final end of line sequence: examples/hello-crlf.sh
 NonPOSIX CR/CRLF line ending detected: examples/hello-crlf.sh
-Modulino ambiguity, either add owner executable permission or else rename with a .lib.sh extension: examples/hello-crlf.sh
-Modulino ambiguity, either add owner executable permission or else rename with a .lib.sh extension: examples/howdy
+Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: examples/hello-crlf.sh
+Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: examples/howdy
 Missing shebang: examples/howdy.zsh
 Missing shebang: examples/just-eol.bash
-Modulino ambiguity, either add owner executable permission or else rename with a .lib.sh extension: examples/pipefail
-Modulino ambiguity, either add owner executable permission or else rename with a .lib.sh extension: examples/shout.sh
-Modulino ambiguity, either add owner executable permission or else rename with a .lib.sh extension: examples/wednesday
+Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: examples/pipefail
+Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: examples/shout.sh
+Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: examples/wednesday
 Leading BOM reduces portability: examples/wednesday-bom
-Modulino ambiguity, either add owner executable permission or else rename with a .lib.sh extension: examples/wednesday-bom
-Modulino ambiguity, either add owner executable permission or else rename with a .lib.sh extension: examples/welcome
+Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: examples/wednesday-bom
+Modulino ambiguity, either have owner executable permission or else use an extension like .lib.sh: examples/welcome
 
 $ funk -help
   -cr
