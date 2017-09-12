@@ -79,7 +79,7 @@ Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/welc
 
 $ rosy -help
   -ahiru
-        Recommend sh for library scripts
+        Recommend sh for portability
   -help
         Show usage information
   -kame

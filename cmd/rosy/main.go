@@ -15,7 +15,7 @@ import (
 
 var flagKame = flag.Bool("kame", false, "Recommend faster shells")
 var flagUsagi = flag.Bool("usagi", false, "Recommend more robust shells")
-var flagAhiru = flag.Bool("ahiru", false, "Recommend sh for library scripts")
+var flagAhiru = flag.Bool("ahiru", false, "Recommend sh for portability")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 
