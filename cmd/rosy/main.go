@@ -128,8 +128,7 @@ func (o *Rose) Walk(pth string, info os.FileInfo, err error) error {
 
 	if smell.POSIXy &&
 		!(stank.LOWEREXTENSIONS2CONFIG[strings.ToLower(smell.Extension)] || stank.LOWERFILENAMES2CONFIG[strings.ToLower(smell.Filename)]) &&
-		!CheckShebang(smell) &&
-		CheckJavaShim(smell) {
+		!CheckShebang(smell) {
 
 		switch o.Mode {
 		case ModeRose:
