@@ -229,6 +229,8 @@ $ funk -help
         Show version information
 ```
 
+The optional `-modulino` flag to funk enables strict separation of script duties, into distinct application scripts vs. library scripts. Application scripts are generally executed by invoking the path, such as `./hello` or `~/bin/hello` or simply `hello` when `$PATH` is appropriately modified. Application scripts feature owner executable permissions, and perhaps group and other as well depending on system configuration needs. In contrast, library scripts are intended to be imported with dot (`.`) or `source` into user shells or other scripts, and should feature a file extension like `.lib.sh`, `.sh`, `.bash`, etc. By using separate naming conventions, we more quickly communicate to downstream users how to interact with a shell script. In particular, by dropping file extensions for shell script applications, we encourage authors to choose more meaningful script names. Instead of the generic `build.sh`, choose `build-docker`. Instead of `kafka.sh`, choose `start-kafka`, `kafka-entrypoint`, etc.
+
 Finally, `stink` prints a record of each file's POSIXyness, including any interesting fields it identified along the way. Note that some fields may be zero valued if the stench of POSIX or rosy waft of nonPOSIX is overwhelming, short-circuiting analysis. This short-circuiting feature dramatically speeds up how `stank` and `rosy` search large projects.
 
 Note that permissions are relayed as decimals, due to constraints on JSON integer formatting (we didn't want to use a custom octal string field). Use `echo 'obase=8;<some integer> | bc` to display these values in octal.
