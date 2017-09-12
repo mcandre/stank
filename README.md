@@ -90,13 +90,7 @@ $ rosy -help
         Show version information
 ```
 
-The `funk` linter reports strange odors emanating from scripts, such as missing shebangs.
-
-Note that funk cannot reliably warn for missing shebangs if the extension is also missing; typically, script authors use one or the other to mark files as shell scripts. In any case, know that the shebang is requisite for ensuring your scripts are properly interpreted.
-
-Note that funk may fail to present permissions warnings if the scripts are housed on non*nix file systems such as NTFS, where executable bits are often missing from the file metadata altogether. When storing shell scripts, be sure to set the appropriate file permissions, and transfer files as a bundle in a tarball or similar to safeguard against dropped permissions.
-
-Note that funk may warn of interpreter mismatches for scripts with extraneous dots in the filename. Rather than `.envrc.sample`, name the file `sample.envrc`. Rather than `wget-google.com`, name the file `wget-google-com`. Appending `.sh` is also an option, so `update.es.cluster` renames to `update.es.cluster.sh`.
+The `funk` linter reports strange odors emanating from scripts, such as improper line endings, the presence of Byte Order Marker's in some Unicode scripts.
 
 ```console
 $ funk examples
@@ -144,6 +138,12 @@ $ funk -help
   -version
         Show version information
 ```
+
+Note that funk cannot reliably warn for missing shebangs if the extension is also missing; typically, script authors use one or the other to mark files as shell scripts. Lacking both a shebang and a file extension, means that a file could contain code for many languages, making it difficult to determine the POSIXy nature of the code. Even if an exhaustive set of ASTs are applied to test the file contents for syntactical validity across the dozens of available shell languages, there is a strong possibility in shorter files that the contents are merely incidentally valid script syntax, though the intent of the file is not to operate as a POSIX shell script. Short, nonPOSIX scripts such as for csh/tcsh could easily trigger a "POSIX" syntax match. In any case, know that the shebang is requisite for ensuring your scripts are properly interpreted.
+
+Note that funk may fail to present permissions warnings if the scripts are housed on non*nix file systems such as NTFS, where executable bits are often missing from the file metadata altogether. When storing shell scripts, be sure to set the appropriate file permissions, and transfer files as a bundle in a tarball or similar to safeguard against dropped permissions.
+
+Note that funk may warn of interpreter mismatches for scripts with extraneous dots in the filename. Rather than `.envrc.sample`, name the file `sample.envrc`. Rather than `wget-google.com`, name the file `wget-google-com`. Appending `.sh` is also an option, so `update.es.cluster` renames to `update.es.cluster.sh`.
 
 The optional `-modulino` flag to funk enables strict separation of script duties, into distinct application scripts vs. library scripts. Application scripts are generally executed by invoking the path, such as `./hello` or `~/bin/hello` or simply `hello` when `$PATH` is appropriately modified. Application scripts feature owner executable permissions, and perhaps group and other as well depending on system configuration needs. In contrast, library scripts are intended to be imported with dot (`.`) or `source` into user shells or other scripts, and should feature a file extension like `.lib.sh`, `.sh`, `.bash`, etc. By using separate naming conventions, we more quickly communicate to downstream users how to interact with a shell script. In particular, by dropping file extensions for shell script applications, we encourage authors to choose more meaningful script names. Instead of the generic `build.sh`, choose `build-docker`. Instead of `kafka.sh`, choose `start-kafka`, `kafka-entrypoint`, etc.
 
