@@ -98,6 +98,33 @@ Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustnes
 Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/salutations4.bash
 Rewrite script in ksh, bash, zsh, etc., and enable debugging flags for robustness: examples/sample.envrc
 
+$ rosy -ahiru examples
+Rewrite in pure #!/bin/sh for portability: examples/blank.bash
+Rewrite in pure #!/bin/sh for portability: examples/derp.zsh
+Rewrite in pure #!/bin/sh for portability: examples/globs.bash
+Clarify interpreter with a shebang line: examples/goodbye.sh
+Clarify interpreter with a shebang line: examples/greetings.bash
+Rewrite in pure #!/bin/sh for portability: examples/hello-ksh88.ksh
+Rewrite in pure #!/bin/sh for portability: examples/hello-mksh.ksh
+Rewrite in pure #!/bin/sh for portability: examples/hello.bosh
+Rewrite in pure #!/bin/sh for portability: examples/hello.ksh
+Rewrite in pure #!/bin/sh for portability: examples/hello.ksh88
+Rewrite in pure #!/bin/sh for portability: examples/hello.oksh
+Rewrite in pure #!/bin/sh for portability: examples/hello.pdksh
+Rewrite in pure #!/bin/sh for portability: examples/hello.yash
+Rewrite in pure #!/bin/sh for portability: examples/howdy
+Clarify interpreter with a shebang line: examples/howdy.zsh
+Clarify interpreter with a shebang line: examples/just-eol.bash
+Rewrite in pure #!/bin/sh for portability: examples/just-shebang.bash
+Rewrite in pure #!/bin/sh for portability: examples/pipefail
+Rewrite in pure #!/bin/sh for portability: examples/salutations.bash
+Rewrite in pure #!/bin/sh for portability: examples/salutations.sh
+Rewrite in pure #!/bin/sh for portability: examples/salutations4.bash
+Rewrite in pure #!/bin/sh for portability: examples/wednesday
+Rewrite in pure #!/bin/sh for portability: examples/wednesday-bom
+Rewrite in pure #!/bin/sh for portability: examples/welcome
+Rewrite in pure #!/bin/sh for portability: examples/welcome.sh
+
 $ rosy -help
   -help
         Show usage information

@@ -15,6 +15,7 @@ import (
 
 var flagKame = flag.Bool("kame", false, "Recommend faster shells")
 var flagUsagi = flag.Bool("usagi", false, "Recommend more robust shells")
+var flagAhiru = flag.Bool("ahiru", false, "Recommend sh for library scripts")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 
@@ -24,6 +25,7 @@ const (
 	ModeRose RoseMode = iota
 	ModeKame
 	ModeUsagi
+	ModeAhiru
 )
 
 // Rose holds configuration for a rosy walk.
@@ -104,6 +106,18 @@ func CheckUsagi(smell stank.Smell) bool {
 	return false
 }
 
+// CheckAhiru analyzes the interpreter of a POSIXy smell.
+// If the interpreter is not pure sh, CheckAhiru prints an warning and returns true.
+// Otherwise, CheckAhiru returns false.
+func CheckAhiru(smell stank.Smell) bool {
+	if smell.Interpreter != "sh" {
+		fmt.Printf("Rewrite in pure #!/bin/sh for portability: %s\n", smell.Path)
+		return true
+	}
+
+	return false
+}
+
 // Walk is a callback for filepath.Walk to scan for shell scripts.
 func (o *Rose) Walk(pth string, info os.FileInfo, err error) error {
 	smell, err := stank.Sniff(pth, stank.SniffConfig{})
@@ -124,6 +138,8 @@ func (o *Rose) Walk(pth string, info os.FileInfo, err error) error {
 			o.FoundWarning = CheckKame(smell)
 		case ModeUsagi:
 			o.FoundWarning = CheckUsagi(smell)
+		case ModeAhiru:
+			o.FoundWarning = CheckAhiru(smell)
 		}
 	}
 
@@ -140,6 +156,8 @@ func main() {
 		rose.Mode = ModeKame
 	case *flagUsagi:
 		rose.Mode = ModeUsagi
+	case *flagAhiru:
+		rose.Mode = ModeAhiru
 	}
 
 	switch {
