@@ -39,7 +39,7 @@ func CheckEOL(smell stank.Smell) bool {
 // CheckCR analyzes POSIXy scripts for the presence/absence of a CR/CRLF line ending sequence.
 func CheckCR(smell stank.Smell) bool {
 	if smell.ContainsCR {
-		fmt.Printf("NonPOSIX CR/CRLF line ending detected: %s\n", smell.Path)
+		fmt.Printf("CR/CRLF line ending detected: %s\n", smell.Path)
 		return true
 	}
 
@@ -170,7 +170,7 @@ func (o *Funk) Walk(pth string, info os.FileInfo, err error) error {
 		log.Print(err)
 	}
 
-	if smell.POSIXy {
+	if smell.POSIXy || smell.AltShellScript {
 		if o.FunkyCheck(smell) {
 			o.FoundOdor = true
 		}

@@ -45,6 +45,8 @@ $ stank examples/hooks | xargs checkbashisms
 error: examples/hooks/pre-rebase: Unterminated quoted string found, EOF reached. Wanted: <'>, opened in line 133
 
 $ stank -help
+  -alt
+        Limit results to specifically alternative, non-POSIX lowlevel shell scripts
   -help
         Show usage information
   -sh
@@ -62,12 +64,18 @@ Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/derp
 Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/globs.bash
 Clarify interpreter with a shebang line: examples/goodbye.sh
 Clarify interpreter with a shebang line: examples/greetings.bash
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/hello-legacy
 Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/hello.bosh
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/hello.lksh
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/hello.osh
 Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/hello.yash
 Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/howdy
 Clarify interpreter with a shebang line: examples/howdy.zsh
 Clarify interpreter with a shebang line: examples/just-eol.bash
 Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/just-shebang.bash
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/lo
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/lo-cr.csh
+Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/lo.csh
 Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/pipefail
 Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/salutations.bash
 Rewrite script in sh, ksh, posh, dash, etc. for performance boost: examples/salutations.sh
@@ -101,9 +109,11 @@ Missing shebang: examples/blank.bash
 Interpreter mismatch between shebang and extension: examples/derp.zsh
 Missing shebang: examples/greetings.bash
 Missing final end of line sequence: examples/hello-crlf.sh
-NonPOSIX CR/CRLF line ending detected: examples/hello-crlf.sh
+CR/CRLF line ending detected: examples/hello-crlf.sh
 Missing shebang: examples/howdy.zsh
 Missing shebang: examples/just-eol.bash
+Missing final end of line sequence: examples/lo-cr.csh
+CR/CRLF line ending detected: examples/lo-cr.csh
 Leading BOM reduces portability: examples/wednesday-bom
 
 $ funk -modulino examples
@@ -114,11 +124,14 @@ Missing shebang: examples/blank.bash
 Interpreter mismatch between shebang and extension: examples/derp.zsh
 Missing shebang: examples/greetings.bash
 Missing final end of line sequence: examples/hello-crlf.sh
-NonPOSIX CR/CRLF line ending detected: examples/hello-crlf.sh
+CR/CRLF line ending detected: examples/hello-crlf.sh
 Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/hello-crlf.sh
 Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/howdy
 Missing shebang: examples/howdy.zsh
 Missing shebang: examples/just-eol.bash
+Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/lo
+Missing final end of line sequence: examples/lo-cr.csh
+CR/CRLF line ending detected: examples/lo-cr.csh
 Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/pipefail
 Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/shout.sh
 Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/wednesday
@@ -139,6 +152,8 @@ $ funk -help
         Show version information
 ```
 
+Each of `stank`, `funk`, and `rosy` have the ability to select lowlevel, nonPOSIX scripts as well, such as csh/tcsh scripts used in FreeBSD.
+
 Note that funk cannot reliably warn for missing shebangs if the extension is also missing; typically, script authors use one or the other to mark files as shell scripts. Lacking both a shebang and a file extension, means that a file could contain code for many languages, making it difficult to determine the POSIXy nature of the code. Even if an exhaustive set of ASTs are applied to test the file contents for syntactical validity across the dozens of available shell languages, there is a strong possibility in shorter files that the contents are merely incidentally valid script syntax, though the intent of the file is not to operate as a POSIX shell script. Short, nonPOSIX scripts such as for csh/tcsh could easily trigger a "POSIX" syntax match. In any case, know that the shebang is requisite for ensuring your scripts are properly interpreted.
 
 Note that funk may fail to present permissions warnings if the scripts are housed on non*nix file systems such as NTFS, where executable bits are often missing from the file metadata altogether. When storing shell scripts, be sure to set the appropriate file permissions, and transfer files as a bundle in a tarball or similar to safeguard against dropped permissions.
@@ -158,7 +173,7 @@ Similarly, the old Bourne shell AKA "sh" AKA "bsh" presents language identificat
 ```console
 $ stink examples/hello
 {"Path":"examples/hello","Filename":"hello","Basename":"hello","Extension":"","Shebang":"#!/bin/sh","Interpreter":"sh","LineEnding":"\n","FinalEOL":false,"ContainsCR":false
-,"Permissions":509,"Directory":false,"OwnerExecutable":true,"BOM":false,"POSIXy":true}
+,"Permissions":509,"Directory":false,"OwnerExecutable":true,"BOM":false,"POSIXy":true,"AltShellScript":false}
 
 $ stink -pp examples/hello
 {
@@ -175,7 +190,8 @@ $ stink -pp examples/hello
   "Directory": false,
   "OwnerExecutable": true,
   "BOM": false,
-  "POSIXy": true
+  "POSIXy": true,
+  "AltShellScript": false
 }
 
 $ stink -pp examples/hello.py
@@ -193,7 +209,8 @@ $ stink -pp examples/hello.py
   "Directory": false,
   "OwnerExecutable": false,
   "BOM": false,
-  "POSIXy": false
+  "POSIXy": false,
+  "AltShellScript": false
 }
 
 $ stink -help

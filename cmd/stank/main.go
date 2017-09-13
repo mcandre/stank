@@ -12,12 +12,21 @@ import (
 )
 
 var flagSh = flag.Bool("sh", false, "Limit results to specifically bare POSIX sh scripts")
+var flagAlt = flag.Bool("alt", false, "Limit results to specifically alternative, non-POSIX lowlevel shell scripts")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 
+type StankMode int
+
+const (
+	ModePOSIXy StankMode = iota
+	ModePureSh
+	ModeAltShellScript
+)
+
 // Stanker holds configuration for a stanky walk
 type Stanker struct {
-	PureSh bool
+	Mode StankMode
 }
 
 // StankWalk sniffs a file system node for POSIXyness.
@@ -29,8 +38,19 @@ func (o Stanker) Walk(pth string, info os.FileInfo, err error) error {
 		log.Print(err)
 	}
 
-	if smell.POSIXy && (!o.PureSh || smell.Interpreter == "sh" || smell.Interpreter == "generic-sh") {
-		fmt.Println(smell.Path)
+	switch o.Mode {
+	case ModePureSh:
+		if smell.POSIXy && (smell.Interpreter == "sh" || smell.Interpreter == "generic-sh") {
+			fmt.Println(smell.Path)
+		}
+	case ModeAltShellScript:
+		if smell.AltShellScript {
+			fmt.Println(smell.Path)
+		}
+	default:
+		if smell.POSIXy {
+			fmt.Println(smell.Path)
+		}
 	}
 
 	return nil
@@ -39,10 +59,14 @@ func (o Stanker) Walk(pth string, info os.FileInfo, err error) error {
 func main() {
 	flag.Parse()
 
-	stanker := Stanker{}
+	stanker := Stanker{Mode: ModePOSIXy}
 
 	if *flagSh {
-		stanker.PureSh = true
+		stanker.Mode = ModePureSh
+	}
+
+	if *flagAlt {
+		stanker.Mode = ModeAltShellScript
 	}
 
 	switch {

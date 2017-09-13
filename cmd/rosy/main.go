@@ -111,7 +111,7 @@ func CheckUsagi(smell stank.Smell) bool {
 // Otherwise, CheckAhiru returns false.
 func CheckAhiru(smell stank.Smell) bool {
 	if smell.Interpreter != "sh" {
-		fmt.Printf("Rewrite in pure #!/bin/sh for portability: %s\n", smell.Path)
+		fmt.Printf("Rewrite in pure POSIX sh for portability: %s\n", smell.Path)
 		return true
 	}
 
@@ -126,7 +126,7 @@ func (o *Rose) Walk(pth string, info os.FileInfo, err error) error {
 		log.Print(err)
 	}
 
-	if smell.POSIXy &&
+	if (smell.POSIXy || smell.AltShellScript) &&
 		!(stank.LOWEREXTENSIONS2CONFIG[strings.ToLower(smell.Extension)] || stank.LOWERFILENAMES2CONFIG[strings.ToLower(smell.Filename)]) &&
 		!CheckShebang(smell) {
 

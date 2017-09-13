@@ -87,6 +87,7 @@ type Smell struct {
 	OwnerExecutable bool
 	BOM             bool
 	POSIXy          bool
+	AltShellScript  bool
 }
 
 // LOWEREXTENSIONS2POSIXyNESS is a fairly exhaustive map of lowercase file extensions to whether or not they represent POSIX shell scripts.
@@ -209,12 +210,10 @@ var LOWEREXTENSIONS2CONFIG = map[string]bool{
 	".zshrc":        true,
 	".zlogin":       true,
 	".zlogout":      true,
-	".csh":          true,
 	".cshrc":        true,
-	".tcsh":         true,
 	".tcshrc":       true,
-	".fish":         true,
-	".rc":           true,
+	".fishrc":       true,
+	".rcrc":         true,
 	".ionrc":        true,
 }
 
@@ -410,6 +409,45 @@ var INTERPRETERS2POSIXyNESS = map[string]bool{
 type SniffConfig struct {
 	EOLCheck bool
 	CRCheck  bool
+}
+
+var ALTINTERPRETERS = map[string]bool{
+	"osh":  true,
+	"lksh": true,
+	"csh":  true,
+	"tcsh": true,
+	"fish": true,
+	"ion":  true,
+	"rc":   true,
+	"tsh":  true,
+	"etsh": true,
+}
+
+var ALTEXTENSIONS = map[string]bool{
+	".osh":    true,
+	".lksh":   true,
+	".csh":    true,
+	".cshrc":  true,
+	".tcsh":   true,
+	".tcshrc": true,
+	".fish":   true,
+	".fishrc": true,
+	".ion":    true,
+	".ionrc":  true,
+	".rc":     true,
+	".rcrc":   true,
+	".tsh":    true,
+	".etsh":   true,
+}
+
+var ALTFILENAMES = map[string]bool{
+	"csh.login":  true,
+	"csh.logout": true,
+}
+
+// IsAltShellScript returns whether a smell represents a non-POSIX, but nonetheless similar kind of lowlevel shell script language.
+func IsAltShellScript(smell Smell) bool {
+	return ALTINTERPRETERS[smell.Interpreter] || ALTEXTENSIONS[smell.Extension] || ALTFILENAMES[smell.Filename]
 }
 
 // Sniff analyzes the holistic smell of a given file path,
@@ -648,9 +686,11 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 
 	if interpreterPOSIXy && (!extensionPOSIXyOK || extensionPOSIXy) && (!filenamePOSIXyOK || filenamePOSIXy) {
 		smell.POSIXy = true
+	} else if IsAltShellScript(smell) {
+		smell.AltShellScript = true
 	}
 
-	if smell.POSIXy && config.CRCheck {
+	if (smell.POSIXy || smell.AltShellScript) && config.CRCheck {
 		fd3, err := os.Open(pth)
 
 		defer func() {
