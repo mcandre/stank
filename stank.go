@@ -157,6 +157,7 @@ var LOWEREXTENSIONS2POSIXyNESS = map[string]bool{
 	".pike":         false,
 	".rkt":          false,
 	".scala":        false,
+	".elv":          false,
 	".sf":           false,
 	".txr":          false,
 	".zkl":          false,
@@ -250,6 +251,7 @@ var LOWERFILENAMES2POSIXyNESS = map[string]bool{
 	"pre-rebase.sample":         false,
 	"prepare-commit-msg.sample": false,
 	"update.sample":             false,
+	"rc.elv":                    false,
 	"thumbs.db":                 false,
 }
 
@@ -273,6 +275,7 @@ var LOWERFILENAMES2CONFIG = map[string]bool{
 	"tcsh.login":  true,
 	"tcsh.logout": true,
 	"rcrc":        true,
+	"rc.elv":      true,
 }
 
 // LOWEREXTENSIONS2INTERPRETER is a fairly exhaustive map of lowercase file extensions to their corresponding interpreters.
@@ -304,6 +307,7 @@ var LOWEREXTENSIONS2INTERPRETER = map[string]string{
 	".bash_login":   "bash",
 	".bash_logout":  "bash",
 	".zshprofile":   "zsh",
+	".elv":          "elvish",
 }
 
 // LOWERFILENAMES2INTERPRETER is a fairly exhaustive map of lowercase filenames to their corresponding interpreters.
@@ -342,6 +346,7 @@ var LOWERFILENAMES2INTERPRETER = map[string]string{
 	"csh.logout":  "csh",
 	"tcsh.login":  "tcsh",
 	"tcsh.logout": "tcsh",
+	"rc.elv":      "elvish",
 }
 
 // BOMS acts as a registry set of known Byte Order mark sequences.
@@ -403,6 +408,7 @@ var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"swift":  false,
 	"tclsh":  false,
 	"ion":    false,
+	"elvish": false,
 }
 
 // SniffConfig bundles together the various options when sniffing files for POSIXyNESS.
@@ -412,15 +418,16 @@ type SniffConfig struct {
 }
 
 var ALTINTERPRETERS = map[string]bool{
-	"osh":  true,
-	"lksh": true,
-	"csh":  true,
-	"tcsh": true,
-	"fish": true,
-	"ion":  true,
-	"rc":   true,
-	"tsh":  true,
-	"etsh": true,
+	"osh":    true,
+	"lksh":   true,
+	"csh":    true,
+	"tcsh":   true,
+	"fish":   true,
+	"ion":    true,
+	"rc":     true,
+	"tsh":    true,
+	"etsh":   true,
+	"elvish": true,
 }
 
 var ALTEXTENSIONS = map[string]bool{
@@ -438,11 +445,13 @@ var ALTEXTENSIONS = map[string]bool{
 	".rcrc":   true,
 	".tsh":    true,
 	".etsh":   true,
+	".elv":    true,
 }
 
 var ALTFILENAMES = map[string]bool{
 	"csh.login":  true,
 	"csh.logout": true,
+	"rc.elv":     true,
 }
 
 // IsAltShellScript returns whether a smell represents a non-POSIX, but nonetheless similar kind of lowlevel shell script language.
