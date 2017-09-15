@@ -266,7 +266,7 @@ $ go get github.com/mcandre/stank/...
 
 ```console
 $ mkdir -p $GOPATH/src/github.com/mcandre
-$ git clone git@github.com:mcandre/stank.git $GOPATH/src/github.com/stank
+$ git clone https://github.com/mcandre/stank.git $GOPATH/src/github.com/stank
 $ sh -c "cd $GOPATH/src/github.com/mcandre/stank/cmd/stink && go install"
 $ sh -c "cd $GOPATH/src/github.com/mcandre/stank/cmd/stank && go install"
 $ sh -c "cd $GOPATH/src/github.com/mcandre/stank/cmd/rosy && go install"
