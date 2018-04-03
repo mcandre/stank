@@ -16,11 +16,17 @@ var flagAlt = flag.Bool("alt", false, "Limit results to specifically alternative
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 
+// StankMode controls stank rule behavior.
 type StankMode int
 
 const (
+	// ModePOSIXy matches POSIX-like shell scripts.
 	ModePOSIXy StankMode = iota
+
+	// ModePureSh matches specifically sh-interpreted scripts.
 	ModePureSh
+
+	// ModeAltShellScript matches certain non-POSIX shell scripts.
 	ModeAltShellScript
 )
 
@@ -29,11 +35,12 @@ type Stanker struct {
 	Mode StankMode
 }
 
-// StankWalk sniffs a file system node for POSIXyness.
+// Walk sniffs a file system node for POSIXyness.
 // If the file smells sufficiently POSIXy, the path is printed.
 // Otherwise, the path is omitted.
 func (o Stanker) Walk(pth string, info os.FileInfo, err error) error {
 	smell, err := stank.Sniff(pth, stank.SniffConfig{})
+
 	if err != nil && err != io.EOF {
 		log.Print(err)
 	}

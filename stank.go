@@ -417,6 +417,7 @@ type SniffConfig struct {
 	CRCheck  bool
 }
 
+// ALTINTERPRETERS collects some alternative shell interpreters.
 var ALTINTERPRETERS = map[string]bool{
 	"osh":    true,
 	"lksh":   true,
@@ -430,6 +431,7 @@ var ALTINTERPRETERS = map[string]bool{
 	"elvish": true,
 }
 
+// ALTEXTENSIONS collets some alternative shell script file extensions.
 var ALTEXTENSIONS = map[string]bool{
 	".osh":    true,
 	".lksh":   true,
@@ -448,6 +450,7 @@ var ALTEXTENSIONS = map[string]bool{
 	".elv":    true,
 }
 
+// ALTFILENAMES matches some alternative shell script profile filenames.
 var ALTFILENAMES = map[string]bool{
 	"csh.login":  true,
 	"csh.logout": true,
@@ -519,7 +522,7 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 	}
 
 	defer func() {
-		err := fd.Close()
+		err = fd.Close()
 
 		if err != nil {
 			log.Panic(err)
@@ -547,7 +550,11 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 	for i := 2; i < 6 && i < maxBOMCheckLength; i++ {
 		if BOMS[string(bs[:i])] {
 			smell.BOM = true
-			br.Discard(i)
+
+			if _, err = br.Discard(i); err != nil {
+				return smell, err
+			}
+
 			break
 		}
 	}
@@ -617,7 +624,9 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 
 		eolBuf := make([]byte, maxEOLSequenceLength)
 
-		fd2.ReadAt(eolBuf, fi.Size()-maxEOLSequenceLength)
+		if _, err := fd2.ReadAt(eolBuf, fi.Size()-maxEOLSequenceLength); err != nil {
+			return smell, err
+		}
 
 		if eolBuf[maxEOLSequenceLength-1] == byte('\n') && (maxEOLSequenceLength < 2 || eolBuf[0] != byte('\r')) {
 			smell.FinalEOL = true
@@ -703,7 +712,7 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 		fd3, err := os.Open(pth)
 
 		defer func() {
-			err := fd3.Close()
+			err = fd3.Close()
 
 			if err != nil {
 				log.Panic(err)

@@ -19,12 +19,20 @@ var flagAhiru = flag.Bool("ahiru", false, "Recommend sh for portability")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 
+// RoseMode controls rosy rule behavior.
 type RoseMode int
 
 const (
+	// ModeRose encourages developers to rewrite scripts in different languages.
 	ModeRose RoseMode = iota
+
+	// ModeKame recommends faster shells.
 	ModeKame
+
+	// ModeUsagi recommends more robust shells.
 	ModeUsagi
+
+	// ModeAhiru recommends POSIX sh for portability.
 	ModeAhiru
 )
 

@@ -156,7 +156,7 @@ Each of `stank`, `funk`, and `rosy` have the ability to select lowlevel, nonPOSI
 
 Note that funk cannot reliably warn for missing shebangs if the extension is also missing; typically, script authors use one or the other to mark files as shell scripts. Lacking both a shebang and a file extension, means that a file could contain code for many languages, making it difficult to determine the POSIXy nature of the code. Even if an exhaustive set of ASTs are applied to test the file contents for syntactical validity across the dozens of available shell languages, there is a strong possibility in shorter files that the contents are merely incidentally valid script syntax, though the intent of the file is not to operate as a POSIX shell script. Short, nonPOSIX scripts such as for csh/tcsh could easily trigger a "POSIX" syntax match. In any case, know that the shebang is requisite for ensuring your scripts are properly interpreted.
 
-Note that funk may fail to present permissions warnings if the scripts are housed on non*nix file systems such as NTFS, where executable bits are often missing from the file metadata altogether. When storing shell scripts, be sure to set the appropriate file permissions, and transfer files as a bundle in a tarball or similar to safeguard against dropped permissions.
+Note that funk may fail to present permissions warnings if the scripts are housed on non-UNIX file systems such as NTFS, where executable bits are often missing from the file metadata altogether. When storing shell scripts, be sure to set the appropriate file permissions, and transfer files as a bundle in a tarball or similar to safeguard against dropped permissions.
 
 Note that funk may warn of interpreter mismatches for scripts with extraneous dots in the filename. Rather than `.envrc.sample`, name the file `sample.envrc`. Rather than `wget-google.com`, name the file `wget-google-com`. Appending `.sh` is also an option, so `update.es.cluster` renames to `update.es.cluster.sh`.
 
@@ -166,7 +166,7 @@ Finally, `stink` prints a record of each file's POSIXyness, including any intere
 
 Note that permissions are relayed as decimals, due to constraints on JSON integer formatting (we didn't want to use a custom octal string field). Use `echo 'obase=8;<some integer> | bc` to display these values in octal.
 
-Note that legacy systems, packages, and shell scripts referencing "sh" may refer to a plethora of pre-POSIX shells. Modern systems rename "sh" to "lksh", "tsh", "etsh", etc. to avoid confusion. In general, the stank suite will assume that the majority of scripts being scanned are targeting post-1971 technology, so use your human intuition and context to note any legacy Thompson UNIX v6 "sh", etc. scripts. Most modern linters will neither be able to parse such scripts of any complexity, nor will they recognize them for the legacy scripts that they are, unless the scripts' shebangs are rendered with the modern retro interpreters "lksh", "tsh", "etsh", etc. for deployment on modern *nix systems. One could almost use the fs stats for modification/change to try to identify these legacy outliers, but this is a practically unrealistic assumption except for the most obsessive archaeologist, diligently ensuring their legacy scripts continue to present 1970's metadata even after experimental content modifications. So the stank system will simply punt and assume sh -> POSIX sh, ksh -> ksh88 / ksh93 for the sake of modernity and balance.
+Note that legacy systems, packages, and shell scripts referencing "sh" may refer to a plethora of pre-POSIX shells. Modern systems rename "sh" to "lksh", "tsh", "etsh", etc. to avoid confusion. In general, the stank suite will assume that the majority of scripts being scanned are targeting post-1971 technology, so use your human intuition and context to note any legacy Thompson UNIX v6 "sh", etc. scripts. Most modern linters will neither be able to parse such scripts of any complexity, nor will they recognize them for the legacy scripts that they are, unless the scripts' shebangs are rendered with the modern retro interpreters "lksh", "tsh", "etsh", etc. for deployment on modern UNIX systems. One could almost use the fs stats for modification/change to try to identify these legacy outliers, but this is a practically unrealistic assumption except for the most obsessive archaeologist, diligently ensuring their legacy scripts continue to present 1970's metadata even after experimental content modifications. So the stank system will simply punt and assume sh -> POSIX sh, ksh -> ksh88 / ksh93 for the sake of modernity and balance.
 
 Similarly, the old Bourne shell AKA "sh" AKA "bsh" presents language identification difficulties. Old Bourne shell scripts are most likely to present themselves with "sh" shebangs, which is okay as Bourne sh and ksh88/pdksh/ksh served as the bases for the POSIX sh standard. Some modern systems may present a Bourne shell as a "sh" or "bsh" binary. The former presents few problems for stank identification, though "bsh" is tricky, as the majority of its uses today are not associated with the Bourne shell but with the Java BeanShell. So stank may default to treating `bsh` scripts as non-POSIXy, and any such Bourne shell scripts are advised to feature either `bash` or `sh` shebangs, and perhaps `.sh` or `.bash` extensions, in order to self-identify as modern, POSIX compliant scripts.
 
@@ -236,26 +236,21 @@ https://github.com/mcandre/stank/releases
 
 http://godoc.org/github.com/mcandre/stank
 
-# REQUIREMENTS
+# RUNTIME REQUIREMENTS
 
-Each of the applications in the stank suite are standalone, with no requirements other than deploying to a suitable operating system.
+(None)
 
-## Development
+# BUILDTIME REQUIREMENTS
 
-* [Go](https://golang.org) 1.7+
-* [gox](https://github.com/mitchellh/gox)
-* [zipc](https://github.com/mcandre/zipc)
-* [coreutils](https://www.gnu.org/software/coreutils/coreutils.html)
-* [findutils](https://www.gnu.org/software/findutils/)
-* [make](https://www.gnu.org/software/make/)
-* [golint](https://github.com/golang/lint)
-* [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports)
-* [errcheck](https://github.com/kisielk/errcheck)
+* [Go](https://golang.org/) 1.9+
+* [Docker](https://www.docker.com/)
+* [Mage](https://magefile.org/) (e.g., `go get github.com/magefile/mage`)
+* [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports) (e.g. `go get golang.org/x/tools/cmd/goimports`)
+* [golint](https://github.com/golang/lint) (e.g. `go get github.com/golang/lint/golint`)
+* [errcheck](https://github.com/kisielk/errcheck) (e.g. `go get github.com/kisielk/errcheck`)
 * [nakedret](https://github.com/alexkohler/nakedret) (e.g. `go get github.com/alexkohler/nakedret`)
-* [opennota/check](https://github.com/opennota/check) (e.g. `go get github.com/opennota/check/cmd/...`)
-* [megacheck](https://github.com/dominikh/go-tools/tree/master/cmd/megacheck) (e.g. `go get github.com/dominikh/go-tools/cmd/megacheck`)
-* [flcl](https://github.com/mcandre/flcl)
-* [editorconfig-cli](https://github.com/amyboyd/editorconfig-cli)
+* [goxcart](https://github.com/mcandre/goxcart) (e.g., `github.com/mcandre/goxcart/...`)
+* [zipc](https://github.com/mcandre/zipc) (e.g. `go get github.com/mcandre/zipc/...`)
 
 # INSTALL FROM REMOTE GIT REPOSITORY
 
@@ -268,9 +263,8 @@ $ go get github.com/mcandre/stank/...
 ```console
 $ mkdir -p $GOPATH/src/github.com/mcandre
 $ git clone https://github.com/mcandre/stank.git $GOPATH/src/github.com/stank
-$ sh -c "cd $GOPATH/src/github.com/mcandre/stank/cmd/stink && go install"
-$ sh -c "cd $GOPATH/src/github.com/mcandre/stank/cmd/stank && go install"
-$ sh -c "cd $GOPATH/src/github.com/mcandre/stank/cmd/rosy && go install"
+$ git submodule update --init --recursive
+$ go install ./...
 ```
 
 # WARNING ON FALSE POSITIVES
@@ -306,16 +300,22 @@ $ stink -pp examples/i-should-have-an-extension
 
 Perhaps append a `.lisp` extension to such files. Or separate the modulino into clear library vs. command line modules. Or extract the shell interaction into a dedicated script. Or convince the language maintainers to treat shebangs as comments. Write your congressman. However you resolve this, know that the current situation is far outside the norm, and likely to break in a suitably arcane and dramatic fashion. With wyverns and flaming seas and portents of all ill manner.
 
+# TEST
+
+```console
+$ mage test
+```
+
 # LINT
 
 ```console
-$ make lint
+$ mage lint
 ```
 
 # PORT
 
 ```console
-$ make port
+$ mage port
 ```
 
 # Shell script linters

@@ -1,0 +1,3 @@
+[submodule "vendor/github.com/mcandre/mage-extras"]
+	path = vendor/github.com/mcandre/mage-extras
+	url = https://github.com/mcandre/mage-extras.git
