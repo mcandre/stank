@@ -243,6 +243,9 @@ http://godoc.org/github.com/mcandre/stank
 # BUILDTIME REQUIREMENTS
 
 * [Go](https://golang.org/) 1.9+
+
+## Recommended
+
 * [Docker](https://www.docker.com/)
 * [Mage](https://magefile.org/) (e.g., `go get github.com/magefile/mage`)
 * [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports) (e.g. `go get golang.org/x/tools/cmd/goimports`)
