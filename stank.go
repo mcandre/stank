@@ -249,6 +249,7 @@ var LOWERFILENAMES2POSIXyNESS = map[string]bool{
 	"pre-commit.sample":         false,
 	"pre-push.sample":           false,
 	"pre-rebase.sample":         false,
+	"pre-receive.sample":        false,
 	"prepare-commit-msg.sample": false,
 	"update.sample":             false,
 	"rc.elv":                    false,
