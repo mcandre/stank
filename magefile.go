@@ -94,8 +94,8 @@ func CoverageHTML() error { mg.Deps(CoverageProfile); return mageextras.Coverage
 // CoverageProfile generates raw coverage data.
 func CoverageProfile() error { return mageextras.CoverageProfile(CoverProfile) }
 
-// GoVet runs go tool vet.
-func GoVet() error { return mageextras.GoVet("-shadow") }
+// GoVet runs go vet with shadow checks enabled.
+func GoVet() error { return mageextras.GoVetShadow() }
 
 // GoLint runs golint.
 func GoLint() error { return mageextras.GoLint() }
