@@ -410,6 +410,7 @@ var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"tclsh":  false,
 	"ion":    false,
 	"elvish": false,
+	"stash": false,
 }
 
 // SniffConfig bundles together the various options when sniffing files for POSIXyNESS.
@@ -489,7 +490,6 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 
 	if mode.IsDir() {
 		smell.Directory = true
-
 		return smell, nil
 	}
 
