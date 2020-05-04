@@ -79,6 +79,7 @@ type Smell struct {
 	Extension       string
 	Shebang         string
 	Interpreter     string
+	InterpreterFlags []string
 	LineEnding      string
 	FinalEOL        bool
 	ContainsCR      bool
@@ -698,6 +699,7 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 		}
 	} else {
 		smell.Interpreter = interpreterFilename
+		smell.InterpreterFlags = commandParts[1:]
 	}
 
 	// Compare interpreter against common POSIX and nonPOSIX names.
