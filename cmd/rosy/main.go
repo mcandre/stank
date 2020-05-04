@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -74,18 +73,6 @@ func CheckShebang(smell stank.Smell) bool {
 	}
 
 	return false
-}
-
-// CheckJavaShim analyzes a POSIXy script's path, returning false if the script is housed in a conventional Java project.
-// Otherwise, CheckJavaShim returns true.
-func CheckJavaShim(smell stank.Smell) bool {
-	parent := path.Base(path.Dir(smell.Path))
-
-	if parent == "bin" {
-		return false
-	}
-
-	return true
 }
 
 // CheckRose accepts a POSIXy smell and warns the user to rewrite in a safer language.
