@@ -79,22 +79,22 @@ const Version = "0.0.13"
 //
 // Languages with duplicate names (e.g. oil shell osh vs. OpenSolaris oil shell) are generally assumed not to be POSIXy. Unable to disambiguate without more specific information (shebang names, file extentions).
 type Smell struct {
-	Path            string
-	Filename        string
-	Basename        string
-	Extension       string
-	Shebang         string
-	Interpreter     string
-	InterpreterFlags []string
-	LineEnding      string
-	FinalEOL        bool
-	ContainsCR      bool
-	Permissions     os.FileMode
-	Directory       bool
-	OwnerExecutable bool
-	BOM             bool
-	POSIXy          bool
-	AltShellScript  bool
+	Path              string
+	Filename          string
+	Basename          string
+	Extension         string
+	Shebang           string
+	Interpreter       string
+	InterpreterFlags  []string
+	LineEnding        string
+	FinalEOL          bool
+	ContainsCR        bool
+	Permissions       os.FileMode
+	Directory         bool
+	OwnerExecutable   bool
+	BOM               bool
+	POSIXy            bool
+	AltShellScript    bool
 	CoreConfiguration bool
 }
 
@@ -424,7 +424,7 @@ var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"ion":    false,
 	"elvish": false,
 	"expect": false,
-	"stash": false,
+	"stash":  false,
 }
 
 // SniffConfig bundles together the various options when sniffing files for POSIXyNESS.
@@ -653,7 +653,7 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 
 	// Recognize poorly written shell scripts that feature
 	// a POSIXy filename but lack a proper shebang line.
-	if !strings.HasPrefix(line, "#!") && !strings.HasPrefix(line, "!#"){
+	if !strings.HasPrefix(line, "#!") && !strings.HasPrefix(line, "!#") {
 		if smell.POSIXy && !filenameInterpreterOK {
 			smell.Interpreter = "generic-sh"
 		}
