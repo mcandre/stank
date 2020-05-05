@@ -134,6 +134,7 @@ var LOWEREXTENSIONS2POSIXyNESS = map[string]bool{
 	".fish":         false,
 	".rc":           false,
 	".ionrc":        false,
+	".expect":       false,
 	".py":           false,
 	".pyw":          false,
 	".pl":           false,
@@ -414,6 +415,7 @@ var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"tclsh":  false,
 	"ion":    false,
 	"elvish": false,
+	"expect": false,
 	"stash": false,
 }
 
