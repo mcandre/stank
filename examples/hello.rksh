@@ -1,0 +1,2 @@
+#!/bin/rksh
+echo "Hello"
