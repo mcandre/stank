@@ -82,6 +82,11 @@ func CheckShebangs(smell stank.Smell) bool {
 		return true
 	}
 
+	if !strings.HasPrefix(smell.Shebang, "#!") {
+		fmt.Printf("Shebang appears to be flipped: %v\n", smell.Path)
+		return true
+	}
+
 	if !strings.HasPrefix(smell.Shebang, "#!/") {
 		fmt.Printf("Shebang application should be absolute and non-nested: %v\n", smell.Path)
 		return true

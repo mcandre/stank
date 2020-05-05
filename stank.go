@@ -643,9 +643,9 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 		}
 	}
 
-	// Recognize poorly written shell scripst that feature
+	// Recognize poorly written shell scripts that feature
 	// a POSIXy filename but lack a proper shebang line.
-	if !strings.HasPrefix(line, "#!") {
+	if !strings.HasPrefix(line, "#!") && !strings.HasPrefix(line, "!#"){
 		if smell.POSIXy && !filenameInterpreterOK {
 			smell.Interpreter = "generic-sh"
 		}
