@@ -72,6 +72,12 @@ const Version = "0.0.13"
 // Something else encompasses nonPOSIX shell scripts such as Csh, Tcsh, Python, Ruby, Lua scripts;
 // also encompasses nonscript files such as multimedia images, audio, rich text documents,
 // machine code, and other nonUTF-8, nonASCII content.
+//
+// Scripts referencing "sh" are generally considered to be POSIX sh. Ignoring unmarked legacy Thompson sh scripts.
+//
+// Unknown, even more obscure languages are assumed to be non-POSIXY.
+//
+// Languages with duplicate names (e.g. oil shell osh vs. OpenSolaris oil shell) are generally assumed not to be POSIXy. Unable to disambiguate without more specific information (shebang names, file extentions).
 type Smell struct {
 	Path            string
 	Filename        string
@@ -101,7 +107,6 @@ var LOWEREXTENSIONS2POSIXyNESS = map[string]bool{
 	".bash":         true,
 	".bash4":        true,
 	".bosh":         true,
-	".osh":          false,
 	".yash":         true,
 	".zsh":          true,
 	".lksh":         false,
@@ -383,7 +388,6 @@ var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"bash":   true,
 	"bash4":  true,
 	"bosh":   true,
-	"osh":    false,
 	"yash":   true,
 	"zsh":    true,
 	"lksh":   false,
