@@ -89,6 +89,7 @@ type Smell struct {
 	BOM             bool
 	POSIXy          bool
 	AltShellScript  bool
+	CoreConfiguration bool
 }
 
 // LOWEREXTENSIONS2POSIXyNESS is a fairly exhaustive map of lowercase file extensions to whether or not they represent POSIX shell scripts.
@@ -517,6 +518,9 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 		smell.POSIXy = filenamePOSIXy
 	}
 
+	smell.CoreConfiguration = LOWEREXTENSIONS2CONFIG[strings.ToLower(smell.Extension)] ||
+		LOWERFILENAMES2CONFIG[strings.ToLower(smell.Filename)]
+
 	fd, err := os.Open(pth)
 
 	if err != nil {
@@ -648,7 +652,7 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 	smell.Shebang = strings.TrimRight(line, "\r\n")
 
 	// shebang minus the #! prefix.
-	command := smell.Shebang[2:]
+	command := strings.TrimSpace(smell.Shebang[2:])
 
 	// At this point, we have a script that is not obviously filenamed either a POSIX shell script file, nor obviously a nonPOSIX file. We have read the first line of the file, and determined that it is some sort of POSIX-style shebang.
 	// Example commonly encountered shebang forms:

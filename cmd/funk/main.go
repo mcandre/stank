@@ -61,15 +61,14 @@ func CheckBOMs(smell stank.Smell) bool {
 
 // CheckShebangs analyzes POSIXy scripts for some shebang oddities. If an oddity is found, CheckShebangs prints a warning and returns true.
 // Otherwise, CheckShebangs returns false.
+//
+// Note: While shell safety flags are risky when placed in shebangs,
+// Unfortunately many non-POSIXy languages unfortunately require such flags:
+// sed, awk, Emacs Lisp, Fourth, Octave, Mathematica, ...
+// Therefore, CheckShebangs may trigger unactionable warnings when run on non-POSIXy files.
 func CheckShebangs(smell stank.Smell) bool {
-	// Empty extension and .sh are valid for POSIX scripts.
-	// .envrc is also common for direnv-triggered shell scripts.
-	if smell.Extension == "" || smell.Extension == ".sh" || smell.Extension == ".envrc" {
-		return false
-	}
-
 	// Shebangs are ill advised for configuration files.
-	if stank.LOWEREXTENSIONS2CONFIG[strings.ToLower(smell.Extension)] || stank.LOWERFILENAMES2CONFIG[strings.ToLower(smell.Filename)] {
+	if smell.CoreConfiguration {
 		if smell.Shebang != "" {
 			fmt.Printf("Configuration features shebang: %s\n", smell.Path)
 			return true
@@ -83,21 +82,18 @@ func CheckShebangs(smell stank.Smell) bool {
 		return true
 	}
 
-	extensionSansDot := smell.Extension[1:]
-
-	// .bash is valid for bash4 scripts.
-	if smell.Interpreter == "bash4" && extensionSansDot == "bash" {
-		return false
+	if !strings.HasPrefix(smell.Shebang, "#!/") {
+		fmt.Printf("Shebang application should be absolute and non-nested: %v\n", smell.Path)
+		return true
 	}
 
-	// .ksh is valid for ksh derivatives, even the nonPOSIX lksh.
-	if strings.Contains(smell.Interpreter, "ksh") && extensionSansDot == "ksh" {
-		return false
+	if strings.Contains(smell.Shebang[2:], "#") {
+		fmt.Printf("Commented shebangs may be unparsable: %v\n", smell.Path)
+		return true
 	}
 
-	// Mismatched shebangs and extensions result in a script being sent to the wrong parser depending on whether it is loaded as `<interpreter> <path>` vs. `./<path>`.
-	if smell.Interpreter != extensionSansDot {
-		fmt.Printf("Interpreter mismatch between shebang and extension: %s\n", smell.Path)
+	if len(smell.InterpreterFlags) != 0 {
+		fmt.Printf("Risk of parse error for interpreter space / secondary argument. Any safety flags will be ignored on `%v <script>` launch: %v\n", smell.Interpreter, smell.Path)
 		return true
 	}
 
@@ -161,21 +157,6 @@ func CheckSlick(smell stank.Smell) bool {
 	return false
 }
 
-// CheckFlags warns on the presence of flags supplied to a POSIXy shebang.
-//
-// Note: While shell safety flags are risky when placed in shebangs,
-// Many non-POSIXy languages unfortunately require such flags:
-// sed, awk, Emacs Lisp, Fourth, Octave, Mathematica, ...
-// Therefore, CheckFlags may trigger unactionable warnings when run on non-POSIXy files.
-func CheckFlags(smell stank.Smell) bool {
-	if len(smell.InterpreterFlags) != 0 {
-		fmt.Printf("Shebang flags are ignored on `%v <script>` launch style and may be unparsable by strict exec implementations: %v\n", smell.Interpreter, smell.Path)
-		return true
-	}
-
-	return false
-}
-
 // FunkyCheck analyzes POSIXy scripts for some oddities. If an oddity is found, FunkyCheck prints a warning and returns true.
 // Otherwise, FunkyCheck returns false.
 func (o Funk) FunkyCheck(smell stank.Smell) bool {
@@ -201,7 +182,6 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 	resShebang := CheckShebangs(smell)
 	resPerms := CheckPermissions(smell)
 	resSlick := CheckSlick(smell)
-	resFlags := CheckFlags(smell)
 
 	return resEOL ||
 		resCR ||
@@ -209,8 +189,7 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 		resModulino ||
 		resShebang ||
 		resPerms ||
-		resSlick ||
-		resFlags
+		resSlick
 }
 
 // Walk is a callback for filepath.Walk to lint shell scripts.
