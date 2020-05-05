@@ -129,19 +129,24 @@ var portBasename = fmt.Sprintf("stank-%s", stank.Version)
 // repoNamespace identifies the Go namespace for this project.
 var repoNamespace = "github.com/mcandre/stank"
 
-// Goxcart cross-compiles Go binaries with additional targets enabled.
-func Goxcart() error {
-	return mageextras.Goxcart(
-		artifactsPath,
-		"-repo",
-		repoNamespace,
-		"-banner",
-		portBasename,
-	)
+// Xgo cross-compiles (c)Go binaries with additional targets enabled.
+func Xgo() error {
+	artifactsPathDist := path.Join(artifactsPath, portBasename)
+
+	for _, name := range []string{"stink", "stank", "funk", "rosy"} {
+		if err := mageextras.Xgo(
+			artifactsPathDist,
+			fmt.Sprintf("github.com/mcandre/stank/cmd/%v", name),
+		); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // Port builds and compresses artifacts.
-func Port() error { mg.Deps(Goxcart); return mageextras.Archive(portBasename, artifactsPath) }
+func Port() error { mg.Deps(Xgo); return mageextras.Archive(portBasename, artifactsPath) }
 
 // Install builds and installs Go applications.
 func Install() error { return mageextras.Install() }
