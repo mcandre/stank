@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"io"
@@ -10,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/mcandre/stank"
+	"mvdan.cc/sh/syntax"
 )
 
 var flagEOL = flag.Bool("eol", true, "Report presence/absence of final end of line sequence")
@@ -134,6 +136,32 @@ func CheckModulino(smell stank.Smell) bool {
 	return false
 }
 
+// CheckSlick passes any sh interpreted scripts through a strict POSIX sh parser.
+func CheckSlick(smell stank.Smell) bool {
+	if !smell.POSIXy || (smell.Interpreter != "generic-sh" && smell.Interpreter != "sh") {
+		return false
+	}
+
+	parser := syntax.NewParser(syntax.Variant(syntax.LangPOSIX))
+
+	fd, er := os.Open(smell.Path)
+
+	if er != nil {
+		log.Print(er)
+		return true
+	}
+
+	br := bufio.NewReader(fd)
+	_, er = parser.Parse(br, smell.Path)
+
+	if er != nil {
+		fmt.Printf("%v\n", er)
+		return true
+	}
+
+	return false
+}
+
 // FunkyCheck analyzes POSIXy scripts for some oddities. If an oddity is found, FunkyCheck prints a warning and returns true.
 // Otherwise, FunkyCheck returns false.
 func (o Funk) FunkyCheck(smell stank.Smell) bool {
@@ -158,8 +186,15 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 	resBOM := CheckBOMs(smell)
 	resShebang := CheckShebangs(smell)
 	resPerms := CheckPermissions(smell)
+	resSlick := CheckSlick(smell)
 
-	return resEOL || resCR || resBOM || resModulino || resShebang || resPerms
+	return resEOL ||
+		resCR ||
+		resBOM ||
+		resModulino ||
+		resShebang ||
+		resPerms ||
+		resSlick
 }
 
 // Walk is a callback for filepath.Walk to lint shell scripts.
