@@ -144,6 +144,7 @@ var LOWEREXTENSIONS2POSIXyNESS = map[string]bool{
 	".pyw":          false,
 	".pl":           false,
 	".rb":           false,
+	".php":          false,
 	".lua":          false,
 	".js":           false,
 	".lisp":         false,
@@ -318,6 +319,8 @@ var LOWEREXTENSIONS2INTERPRETER = map[string]string{
 	".bash_logout":  "bash",
 	".zshprofile":   "zsh",
 	".elv":          "elvish",
+	".php":          "php",
+	".lua":          "lua",
 }
 
 // LOWERFILENAMES2INTERPRETER is a fairly exhaustive map of lowercase filenames to their corresponding interpreters.
@@ -411,6 +414,7 @@ var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"perl6":  false,
 	"ruby":   false,
 	"jruby":  false,
+	"php":    false,
 	"lua":    false,
 	"node":   false,
 	"awk":    false,
