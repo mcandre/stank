@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -147,7 +146,7 @@ func CheckSlick(smell stank.Smell) bool {
 	fd, er := os.Open(smell.Path)
 
 	if er != nil {
-		log.Print(er)
+		fmt.Printf("%v\n", er)
 		return true
 	}
 
@@ -156,6 +155,21 @@ func CheckSlick(smell stank.Smell) bool {
 
 	if er != nil {
 		fmt.Printf("%v\n", er)
+		return true
+	}
+
+	return false
+}
+
+// CheckFlags warns on the presence of flags supplied to a POSIXy shebang.
+//
+// Note: While shell safety flags are risky when placed in shebangs,
+// Many non-POSIXy languages unfortunately require such flags:
+// sed, awk, Emacs Lisp, Fourth, Octave, Mathematica, ...
+// Therefore, CheckFlags may trigger unactionable warnings when run on non-POSIXy files.
+func CheckFlags(smell stank.Smell) bool {
+	if len(smell.InterpreterFlags) != 0 {
+		fmt.Printf("Shebang flags are ignored on `%v <script>` launch style and may be unparsable by strict exec implementations: %v\n", smell.Interpreter, smell.Path)
 		return true
 	}
 
@@ -187,6 +201,7 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 	resShebang := CheckShebangs(smell)
 	resPerms := CheckPermissions(smell)
 	resSlick := CheckSlick(smell)
+	resFlags := CheckFlags(smell)
 
 	return resEOL ||
 		resCR ||
@@ -194,7 +209,8 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 		resModulino ||
 		resShebang ||
 		resPerms ||
-		resSlick
+		resSlick ||
+		resFlags
 }
 
 // Walk is a callback for filepath.Walk to lint shell scripts.
@@ -202,13 +218,11 @@ func (o *Funk) Walk(pth string, info os.FileInfo, err error) error {
 	smell, err := stank.Sniff(pth, stank.SniffConfig{EOLCheck: o.EOLCheck, CRCheck: o.CRCheck})
 
 	if err != nil && err != io.EOF {
-		log.Print(err)
+		fmt.Printf("%v\n", err)
 	}
 
-	if smell.POSIXy || smell.AltShellScript {
-		if o.FunkyCheck(smell) {
-			o.FoundOdor = true
-		}
+	if (smell.POSIXy || smell.AltShellScript) && o.FunkyCheck(smell) {
+		o.FoundOdor = true
 	}
 
 	return nil
