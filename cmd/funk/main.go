@@ -29,7 +29,7 @@ type Funk struct {
 
 // CheckEOL analyzes POSIXy scripts for the presence/absence of a final end of line sequence such as \n at the end of a file, \r\n, etc.
 func CheckEOL(smell stank.Smell) bool {
-	if !smell.FinalEOL {
+	if smell.FinalEOL != nil && !(*smell.FinalEOL) {
 		fmt.Printf("Missing final end of line sequence: %s\n", smell.Path)
 		return true
 	}

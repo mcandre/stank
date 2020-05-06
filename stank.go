@@ -87,7 +87,7 @@ type Smell struct {
 	Interpreter       string
 	InterpreterFlags  []string
 	LineEnding        string
-	FinalEOL          bool
+	FinalEOL          *bool
 	ContainsCR        bool
 	Permissions       os.FileMode
 	Directory         bool
@@ -647,7 +647,8 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 		}
 
 		if eolBuf[maxEOLSequenceLength-1] == byte('\n') && (maxEOLSequenceLength < 2 || eolBuf[0] != byte('\r')) {
-			smell.FinalEOL = true
+			b := true
+			smell.FinalEOL = &b
 		}
 	}
 
