@@ -1,5 +1,5 @@
 #!/bin/sh
-set -eu
 unset IFS
+set -eu
 
 echo "Hello"
