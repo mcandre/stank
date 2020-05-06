@@ -75,6 +75,7 @@ type Smell struct {
 	Filename          string
 	Basename          string
 	Extension         string
+	Symlink           bool
 	Shebang           string
 	Interpreter       string
 	InterpreterFlags  []string

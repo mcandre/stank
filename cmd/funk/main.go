@@ -164,6 +164,148 @@ func CheckSlick(smell stank.Smell) bool {
 	return false
 }
 
+// CheckIFSReset enforces IFS configured to '\n\t ' near the beginning of executable scripts,
+// in order to reduce tokenization errors.
+func CheckIFSReset(smell stank.Smell) bool {
+	if !smell.POSIXy || smell.Library {
+		return false
+	}
+
+	fd, err := os.Open(smell.Path)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, err.Error())
+		return true
+	}
+
+	defer func() {
+		err = fd.Close()
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, err.Error())
+		}
+	}()
+
+	fi, err := os.Lstat(smell.Path)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, err.Error())
+		return true
+	}
+
+	if fi.Size() == 0 {
+		return false
+	}
+
+	scanner := bufio.NewScanner(fd)
+
+	var candidateLine string
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if strings.HasPrefix(line, "#") ||
+			strings.HasPrefix(line, "set") ||
+			strings.HasPrefix(line, "trap") ||
+			strings.TrimSpace(line) == "" {
+			continue
+		}
+
+		candidateLine = line
+		break
+	}
+
+	if candidateLine == "" {
+		return false
+	}
+
+	if index := strings.Index(candidateLine, "#"); index != -1 {
+		candidateLine = candidateLine[:index]
+	}
+
+	candidateLine = strings.TrimSpace(candidateLine)
+
+	parts := strings.Split(candidateLine, "=")
+
+	if len(parts) < 1 || strings.TrimSpace(parts[0]) != "IFS" {
+		fmt.Printf("Tokenize like IFS=\"$(printf '%%b_' '\\n\\t ')\"; IFS=\"${IFS%%_}\" at the top of executable scripts: %v\n", smell.Path)
+		return true
+	}
+
+	return false
+}
+
+// CheckSafetyFlags warns on missing `set`... safety command from the beginning of executable scripts,
+// in order to reduce runtime errors.
+func CheckSafetyFlags(smell stank.Smell) bool {
+	if !smell.POSIXy || smell.Library {
+		return false
+	}
+
+	fd, err := os.Open(smell.Path)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, err.Error())
+		return true
+	}
+
+	defer func() {
+		err = fd.Close()
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, err.Error())
+		}
+	}()
+
+	fi, err := os.Lstat(smell.Path)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, err.Error())
+		return true
+	}
+
+	if fi.Size() == 0 {
+		return false
+	}
+
+	scanner := bufio.NewScanner(fd)
+
+	var candidateLine string
+
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+
+		if strings.HasPrefix(line, "#") ||
+			strings.HasPrefix(line, "IFS") ||
+			strings.HasPrefix(line, "trap") ||
+			strings.TrimSpace(line) == "" {
+			continue
+		}
+
+		candidateLine = line
+		break
+	}
+
+	if candidateLine == "" {
+		return false
+	}
+
+	if index := strings.Index(candidateLine, "#"); index != -1 {
+		candidateLine = candidateLine[:index]
+	}
+
+	candidateLine = strings.TrimSpace(candidateLine)
+
+	parts := strings.Split(candidateLine, " ")
+
+	if len(parts) < 1 || strings.TrimSpace(parts[0]) != "set" {
+		fmt.Printf("Apply safety flags like set -eu at the top of executable scripts: %v\n", smell.Path)
+		return true
+	}
+
+	return false
+}
+
 // FunkyCheck analyzes POSIXy scripts for some oddities. If an oddity is found, FunkyCheck prints a warning and returns true.
 // Otherwise, FunkyCheck returns false.
 func (o Funk) FunkyCheck(smell stank.Smell) bool {
@@ -189,6 +331,8 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 	resShebang := CheckShebangs(smell)
 	resPerms := CheckPermissions(smell)
 	resSlick := CheckSlick(smell)
+	resIFSReset := CheckIFSReset(smell)
+	resSafetyFlags := CheckSafetyFlags(smell)
 
 	return resEOL ||
 		resCR ||
@@ -196,13 +340,15 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 		resModulino ||
 		resShebang ||
 		resPerms ||
-		resSlick
+		resSlick ||
+		resIFSReset ||
+		resSafetyFlags
 }
 
 // Ignores is a poor man's gitignore.
 //
 // TODO: https://github.com/mcandre/stank/issues/1
-var Ignores = []string {
+var Ignores = []string{
 	".git",
 	"vendor",
 	"node_modules",

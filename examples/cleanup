@@ -1,0 +1,7 @@
+#!/bin/bash
+trap "echo cleaning" EXIT SIGINT SIGTERM
+set -eEu o pipefail
+IFS="$(printf '%b_' '\n\t ')"
+IFS="${IFS%_}"
+
+echo "Hello"

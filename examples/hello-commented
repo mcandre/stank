@@ -1,2 +1,8 @@
-#!/bin/sh # shebang line
+#!/bin/sh
+# (C) Copyright 2020 YelloSoft
+
+# custom tokenization
+IFS="$(printf '%b_' ' ')"
+IFS="${IFS%_}"
+
 echo "Hello"

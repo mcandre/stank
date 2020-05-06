@@ -1,4 +1,4 @@
 #!/bin/bash -eEuo pipefail
-IFS=$'\t\n '
+IFS=$'\n\t '
 
 echo "Hello"

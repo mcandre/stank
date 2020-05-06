@@ -341,22 +341,22 @@ var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"stash":  false,
 }
 
-// FULL_BASH_INTERPRETERS note when a shell has the basic modern bash features,
+// FullBashInterpreters note when a shell has the basic modern bash features,
 // as opposed to subsets such as ash, dash, posh, ksh, zsh.
-var FULL_BASH_INTERPRETERS = map[string]bool {
-	"bash": true,
+var FullBashInterpreters = map[string]bool{
+	"bash":  true,
 	"bash4": true,
 }
 
-// KSH_INTERPRETERS note when a shell is a member of the modern ksh family.
-var KSH_INTERPRETERS = map[string]bool {
-	"ksh":          true,
-	"ksh88":        true,
-	"pdksh":        true,
-	"ksh93":        true,
-	"mksh":         true,
-	"oksh":         true,
-	"rksh":         true,
+// KshInterpreters note when a shell is a member of the modern ksh family.
+var KshInterpreters = map[string]bool{
+	"ksh":   true,
+	"ksh88": true,
+	"pdksh": true,
+	"ksh93": true,
+	"mksh":  true,
+	"oksh":  true,
+	"rksh":  true,
 }
 
 // SniffConfig bundles together the various options when sniffing files for POSIXyNESS.
@@ -424,7 +424,7 @@ func IsAltShellScript(smell Smell) bool {
 // Otherwise, the error value will be nil.
 func Sniff(pth string, config SniffConfig) (Smell, error) {
 	// Attempt to short-circuit for directories
-	fi, err := os.Stat(pth)
+	fi, err := os.Lstat(pth)
 
 	smell := Smell{Path: pth}
 
@@ -466,6 +466,12 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 		LOWERFILENAMES2CONFIG[strings.ToLower(smell.Filename)]
 
 	smell.Library = (smell.CoreConfiguration || smell.Extension != "") && !smell.OwnerExecutable
+
+	smell.Symlink = fi.Mode()&os.ModeSymlink != 0
+
+	if smell.Symlink {
+		return smell, nil
+	}
 
 	fd, err := os.Open(pth)
 
@@ -653,8 +659,8 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 		smell.InterpreterFlags = commandParts[1:]
 	}
 
-	smell.Bash = FULL_BASH_INTERPRETERS[smell.Interpreter]
-	smell.Ksh = KSH_INTERPRETERS[smell.Interpreter]
+	smell.Bash = FullBashInterpreters[smell.Interpreter]
+	smell.Ksh = KshInterpreters[smell.Interpreter]
 
 	// Compare interpreter against common POSIX and nonPOSIX names.
 	interpreterPOSIXy := INTERPRETERS2POSIXyNESS[interpreterFilename]
