@@ -108,17 +108,14 @@ func CheckShebangs(smell stank.Smell) bool {
 // CheckPermissions analyzes POSIXy scripts for some file permission oddities. If an oddity is found, CheckPermissions prints a warning and returns true.
 // Otherwise, CheckPermissions returns false.
 func CheckPermissions(smell stank.Smell) bool {
-	if smell.Permissions&0100 == 0 && smell.Permissions&0010 == 0 && smell.Permissions&0001 == 0 {
-		return false
-	}
-
-	if stank.LOWEREXTENSIONS2CONFIG[strings.ToLower(smell.Extension)] || stank.LOWERFILENAMES2CONFIG[strings.ToLower(smell.Filename)] {
-		fmt.Printf("Configuration features executable permissions: %s\n", smell.Path)
+	if smell.Library && smell.Permissions&0111 != 0 {
+		fmt.Printf("Sourceable script features executable mode bits: %s\n", smell.Path)
 		return true
 	}
 
-	if smell.Extension != "" {
-		fmt.Printf("Convention is to omit file extensions for executable shell scripts: %v\n", smell.Path)
+	if (smell.Extension == "" && smell.Permissions&0100 == 0) ||
+		(smell.Extension != "" && smell.Permissions&0111 != 0) {
+		fmt.Printf("Ambiguous launch style. Either feature a file extensions, or else feature executable bits: %v\n", smell.Path)
 		return true
 	}
 
