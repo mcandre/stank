@@ -117,6 +117,11 @@ func CheckPermissions(smell stank.Smell) bool {
 		return true
 	}
 
+	if smell.Extension != "" {
+		fmt.Printf("Convention is to omit file extensions for executable shell scripts: %v\n", smell.Path)
+		return true
+	}
+
 	return false
 }
 
@@ -197,8 +202,36 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 		resSlick
 }
 
+// Ignores is a poor man's gitignore.
+//
+// TODO: https://github.com/mcandre/stank/issues/1
+var Ignores = []string {
+	".git",
+	"vendor",
+	"node_modules",
+}
+
+// Ignore is a poor man's gitignore.
+//
+// TODO: https://github.com/mcandre/stank/issues/1
+func Ignore(pth string) bool {
+	for _, part := range strings.Split(pth, string(os.PathSeparator)) {
+		for _, ignore := range Ignores {
+			if part == ignore {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 // Walk is a callback for filepath.Walk to lint shell scripts.
 func (o *Funk) Walk(pth string, info os.FileInfo, err error) error {
+	if Ignore(pth) {
+		return nil
+	}
+
 	smell, err := stank.Sniff(pth, stank.SniffConfig{EOLCheck: o.EOLCheck, CRCheck: o.CRCheck})
 
 	if err != nil && err != io.EOF {
