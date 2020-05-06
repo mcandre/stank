@@ -9,9 +9,6 @@ import (
 	"strings"
 )
 
-// Version is semver.
-const Version = "0.0.14"
-
 // LOWEREXTENSIONS2POSIXyNESS is a fairly exhaustive map of lowercase file extensions to whether or not they represent POSIX shell scripts.
 // Newly minted extensions can be added by stank contributors.
 var LOWEREXTENSIONS2POSIXyNESS = map[string]bool{
