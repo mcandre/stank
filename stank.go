@@ -296,7 +296,7 @@ var BOMS = map[string]bool{
 	// {byte(0x84), byte(0x31), byte(0x95), byte(0x33)}:             true,
 }
 
-// INTERPRETERS2POSIXyNESS is a fairly exhaustivemap of interpreters to whether or not the interpreter is a POSIX compatible shell.
+// INTERPRETERS2POSIXyNESS is a fairly exhaustive map of interpreters to whether or not the interpreter is a POSIX compatible shell.
 // Newly minted interpreters can be added by stank contributors.
 var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"sh":     true,
@@ -339,6 +339,24 @@ var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"elvish": false,
 	"expect": false,
 	"stash":  false,
+}
+
+// FULL_BASH_INTERPRETERS note when a shell has the basic modern bash features,
+// as opposed to subsets such as ash, dash, posh, ksh, zsh.
+var FULL_BASH_INTERPRETERS = map[string]bool {
+	"bash": true,
+	"bash4": true,
+}
+
+// KSH_INTERPRETERS note when a shell is a member of the modern ksh family.
+var KSH_INTERPRETERS = map[string]bool {
+	"ksh":          true,
+	"ksh88":        true,
+	"pdksh":        true,
+	"ksh93":        true,
+	"mksh":         true,
+	"oksh":         true,
+	"rksh":         true,
 }
 
 // SniffConfig bundles together the various options when sniffing files for POSIXyNESS.
@@ -632,6 +650,9 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 		smell.Interpreter = interpreterFilename
 		smell.InterpreterFlags = commandParts[1:]
 	}
+
+	smell.Bash = FULL_BASH_INTERPRETERS[smell.Interpreter]
+	smell.Ksh = KSH_INTERPRETERS[smell.Interpreter]
 
 	// Compare interpreter against common POSIX and nonPOSIX names.
 	interpreterPOSIXy := INTERPRETERS2POSIXyNESS[interpreterFilename]

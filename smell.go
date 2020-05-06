@@ -86,6 +86,8 @@ type Smell struct {
 	OwnerExecutable   bool
 	BOM               bool
 	POSIXy            bool
+	Bash              bool
+	Ksh               bool
 	AltShellScript    bool
 	CoreConfiguration bool
 }
