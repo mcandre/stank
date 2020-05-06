@@ -1,2 +1,4 @@
 #!/bin/sh
-echo "Hello"
+hello() {
+    echo "Hello"
+}

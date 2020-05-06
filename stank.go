@@ -465,6 +465,8 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 	smell.CoreConfiguration = LOWEREXTENSIONS2CONFIG[strings.ToLower(smell.Extension)] ||
 		LOWERFILENAMES2CONFIG[strings.ToLower(smell.Filename)]
 
+	smell.Library = !smell.CoreConfiguration && (!smell.OwnerExecutable || smell.Extension != "")
+
 	fd, err := os.Open(pth)
 
 	if err != nil {

@@ -84,6 +84,7 @@ type Smell struct {
 	Permissions       os.FileMode
 	Directory         bool
 	OwnerExecutable   bool
+	Library           bool
 	BOM               bool
 	POSIXy            bool
 	Bash              bool
