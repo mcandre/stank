@@ -225,10 +225,14 @@ func CheckIFSReset(smell stank.Smell) bool {
 
 	candidateLine = strings.TrimSpace(candidateLine)
 
+	if candidateLine == "unset IFS" {
+		return false
+	}
+
 	parts := strings.Split(candidateLine, "=")
 
 	if len(parts) < 1 || strings.TrimSpace(parts[0]) != "IFS" {
-		fmt.Printf("Tokenize like IFS=\"$(printf '%%b_' '\\n\\t ')\"; IFS=\"${IFS%%_}\" at the top of executable scripts: %v\n", smell.Path)
+		fmt.Printf("Tokenize like `unset IFS` at the top of executable scripts: %v\n", smell.Path)
 		return true
 	}
 
@@ -277,6 +281,7 @@ func CheckSafetyFlags(smell stank.Smell) bool {
 
 		if strings.HasPrefix(line, "#") ||
 			strings.HasPrefix(line, "IFS") ||
+			strings.HasPrefix(line, "unset") ||
 			strings.HasPrefix(line, "trap") ||
 			strings.TrimSpace(line) == "" {
 			continue
@@ -299,7 +304,7 @@ func CheckSafetyFlags(smell stank.Smell) bool {
 	parts := strings.Split(candidateLine, " ")
 
 	if len(parts) < 1 || strings.TrimSpace(parts[0]) != "set" {
-		fmt.Printf("Apply safety flags like set -eu at the top of executable scripts: %v\n", smell.Path)
+		fmt.Printf("Control program flow like `set -eu` at the top of executable scripts: %v\n", smell.Path)
 		return true
 	}
 
