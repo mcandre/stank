@@ -225,13 +225,15 @@ func CheckIFSReset(smell stank.Smell) bool {
 
 	candidateLine = strings.TrimSpace(candidateLine)
 
-	if candidateLine == "unset IFS" {
+	deassignmentParts := strings.Fields(candidateLine)
+
+	if len(deassignmentParts) == 2 && deassignmentParts[0] == "unset" && deassignmentParts[1] == "IFS" {
 		return false
 	}
 
-	parts := strings.Split(candidateLine, "=")
+	assignmentParts := strings.Split(candidateLine, "=")
 
-	if len(parts) < 1 || strings.TrimSpace(parts[0]) != "IFS" {
+	if len(assignmentParts) < 1 || strings.TrimSpace(assignmentParts[0]) != "IFS" {
 		fmt.Printf("Tokenize like `unset IFS` at the top of executable scripts: %v\n", smell.Path)
 		return true
 	}
