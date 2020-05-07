@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/mcandre/stank"
@@ -164,6 +165,9 @@ func CheckSlick(smell stank.Smell) bool {
 	return false
 }
 
+// UnsetIFSPattern matches unset IFS commands.
+var UnsetIFSPattern = regexp.MustCompile(`^(\s)*unset(\s)+IFS(\s+(#.*)?)?$`)
+
 // CheckIFSReset enforces IFS configured to '\n\t ' near the beginning of executable scripts,
 // in order to reduce tokenization errors.
 func CheckIFSReset(smell stank.Smell) bool {
@@ -204,8 +208,13 @@ func CheckIFSReset(smell stank.Smell) bool {
 	for scanner.Scan() {
 		line := scanner.Text()
 
+		if UnsetIFSPattern.MatchString(line) {
+			return false
+		}
+
 		if strings.HasPrefix(line, "#") ||
 			strings.HasPrefix(line, "set") ||
+			strings.HasPrefix(line, "unset") ||
 			strings.HasPrefix(line, "trap") ||
 			strings.TrimSpace(line) == "" {
 			continue
@@ -224,12 +233,6 @@ func CheckIFSReset(smell stank.Smell) bool {
 	}
 
 	candidateLine = strings.TrimSpace(candidateLine)
-
-	deassignmentParts := strings.Fields(candidateLine)
-
-	if len(deassignmentParts) == 2 && deassignmentParts[0] == "unset" && deassignmentParts[1] == "IFS" {
-		return false
-	}
 
 	assignmentParts := strings.Split(candidateLine, "=")
 
