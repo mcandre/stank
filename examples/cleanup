@@ -1,5 +1,5 @@
 #!/bin/bash
-trap "echo cleaning" EXIT SIGINT SIGTERM
+trap 'echo cleaning' EXIT
 set -eEu o pipefail
 IFS="$(printf '%b_' '\n\t ')"
 IFS="${IFS%_}"
