@@ -1,9 +1,12 @@
 package stank
 
 import (
+	"mvdan.cc/sh/syntax"
+
 	"bufio"
 	"log"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
@@ -203,26 +206,41 @@ var LOWERFILENAMES2CONFIG = map[string]bool{
 // LOWEREXTENSIONS2INTERPRETER is a fairly exhaustive map of lowercase file extensions to their corresponding interpreters.
 // Newly minted config extensions can be added by stank contributors.
 var LOWEREXTENSIONS2INTERPRETER = map[string]string{
+	".sh":           "sh",
 	".shrc":         "sh",
 	".shinit":       "sh",
+	".bash":         "bash",
 	".bashrc":       "bash",
+	".zsh":          "zsh",
 	".zshrc":        "zsh",
+	".ksh":          "ksh",
 	".lkshrc":       "lksh",
 	".kshrc":        "ksh",
+	".ksh88":        "ksh",
+	".pdksh":        "pdksh",
 	".pdkshrc":      "pdksh",
+	".ksh93":        "ksh93",
 	".ksh93rc":      "ksh93",
+	".mksh":         "mksh",
 	".mkshrc":       "mksh",
+	".dash":         "dash",
 	".dashrc":       "dash",
 	".poshrc":       "posh",
+	"ash":           "ash",
 	".ashrc":        "ash",
 	".zshenv":       "zsh",
 	".zprofile":     "zsh",
 	".zlogin":       "zsh",
 	".zlogout":      "zsh",
+	".csh":          "csh",
 	".cshrc":        "csh",
+	".tcsh":         "tcsh",
 	".tcshrc":       "tcsh",
+	".fish":         "fish",
 	".fishrc":       "fish",
+	".rc":           "rc",
 	".rcrc":         "rc",
+	".ion":          "ion",
 	".ionrc":        "ion",
 	".profile":      "sh",
 	".bash_profile": "bash",
@@ -232,6 +250,14 @@ var LOWEREXTENSIONS2INTERPRETER = map[string]string{
 	".elv":          "elvish",
 	".php":          "php",
 	".lua":          "lua",
+	".mf":           "make",
+	".makefile":     "make",
+	".gnumakefile":  "gmake",
+	".bsdmakefile":  "bmake",
+	".pmakefile":    "pmake",
+	".awk":          "awk",
+	".gawk":         "gawk",
+	".sed":          "sed",
 }
 
 // LOWERFILENAMES2INTERPRETER is a fairly exhaustive map of lowercase filenames to their corresponding interpreters.
@@ -271,6 +297,10 @@ var LOWERFILENAMES2INTERPRETER = map[string]string{
 	"tcsh.login":  "tcsh",
 	"tcsh.logout": "tcsh",
 	"rc.elv":      "elvish",
+	"makefile":    "make",
+	"gnumakefile": "gmake",
+	"bsdmakefile": "bmake",
+	"pmakefile":   "pmake",
 }
 
 // BOMS acts as a registry set of known Byte Order mark sequences.
@@ -329,6 +359,7 @@ var INTERPRETERS2POSIXyNESS = map[string]bool{
 	"lua":    false,
 	"node":   false,
 	"awk":    false,
+	"gawk":   false,
 	"sed":    false,
 	"swift":  false,
 	"tclsh":  false,
@@ -407,6 +438,98 @@ func IsAltShellScript(smell Smell) bool {
 	return ALTINTERPRETERS[smell.Interpreter] || ALTEXTENSIONS[smell.Extension] || ALTFILENAMES[smell.Filename]
 }
 
+// POSIXShCheckSyntax validates syntax for strict POSIX sh compliance.
+func POSIXShCheckSyntax(smell Smell) error {
+	parser := syntax.NewParser(syntax.Variant(syntax.LangPOSIX))
+
+	fd, err := os.Open(smell.Path)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = parser.Parse(bufio.NewReader(fd), smell.Path)
+	return err
+}
+
+// UnixCheckSyntax validates syntax for the wider UNIX shell family.
+func UnixCheckSyntax(smell Smell) error {
+	cmd := exec.Command(smell.Interpreter, "-n", smell.Path)
+	return cmd.Run()
+}
+
+// PerlishCheckSyntax validates syntax for Perl, Ruby, and Node.js.
+func PerlishCheckSyntax(smell Smell) error {
+	cmd := exec.Command(smell.Interpreter, "-c", smell.Path)
+	return cmd.Run()
+}
+
+// PHPCheckSyntax validates syntax for PHP.
+func PHPCheckSyntax(smell Smell) error {
+	cmd := exec.Command(smell.Interpreter, "-l", smell.Path)
+	return cmd.Run()
+}
+
+// PythonCheckSyntax validates syntax for Python.
+func PythonCheckSyntax(smell Smell) error {
+	cmd := exec.Command(smell.Interpreter, "-m", "py_compile", smell.Path)
+	return cmd.Run()
+}
+
+// GoCheckSyntax validates syntax for Go.
+func GoCheckSyntax(smell Smell) error {
+	cmd := exec.Command("gofmt", "-e", smell.Path)
+	return cmd.Run()
+}
+
+// GNUAwkCheckSyntax validates syntax for GNU awk files.
+func GNUAwkCheckSyntax(smell Smell) error {
+	cmd := exec.Command(smell.Interpreter, "--lint", "-f", smell.Path)
+	return cmd.Run()
+}
+
+// INTERPRETER2SYNTAX_VALIDATOR provides syntax validator delegates, if one is available.
+var INTERPRETER2SYNTAX_VALIDATOR = map[string]func(Smell) error{
+	"generic-sh": POSIXShCheckSyntax,
+	"sh":         POSIXShCheckSyntax,
+	"ash":        UnixCheckSyntax,
+	"bash":       UnixCheckSyntax,
+	"bash4":      UnixCheckSyntax,
+	"dash":       UnixCheckSyntax,
+	"posh":       UnixCheckSyntax,
+	"elvish":     UnixCheckSyntax,
+	"ksh":        UnixCheckSyntax,
+	"ksh88":      UnixCheckSyntax,
+	"ksh93":      UnixCheckSyntax,
+	"mksh":       UnixCheckSyntax,
+	"oksh":       UnixCheckSyntax,
+	"pdksh":      UnixCheckSyntax,
+	"rksh":       UnixCheckSyntax,
+	"lksh":       UnixCheckSyntax,
+	"bosh":       UnixCheckSyntax,
+	"osh":        UnixCheckSyntax,
+	"yash":       UnixCheckSyntax,
+	"zsh":        UnixCheckSyntax,
+	"csh":        UnixCheckSyntax,
+	"tcsh":       UnixCheckSyntax,
+	"rc":         UnixCheckSyntax,
+	"fish":       UnixCheckSyntax,
+	"make":       UnixCheckSyntax,
+	"gmake":      UnixCheckSyntax,
+	"bmake":      UnixCheckSyntax,
+	"pmake":      UnixCheckSyntax,
+	"perl":       PerlishCheckSyntax,
+	"perl6":      PerlishCheckSyntax,
+	"ruby":       PerlishCheckSyntax,
+	"node":       PerlishCheckSyntax,
+	"iojs":       PerlishCheckSyntax,
+	"php":        PHPCheckSyntax,
+	"python":     PythonCheckSyntax,
+	"python3":    PythonCheckSyntax,
+	"go":         GoCheckSyntax,
+	"gawk":       GNUAwkCheckSyntax,
+}
+
 // Sniff analyzes the holistic smell of a given file path,
 // returning a Smell record of key indicators tending towards either POSIX compliance or noncompliance,
 // including a flag for the final "POSIXy" trace scent of the file.
@@ -468,6 +591,12 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 
 	if smell.Symlink {
 		return smell, nil
+	}
+
+	extensionInterpreter, extensionInterpreterOK := LOWEREXTENSIONS2INTERPRETER[strings.ToLower(smell.Extension)]
+
+	if extensionInterpreterOK {
+		smell.Interpreter = extensionInterpreter
 	}
 
 	fd, err := os.Open(pth)
@@ -546,12 +675,6 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 		smell.LineEnding = "\r"
 	}
 
-	filenameInterpreter, filenameInterpreterOK := LOWERFILENAMES2INTERPRETER[strings.ToLower(smell.Filename)]
-
-	if filenameInterpreterOK {
-		smell.Interpreter = filenameInterpreter
-	}
-
 	//
 	// Read the entire script in order to assess the presence/absence of a final POSIX end of line (\n) sequence.
 	//
@@ -592,7 +715,7 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 	// Recognize poorly written shell scripts that feature
 	// a POSIXy filename but lack a proper shebang line.
 	if !strings.HasPrefix(line, "#!") && !strings.HasPrefix(line, "!#") {
-		if smell.POSIXy && !filenameInterpreterOK {
+		if smell.POSIXy && !extensionInterpreterOK {
 			smell.Interpreter = "generic-sh"
 		}
 
@@ -640,15 +763,13 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 	// Strip out directory path, if any
 	interpreterFilename := filepath.Base(interpreterPath)
 
-	extensionInterpreter, extensionInterpreterOK := LOWEREXTENSIONS2INTERPRETER[strings.ToLower(smell.Extension)]
+	filenameInterpreter, filenameInterpreterOK := LOWERFILENAMES2INTERPRETER[strings.ToLower(interpreterFilename)]
 
 	// Identify the interpreter, or mark as generic, unknown sh interpreter.
 	if interpreterFilename == "" {
-		if extensionInterpreterOK {
-			smell.Interpreter = extensionInterpreter
-		} else if filenameInterpreterOK {
+		if filenameInterpreterOK {
 			smell.Interpreter = filenameInterpreter
-		} else {
+		} else if !extensionInterpreterOK {
 			smell.Interpreter = "generic-sh"
 		}
 	} else {

@@ -1,0 +1,5 @@
+#!/bin/csh
+
+if ($#argv == 0) then
+    echo 'No args'
+endif

@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
 
 	"github.com/mcandre/stank"
-	"mvdan.cc/sh/syntax"
 )
 
 var flagEOL = flag.Bool("eol", true, "Report presence/absence of final end of line sequence")
@@ -139,26 +139,30 @@ func CheckModulino(smell stank.Smell) bool {
 	return false
 }
 
-// CheckSlick passes any sh interpreted scripts through a strict POSIX sh parser.
-func CheckSlick(smell stank.Smell) bool {
-	if !smell.POSIXy || (smell.Interpreter != "generic-sh" && smell.Interpreter != "sh") {
+// CheckSyntax validates script contents.
+func CheckSyntax(smell stank.Smell) bool {
+	if !smell.POSIXy {
 		return false
 	}
 
-	parser := syntax.NewParser(syntax.Variant(syntax.LangPOSIX))
+	validator, ok := stank.INTERPRETER2SYNTAX_VALIDATOR[smell.Interpreter]
 
-	fd, er := os.Open(smell.Path)
-
-	if er != nil {
-		fmt.Printf("%v\n", er)
+	if !ok {
+		fmt.Printf("Unknown validator for interpreter: %v\n", smell.Path)
 		return true
 	}
 
-	br := bufio.NewReader(fd)
-	_, er = parser.Parse(br, smell.Path)
+	if smell.Interpreter != "generic-sh" && smell.Interpreter != "sh" {
+		_, err := exec.LookPath(smell.Interpreter)
 
-	if er != nil {
-		fmt.Printf("%v\n", er)
+		if err != nil {
+			fmt.Printf("Interpreter not found: %v\n", smell.Path)
+			return true
+		}
+	}
+
+	if err := validator(smell); err != nil {
+		fmt.Printf("%v syntax error: %v\n", smell.Interpreter, err)
 		return true
 	}
 
@@ -340,7 +344,12 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 	resBOM := CheckBOMs(smell)
 	resShebang := CheckShebangs(smell)
 	resPerms := CheckPermissions(smell)
-	resSlick := CheckSlick(smell)
+	resSyntax := CheckSyntax(smell)
+
+	if resSyntax {
+		return true
+	}
+
 	resIFSReset := CheckIFSReset(smell)
 	resSafetyFlags := CheckSafetyFlags(smell)
 
@@ -350,7 +359,6 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 		resModulino ||
 		resShebang ||
 		resPerms ||
-		resSlick ||
 		resIFSReset ||
 		resSafetyFlags
 }
