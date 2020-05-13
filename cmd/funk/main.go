@@ -145,7 +145,7 @@ func CheckSyntax(smell stank.Smell) bool {
 		return false
 	}
 
-	validator, ok := stank.INTERPRETER2SYNTAX_VALIDATOR[smell.Interpreter]
+	validator, ok := stank.Interpreter2SyntaxValidator[smell.Interpreter]
 
 	if !ok {
 		fmt.Printf("Unknown validator for interpreter: %v\n", smell.Path)

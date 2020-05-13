@@ -488,8 +488,8 @@ func GNUAwkCheckSyntax(smell Smell) error {
 	return cmd.Run()
 }
 
-// INTERPRETER2SYNTAX_VALIDATOR provides syntax validator delegates, if one is available.
-var INTERPRETER2SYNTAX_VALIDATOR = map[string]func(Smell) error{
+// Interpreter2SyntaxValidator provides syntax validator delegates, if one is available.
+var Interpreter2SyntaxValidator = map[string]func(Smell) error{
 	"generic-sh": POSIXShCheckSyntax,
 	"sh":         POSIXShCheckSyntax,
 	"ash":        UnixCheckSyntax,
