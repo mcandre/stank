@@ -309,7 +309,7 @@ func CheckSafetyFlags(smell stank.Smell) bool {
 	parts := strings.Split(candidateLine, " ")
 
 	if len(parts) < 1 || strings.TrimSpace(parts[0]) != "set" {
-		fmt.Printf("Control program flow like `set -eu` at the top of executable scripts: %v\n", smell.Path)
+		fmt.Printf("Control program flow like `set -euf` at the top of executable scripts: %v\n", smell.Path)
 		return true
 	}
 

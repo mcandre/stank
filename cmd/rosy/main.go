@@ -54,7 +54,7 @@ var KAMEINTERPRETERS = map[string]bool{
 	"posh":  true,
 }
 
-// USAGIINTERPRETERS catalogues POSIX shells with rich debugging `set` features, such as set -euo pipefail.
+// USAGIINTERPRETERS catalogues POSIX shells with basic debugging `set` features, such as set -euf.
 var USAGIINTERPRETERS = map[string]bool{
 	"ksh":   true,
 	"mksh":  true,
