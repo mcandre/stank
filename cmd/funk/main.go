@@ -68,16 +68,6 @@ func CheckBOMs(smell stank.Smell) bool {
 // sed, awk, Emacs Lisp, Fourth, Octave, Mathematica, ...
 // Therefore, CheckShebangs may trigger unactionable warnings when run on non-POSIXy files.
 func CheckShebangs(smell stank.Smell) bool {
-	// Shebangs are ill advised for configuration files.
-	if smell.CoreConfiguration {
-		if smell.Shebang != "" {
-			fmt.Printf("Configuration features shebang: %s\n", smell.Path)
-			return true
-		}
-
-		return false
-	}
-
 	if smell.Shebang == "" {
 		fmt.Printf("Missing shebang: %s\n", smell.Path)
 		return true
