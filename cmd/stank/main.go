@@ -7,12 +7,14 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/mcandre/stank"
 )
 
 var flagSh = flag.Bool("sh", false, "Limit results to specifically bare POSIX sh scripts")
 var flagAlt = flag.Bool("alt", false, "Limit results to specifically alternative, non-POSIX lowlevel shell scripts")
+var flagExcludeInterpreters = flag.String("exInterp", "", "Remove results with the given interpreter(s) (Comma separated)")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 
@@ -32,7 +34,11 @@ const (
 
 // Stanker holds configuration for a stanky walk
 type Stanker struct {
+	// Mode is scan type.
 	Mode StankMode
+
+	// InterpreterExclusions remove results from scan report.
+	InterpreterExclusions []string
 }
 
 // Walk sniffs a file system node for POSIXyness.
@@ -43,6 +49,12 @@ func (o Stanker) Walk(pth string, info os.FileInfo, err error) error {
 
 	if err != nil && err != io.EOF {
 		log.Print(err)
+	}
+
+	for _, interpreterExclusion := range o.InterpreterExclusions {
+		if smell.Interpreter == interpreterExclusion {
+			return nil
+		}
 	}
 
 	switch o.Mode {
@@ -75,6 +87,8 @@ func main() {
 	if *flagAlt {
 		stanker.Mode = ModeAltShellScript
 	}
+
+	stanker.InterpreterExclusions = strings.Split(*flagExcludeInterpreters, ",")
 
 	switch {
 	case *flagVersion:
