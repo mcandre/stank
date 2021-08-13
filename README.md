@@ -244,36 +244,13 @@ $ stink -help
 
 The included `examples/` directory demonstrates many edge cases, such as empty scripts, shebang-less scripts, extensioned and extensionless scripts, and various Hello World applications in across many programming languages. Some files, such as `examples/goodbye` may contain 100% valid POSIX shell script content, but fail to self-identify with either shebangs or relevant file extensions. In a large project, such files may be mistakenly treated as whoknowswhat format, or simply plain text. Perhaps statistical methods could help identify POSIX grammars, but even an empty file is technically POSIX, which is unhelpful from a reliable classification standpoint. In any case, `examples/` hopefully covers the more common edge cases.
 
-# BUILDTIME REQUIREMENTS
+# RUNTIME REQUIREMENTS
 
-* [Go](https://golang.org/) 1.13+
+(None)
 
-## Recommended
+# CONTRIBUTING
 
-* [Docker](https://www.docker.com/)
-* [Mage](https://magefile.org/) (e.g., `go get github.com/magefile/mage`)
-* [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports) (e.g. `go get golang.org/x/tools/cmd/goimports`)
-* [golint](https://github.com/golang/lint) (e.g. `go get github.com/golang/lint/golint`)
-* [errcheck](https://github.com/kisielk/errcheck) (e.g. `go get github.com/kisielk/errcheck`)
-* [nakedret](https://github.com/alexkohler/nakedret) (e.g. `go get github.com/alexkohler/nakedret`)
-* [shadow](golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow) (e.g. `go get -u golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow`)
-* [goxcart](https://github.com/mcandre/goxcart) (e.g., `github.com/mcandre/goxcart/...`)
-* [zipc](https://github.com/mcandre/zipc) (e.g. `go get github.com/mcandre/zipc/...`)
-
-# INSTALL FROM REMOTE GIT REPOSITORY
-
-```console
-$ go get github.com/mcandre/stank/...
-```
-
-# INSTALL FROM LOCAL GIT REPOSITORY
-
-```console
-$ mkdir -p $GOPATH/src/github.com/mcandre
-$ git clone https://github.com/mcandre/stank.git $GOPATH/src/github.com/stank
-$ git submodule update --init --recursive
-$ go install ./...
-```
+For more details on developing stank itself, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
 # WARNING ON FALSE POSITIVES
 
@@ -307,24 +284,6 @@ $ stink -pp examples/i-should-have-an-extension
 ```
 
 Perhaps append a `.lisp` extension to such files. Or separate the modulino into clear library vs. command line modules. Or extract the shell interaction into a dedicated script. Or convince the language maintainers to treat shebangs as comments. Write your congressman. However you resolve this, know that the current situation is far outside the norm, and likely to break in a suitably arcane and dramatic fashion. With wyverns and flaming seas and portents of all ill manner.
-
-# TEST
-
-```console
-$ mage test
-```
-
-# LINT
-
-```console
-$ mage lint
-```
-
-# PORT
-
-```console
-$ mage port
-```
 
 # Shell script linters
 
