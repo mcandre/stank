@@ -1,0 +1,6 @@
+# github.com/magefile/mage v1.11.0
+github.com/magefile/mage/mg
+# github.com/mcandre/mage-extras v0.0.2
+github.com/mcandre/mage-extras
+# mvdan.cc/sh v2.6.4+incompatible
+mvdan.cc/sh/syntax

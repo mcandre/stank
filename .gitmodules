@@ -1,6 +1,0 @@
-[submodule "vendor/github.com/mcandre/mage-extras"]
-	path = vendor/github.com/mcandre/mage-extras
-	url = https://github.com/mcandre/mage-extras.git
-[submodule "vendor/mvdan.cc/sh"]
-	path = vendor/mvdan.cc/sh
-	url = https://github.com/mvdan/sh.git

@@ -246,7 +246,7 @@ The included `examples/` directory demonstrates many edge cases, such as empty s
 
 # BUILDTIME REQUIREMENTS
 
-* [Go](https://golang.org/) 1.11+
+* [Go](https://golang.org/) 1.13+
 
 ## Recommended
 
