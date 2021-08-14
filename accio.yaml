@@ -1,0 +1,18 @@
+---
+packages:
+- get: "github.com/kisielk/errcheck"
+  version: "v1.6.0"
+- get: "github.com/magefile/mage"
+  version: "v1.11.0"
+- get: "github.com/alexkohler/nakedret"
+  version: "v1.0.0"
+- get: "github.com/mcandre/goxcart"
+  version: "v0.0.5"
+- get: "github.com/mcandre/zipc"
+  version: "v0.0.3"
+- get: "golang.org/x/lint/golint"
+  update: true
+- get: "golang.org/x/tools/cmd/goimports"
+  update: true
+- get: "golang.org/x/tools/go/analysis/passes/shadow"
+  update: true
