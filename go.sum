@@ -1,4 +1,6 @@
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
+github.com/jhoonb/archivex v0.0.0-20201016144719-6a343cdae81d h1:q7n+5taxmM+9T2Q7Ydo7YN90FkoDuR5bbzByZwkQqPo=
+github.com/jhoonb/archivex v0.0.0-20201016144719-6a343cdae81d/go.mod h1:GN1Mg/uXQ6qwXA0HypnUO3xlcQJS9/y68EsHNeuuRa4=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pretty v0.3.0 h1:WgNl7dwNpEZ6jJ9k1snq4pZsg7DOEN8hP9Xw0Tsjwk0=
 github.com/kr/pretty v0.3.0/go.mod h1:640gp4NfQd8pI5XOwp5fnNeVWj67G7CFk/SaSQn7NBk=
@@ -10,6 +12,10 @@ github.com/magefile/mage v1.11.0 h1:C/55Ywp9BpgVVclD3lRnSYCwXTYxmSppIgLeDYlNuls=
 github.com/magefile/mage v1.11.0/go.mod h1:z5UZb/iS3GoOSn0JgWuiw7dxlurVYTu+/jHXqQg881A=
 github.com/mcandre/mage-extras v0.0.2 h1:m/XINfGdmdynhAJt8FsUuxkfBT+gCnP0zOhEgVUH69I=
 github.com/mcandre/mage-extras v0.0.2/go.mod h1:LaUjUgmPBAl+58zVzGk5YhTTxhqGEFDAI5Oit56bPYs=
+github.com/mcandre/mage-extras v0.0.3 h1:YdmVvr0Cw2mZB0Kwl1JRXmwt/B6qH8Hlk8wKpyoyugs=
+github.com/mcandre/mage-extras v0.0.3/go.mod h1:SqNAvy9umAKak3EighQksvOicux1gkTe+E0XOkUIgDE=
+github.com/mcandre/zipc v0.0.4 h1:+C/lXJVySnwfnAdRv5wvphrpX8JYmvpIQ1y6onazCkQ=
+github.com/mcandre/zipc v0.0.4/go.mod h1:iJR+24JbL8Juffs+bbLWs/IL3n/6sNSLEz81+h0EtJc=
 github.com/rogpeppe/go-internal v1.6.1 h1:/FiVV8dS/e+YqF2JvO3yXRFbBLTIuSDkuC7aBOAvL+k=
 github.com/rogpeppe/go-internal v1.6.1/go.mod h1:xXDCJY+GAPziupqXw64V24skbSoqbTEfhy4qGm1nDQc=
 gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=

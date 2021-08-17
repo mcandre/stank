@@ -1,0 +1,6 @@
+github.com/jhoonb/archivex v0.0.0-20201016144719-6a343cdae81d h1:q7n+5taxmM+9T2Q7Ydo7YN90FkoDuR5bbzByZwkQqPo=
+github.com/jhoonb/archivex v0.0.0-20201016144719-6a343cdae81d/go.mod h1:GN1Mg/uXQ6qwXA0HypnUO3xlcQJS9/y68EsHNeuuRa4=
+github.com/magefile/mage v1.11.0 h1:C/55Ywp9BpgVVclD3lRnSYCwXTYxmSppIgLeDYlNuls=
+github.com/magefile/mage v1.11.0/go.mod h1:z5UZb/iS3GoOSn0JgWuiw7dxlurVYTu+/jHXqQg881A=
+github.com/mcandre/mage-extras v0.0.2 h1:m/XINfGdmdynhAJt8FsUuxkfBT+gCnP0zOhEgVUH69I=
+github.com/mcandre/mage-extras v0.0.2/go.mod h1:LaUjUgmPBAl+58zVzGk5YhTTxhqGEFDAI5Oit56bPYs=
