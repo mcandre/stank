@@ -1,3 +1,4 @@
+//go:build mage
 // +build mage
 
 package main
@@ -13,8 +14,8 @@ import (
 	"strings"
 
 	"github.com/magefile/mage/mg"
-	"github.com/mcandre/stank"
 	"github.com/mcandre/mage-extras"
+	"github.com/mcandre/stank"
 )
 
 // artifactsPath describes where artifacts are produced.
@@ -89,7 +90,10 @@ var CoverHTML = "cover.html"
 var CoverProfile = "cover.out"
 
 // CoverageHTML generates HTML formatted coverage data.
-func CoverageHTML() error { mg.Deps(CoverageProfile); return mageextras.CoverageHTML(CoverHTML, CoverProfile) }
+func CoverageHTML() error {
+	mg.Deps(CoverageProfile)
+	return mageextras.CoverageHTML(CoverHTML, CoverProfile)
+}
 
 // CoverageProfile generates raw coverage data.
 func CoverageProfile() error { return mageextras.CoverageProfile(CoverProfile) }
