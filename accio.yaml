@@ -1,16 +1,14 @@
 ---
 packages:
-- get: "github.com/kisielk/errcheck"
-  version: "v1.6.0"
+- name: "github.com/kisielk/errcheck"
   go111module: "off"
-- get: "github.com/magefile/mage"
+- name: "github.com/magefile/mage"
   version: "v1.11.0"
-- get: "github.com/alexkohler/nakedret"
-  version: "v1.0.0"
+- name: "github.com/alexkohler/nakedret"
   go111module: "off"
-- get: "golang.org/x/lint/golint"
-  update: true
-- get: "golang.org/x/tools/cmd/goimports"
-  update: true
-- get: "golang.org/x/tools/go/analysis/passes/shadow"
-  update: true
+- name: "golang.org/x/lint/golint"
+  version: "latest"
+- name: "golang.org/x/tools/cmd/goimports"
+  version: "latest"
+- name: "golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow"
+  version: "latest"
