@@ -2,12 +2,12 @@
 packages:
 - get: "github.com/kisielk/errcheck"
   version: "v1.6.0"
+  go111module: "off"
 - get: "github.com/magefile/mage"
   version: "v1.11.0"
 - get: "github.com/alexkohler/nakedret"
   version: "v1.0.0"
-- get: "github.com/mcandre/goxcart"
-  version: "v0.0.5"
+  go111module: "off"
 - get: "golang.org/x/lint/golint"
   update: true
 - get: "golang.org/x/tools/cmd/goimports"

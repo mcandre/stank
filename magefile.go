@@ -75,8 +75,6 @@ func IntegrationTest() error {
 		return errors.New("Expected non-zero exit status from funk")
 	}
 
-	// ...
-
 	return nil
 }
 
@@ -133,24 +131,11 @@ var portBasename = fmt.Sprintf("stank-%s", stank.Version)
 // repoNamespace identifies the Go namespace for this project.
 var repoNamespace = "github.com/mcandre/stank"
 
-// Xgo cross-compiles (c)Go binaries with additional targets enabled.
-func Xgo() error {
-	artifactsPathDist := path.Join(artifactsPath, portBasename)
-
-	for _, name := range []string{"stink", "stank", "funk", "rosy"} {
-		if err := mageextras.Xgo(
-			artifactsPathDist,
-			fmt.Sprintf("github.com/mcandre/stank/cmd/%v", name),
-		); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
+// Factorio cross-compiles Go binaries for a multitude of platforms.
+func Factorio() error { return mageextras.Factorio(portBasename) }
 
 // Port builds and compresses artifacts.
-func Port() error { mg.Deps(Xgo); return mageextras.Archive(portBasename, artifactsPath) }
+func Port() error { mg.Deps(Factorio); return mageextras.Archive(portBasename, artifactsPath) }
 
 // Install builds and installs Go applications.
 func Install() error { return mageextras.Install() }

@@ -37,7 +37,7 @@ mage-extras defines some reusable task predicates for common workflows, in a pla
 * obtaining the GOPATH/bin directory
 * referencing all local Go packages
 * referencing all local Go commands
-* cross-compiling applications with gox or goxcart
+* cross-compiling applications with factorio, gox, goxcart, and xgo
 * archiving artifacts
 * manipulating the path separator as a string
 

@@ -2,7 +2,6 @@
 
 * [Go](https://golang.org/) 1.17+
 * [accio](https://github.com/mcandre/accio) v0.0.1
-* Go development tools (`accio -install`)
 * [Docker](https://www.docker.com/) 19+
 
 # TEST
