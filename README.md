@@ -61,6 +61,12 @@ $ stank -help
 
 https://github.com/mcandre/stank/releases
 
+# INSTALL FROM SOURCE
+
+```console
+$ go install github.com/mcandre/stank/...@latest
+```
+
 # DOCUMENTATION
 
 http://godoc.org/github.com/mcandre/stank
