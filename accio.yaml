@@ -1,11 +1,13 @@
 ---
 packages:
+- name: "github.com/alexkohler/nakedret"
+  go111module: "off"
 - name: "github.com/kisielk/errcheck"
   go111module: "off"
 - name: "github.com/magefile/mage"
   version: "v1.11.0"
-- name: "github.com/alexkohler/nakedret"
-  go111module: "off"
+- name: "github.com/mcandre/factorio/cmd/factorio"
+  version: "v0.0.1"
 - name: "golang.org/x/lint/golint"
   version: "latest"
 - name: "golang.org/x/tools/cmd/goimports"
