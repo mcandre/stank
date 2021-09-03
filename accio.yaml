@@ -1,9 +1,9 @@
 ---
 packages:
 - name: "github.com/alexkohler/nakedret"
-  go111module: "off"
+  version: "v1.0.0"
 - name: "github.com/kisielk/errcheck"
-  go111module: "off"
+  version: "v1.6.0"
 - name: "github.com/magefile/mage"
   version: "v1.11.0"
 - name: "github.com/mcandre/factorio/cmd/factorio"
