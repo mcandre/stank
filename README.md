@@ -71,10 +71,6 @@ $ go install github.com/mcandre/stank/...@latest
 
 http://godoc.org/github.com/mcandre/stank
 
-# RUNTIME REQUIREMENTS
-
-(None)
-
 # MORE EXAMPLES
 
 `rosy` recommends scripts to be rewritten in other languages, such as porting bash scripts to ksh for speed; porting sh scripts to bash for robustness; or porting zsh scripts to sh for portability. By default, Rose mode is applied, encouraging shell scripts to be rewritten in non-shell languages for significant improvements in robustness and speed.
