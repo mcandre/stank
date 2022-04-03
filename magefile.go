@@ -24,6 +24,9 @@ var artifactsPath = "bin"
 // Default references the default build task.
 var Default = Test
 
+// Audit runs a security audit.
+func Audit() error { return mageextras.SnykTest() }
+
 // UnitTests runs the unit test suite.
 func UnitTest() error { return mageextras.UnitTest() }
 
