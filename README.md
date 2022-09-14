@@ -43,8 +43,16 @@ examples/wednesday
 examples/welcome
 examples/welcome.sh
 
-$ stank examples/hooks | xargs checkbashisms
-error: examples/hooks/pre-rebase: Unterminated quoted string found, EOF reached. Wanted: <'>, opened in line 133
+$ stank examples/hooks | xargs shellcheck
+
+In examples/hooks/pre-applypatch line 11:
+. git-sh-setup
+  ^----------^ SC1091 (info): Not following: git-sh-setup was not specified as input (see shellcheck -x).
+
+
+In examples/hooks/pre-commit line 31:
+	test $(git diff --cached --name-only --diff-filter=A -z $against |
+             ^-- SC2046 (warning): Quote this to prevent word splitting.
 
 $ stank -help
   -alt
@@ -289,9 +297,8 @@ Perhaps append a `.lisp` extension to such files. Or separate the modulino into 
 
 # Shell script linters
 
-These bad bois help to shore up ur shell scripts. Though they're designed to work on individual files, so be sure to stank-ify larger projects and pipe the results to `xargs checkbashisms`, yo!
+These bad bois help to shore up ur shell scripts. Though they're designed to work on individual files, so be sure to stank-ify larger projects and pipe the results to `xargs shellcheck`, yo!
 
-* [checkbashisms](https://sourceforge.net/projects/checkbaskisms/)
 * [bashate](https://pypi.python.org/pypi/bashate)
 * [shlint](https://rubygems.org/gems/shlint)
 * [ShellCheck](https://hackage.haskell.org/package/ShellCheck)
