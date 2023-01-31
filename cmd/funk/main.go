@@ -209,7 +209,6 @@ func CheckIFSReset(smell stank.Smell) bool {
 		if strings.HasPrefix(line, "#") ||
 			strings.HasPrefix(line, "set") ||
 			strings.HasPrefix(line, "unset") ||
-			strings.HasPrefix(line, "trap") ||
 			strings.TrimSpace(line) == "" {
 			continue
 		}
@@ -281,7 +280,6 @@ func CheckSafetyFlags(smell stank.Smell) bool {
 		if strings.HasPrefix(line, "#") ||
 			strings.HasPrefix(line, "IFS") ||
 			strings.HasPrefix(line, "unset") ||
-			strings.HasPrefix(line, "trap") ||
 			strings.TrimSpace(line) == "" {
 			continue
 		}
@@ -308,6 +306,126 @@ func CheckSafetyFlags(smell stank.Smell) bool {
 	}
 
 	return false
+}
+
+// LIST_TRAP_PATTERN matches POSIX trap declarations.
+var LIST_TRAP_PATTERN = regexp.MustCompile("^trap +.+$")
+
+// FUNCTION_TRAP_PATTERN matches zsh function trap declarations.
+var FUNCTION_TRAP_PATTERN = regexp.MustCompile(`^TRAP.+\(\).+$`)
+
+// EXEC_PATTERN matches POSIX exec commands.
+var EXEC_PATTERN = regexp.MustCompile("^exec .+$")
+
+// SET_PATTERN matches set flags
+var SET_PATTERN = regexp.MustCompile("^set (?P<Flags>.+)$")
+
+// ERRTRACE_FLAG_PATTERN matches GNU bash -E or -o errtrace flags.
+var ERRTRACE_FLAG_PATTERN = regexp.MustCompile(`^(-[^\s]*E)|-[^\s]*o errtrace$`)
+
+// CheckTrapHazards warns when traps risk colliding with other control flow semantics.
+func CheckTrapHazards(smell stank.Smell) bool {
+	if !smell.POSIXy {
+		return false
+	}
+
+	fd, err := os.Open(smell.Path)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, err.Error())
+		return true
+	}
+
+	defer func() {
+		err = fd.Close()
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, err.Error())
+		}
+	}()
+
+	fi, err := os.Lstat(smell.Path)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, err.Error())
+		return true
+	}
+
+	if fi.Size() == 0 {
+		return false
+	}
+
+	scanner := bufio.NewScanner(fd)
+
+	var hasListTrap bool
+	var hasTrap bool
+	var hasExec bool
+	var hasErrtraceFlag bool
+
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+
+		if strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		line = strings.TrimSpace(line)
+
+		if line == "" {
+			continue
+		}
+
+		if LIST_TRAP_PATTERN.MatchString(line) {
+			hasListTrap = true
+			hasTrap = true
+		}
+
+		if FUNCTION_TRAP_PATTERN.MatchString(line) {
+			hasTrap = true
+		}
+
+		if EXEC_PATTERN.MatchString(line) {
+			hasExec = true
+		}
+
+		if SET_PATTERN.MatchString(line) {
+			m := SET_PATTERN.FindStringSubmatch(line)
+			flags := m[SET_PATTERN.SubexpIndex("Flags")]
+
+			if ERRTRACE_FLAG_PATTERN.MatchString(flags) {
+				hasErrtraceFlag = true
+			}
+		}
+	}
+
+	if !hasTrap {
+		return false
+	}
+
+	var hasWarning bool
+
+	if hasExec {
+		fmt.Printf("exec discards traps: %v\n", smell.Path)
+		hasWarning = true
+	}
+
+	switch {
+	case smell.Interpreter == "zsh":
+		if hasListTrap {
+			fmt.Printf("List traps deprecated in favor of function traps: %v\n", smell.Path)
+			hasWarning = true
+		}
+	case strings.HasPrefix(smell.Interpreter, "bash"):
+		if !hasErrtraceFlag {
+			fmt.Printf("Missing `set -E` / `set -o errtrace` to guard traps")
+			hasWarning = true
+		}
+	default:
+		fmt.Printf("Traps may reset in subshells: %v\n", smell.Path)
+		hasWarning = true
+	}
+
+	return hasWarning
 }
 
 // FunkyCheck analyzes POSIXy scripts for some oddities. If an oddity is found, FunkyCheck prints a warning and returns true.
@@ -342,6 +460,7 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 
 	resIFSReset := CheckIFSReset(smell)
 	resSafetyFlags := CheckSafetyFlags(smell)
+	resTrapHazards := CheckTrapHazards(smell)
 
 	return resEOL ||
 		resCR ||
@@ -350,7 +469,8 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 		resShebang ||
 		resPerms ||
 		resIFSReset ||
-		resSafetyFlags
+		resSafetyFlags ||
+		resTrapHazards
 }
 
 // Ignores is a poor man's gitignore.

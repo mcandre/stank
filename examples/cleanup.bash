@@ -1,4 +1,7 @@
 #!/bin/bash
+unset IFS
 set -eufEo pipefail
-IFS=$'\n\t '
+
+trap 'echo cleaning' EXIT
+
 echo "Hello"

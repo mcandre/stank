@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eEuo pipefail
+set -eufEo pipefail
 IFS=$'\n\t '
 
 echo "Hello"
