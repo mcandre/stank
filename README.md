@@ -262,6 +262,12 @@ The included `examples/` directory demonstrates many edge cases, such as empty s
 
 For more details on developing stank itself, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
+# WARNING ON FALSE NEGATIVES
+
+Note that very many software components have a bad habit of encouraging embedded, inline shell script snippets into non-shell script files. For example, CI/CD job configurations, Dockerfile RUN steps, Kubernetes resources, and make. Most linter tools (for shell scripts and other languages) have very limited or nonexistent support for linting inline shell script snippets.
+
+Accordingly, move shell script snippets to a dedicated shell script file. And then have the software component execute the shell script. Then you will be able to lint the shell code with more tools, and thereby raise the quality level of your system.
+
 # WARNING ON FALSE POSITIVES
 
 Some rather obscure files, such as Common Lisp source code with multiline, polyglot shebangs and no file extension, may falsely trigger the stank library, and the rosy, stink, and stank applications, which short-circuit on the first line of the hacky shebang. Such files may be falsely identified as "POSIX" code, which is actually the intended behavior! This is because the polyglot shebang is a hack to work around limitations in the Common Lisp language, which ordinarily does not accept POSIX shebang comments, in order to get Common Lisp scripts to be dot-slashable in bash. For this situation, it is best to supply a proper file extension to such files.
