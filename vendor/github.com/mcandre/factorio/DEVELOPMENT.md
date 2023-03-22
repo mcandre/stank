@@ -1,32 +1,46 @@
 # BUILDTIME REQUIREMENTS
 
-* [Go](https://golang.org/) 1.17+
+* [Go](https://golang.org/) 1.20.2+ with `go install github.com/mcandre/accio/cmd/accio@v0.0.3` and `accio -install`
+* [Node.js](https://nodejs.org/en) 16.14.2+ with `npm install -g snyk@1.996.0`
 * [zip](https://linux.die.net/man/1/zip)
+
+## Recommended
+
+* [ASDF](https://asdf-vm.com/) 0.10
+* [direnv](https://direnv.net/) 2
+
+# AUDIT
+
+```console
+$ mage audit
+```
 
 # INSTALL
 
 ```console
-$ go install ./...
+$ mage install
 ```
 
 # UNINSTALL
 
 ```console
-$ rm "$GOPATH/src/factorio"
+$ mage uninstall
 ```
 
 # TEST
 
 ```console
-$ factorio
+$ mage [test]
 ```
 
 # PORT
 
 ```console
-$ FACTORIO_BANNER=factorio-0.0.1 factorio
+$ mage port
+```
 
-$ cd bin
+# CLEAN
 
-$ zip -r factorio-0.0.1.zip factorio-0.0.1
+```console
+$ rm -rf bin
 ```

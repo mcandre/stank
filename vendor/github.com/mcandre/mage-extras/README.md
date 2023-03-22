@@ -50,11 +50,12 @@ https://godoc.org/github.com/mcandre/mage-extras
 
 # RUNTIME REQUIREMENTS
 
-* [Mage](https://magefile.org/) (e.g., `go get github.com/magefile/mage`)
+* [Mage](https://magefile.org/) (e.g., `go install github.com/magefile/mage`)
 
 ## Recommended
 
-* [karp](https://github.com/mcandre/karp) (e.g. `go get https://github.com/mcandre/karp/...`) for conveniently browsing coverage reports.
+* [accio](https://github.com/mcandre/accio) (e.g., `go install github.com/mcandre/accio/cmd/accio@v0.0.3`)
+* [karp](https://github.com/mcandre/karp) (e.g. `go install https://github.com/mcandre/karp/...`) for conveniently browsing coverage reports.
 
 # CONTRIBUTING
 

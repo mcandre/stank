@@ -12,9 +12,6 @@ import (
 	"strings"
 )
 
-// Version is semver.
-const Version = "0.0.1"
-
 // ArtifactToplevelDir names the output location for binaries.
 const ArtifactToplevelDir = "bin"
 
@@ -54,6 +51,7 @@ func (o Platform) String() string {
 	return fmt.Sprintf("%s/%s", o.Os, o.Arch)
 }
 
+// Platforms enumerates the available platform combinations.
 func Platforms() ([]Platform, error) {
 	var platforms []Platform
 

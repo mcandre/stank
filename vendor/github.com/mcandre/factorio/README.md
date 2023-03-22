@@ -1,4 +1,4 @@
-# factorio: mo' platforms, mo' problems!
+# factorio: Go cross-compiler
 
 # EXAMPLE
 
@@ -21,6 +21,8 @@ bin/artifact-dev
 
 factorio accelerates Go application development, by automating the process of generating binaries for a multitude of platforms. Your time is valuable. Spend it developing software, not tinkering with toolchains.
 
+factorio is fast. It has no intrinsic dependency on any containers or virtual machines. Factorio plugs directly into the standard `go` command line system.
+
 # LICENSE
 
 FreeBSD
@@ -29,15 +31,19 @@ FreeBSD
 
 https://godoc.org/github.com/mcandre/factorio
 
+# DOWNLOAD
+
+https://github.com/mcandre/factorio/releases
+
 # INSTALL FROM SOURCE
 
 ```console
-$ go install github.com/mcandre/factorio/cmd/factorio
+$ go install github.com/mcandre/factorio/cmd/factorio@latest
 ```
 
 # RUNTIME REQUIREMENTS
 
-* [Go](https://golang.org/) 1.17+
+* [Go](https://golang.org/) 1.20.2+
 
 ## Recommended
 
@@ -55,11 +61,14 @@ factorio primarily assists conventional PC (desktop/laptop/workstation/server) a
 
 factorio will exclude mobile platforms by default. You can customize the platform blocklist by supplying a Go [Regexp](https://godoc.org/regexp) to a `FACTORIO_PLATFORM_BLOCKLIST` environment variable, e.g. `FACTORIO_PLATFORM_BLOCKLIST=//`.
 
-factorio plugs directly into the standard Go system, compatible with most `go build` flags and environment variables. Any Extra environment variables or flags you pass to `factorio` will propagate to `go build`.
+factorio is essentially compatible with `go build` flags and environment variables. Any Extra environment variables or flags you pass to `factorio` will propagate to `go build`.
 
 ## SEE ALSO
 
-* [cartel](https://github.com/mcandre/cartel) ports native C/C++ applications to Linux variants.
 * [gox](https://github.com/mitchellh/gox), an older Go cross-compiler wrapper.
+* [LLVM](https://llvm.org/) bitcode offers an abstract assembler format for C/C++ code.
+* [snek](https://github.com/mcandre/snek) ports native C/C++ applications.
 * [tonixxx](https://github.com/mcandre/tonixxx) ports applications of any programming language.
-* [xgo](https://github.com/karalabe/xgo) supports Go projects with native cgo dependencies.
+* [tug](https://github.com/mcandre/tug) automates multi-platform Docker image builds.
+* [WASM](https://webassembly.org/) provides a portable interface for C/C++ code.
+* [xgo](https://github.com/crazy-max/xgo) supports Go projects with native cgo dependencies.
