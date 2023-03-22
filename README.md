@@ -128,19 +128,16 @@ The `funk` linter reports strange odors emanating from scripts, such as improper
 
 ```console
 $ funk examples
-Configuration features shebang: examples/badconfigs/.bash_profile
-Configuration features executable permissions: examples/badconfigs/zprofile
-Missing final end of line sequence: examples/blank.bash
+Ambiguous launch style. Either feature a file extensions, or else feature executable bits: examples/.shrc
+Tokenize like `unset IFS` at the top of executable scripts: examples/.shrc
+Control program flow like `set -euf` at the top of executable scripts: examples/.shrc
+Tokenize like `unset IFS` at the top of executable scripts: examples/badconfigs/zprofile
+Control program flow like `set -euf` at the top of executable scripts: examples/badconfigs/zprofile
 Missing shebang: examples/blank.bash
-Interpreter mismatch between shebang and extension: examples/derp.zsh
+Traps may reset in subshells: examples/cleanup.sh
+Missing shebang: examples/goodbye.sh
 Missing shebang: examples/greetings.bash
-Missing final end of line sequence: examples/hello-crlf.sh
-CR/CRLF line ending detected: examples/hello-crlf.sh
-Missing shebang: examples/howdy.zsh
-Missing shebang: examples/just-eol.bash
-Missing final end of line sequence: examples/lo-cr.csh
-CR/CRLF line ending detected: examples/lo-cr.csh
-Leading BOM reduces portability: examples/wednesday-bom
+Control program flow like `set -euf` at the top of executable scripts: examples/hello-commented
 
 $ funk -modulino examples
 Configuration features shebang: examples/badconfigs/.bash_profile
