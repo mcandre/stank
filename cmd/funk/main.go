@@ -308,20 +308,20 @@ func CheckSafetyFlags(smell stank.Smell) bool {
 	return false
 }
 
-// LIST_TRAP_PATTERN matches POSIX trap declarations.
-var LIST_TRAP_PATTERN = regexp.MustCompile("^trap +.+$")
+// ListTrapPattern matches POSIX trap declarations.
+var ListTrapPattern = regexp.MustCompile("^trap +.+$")
 
-// FUNCTION_TRAP_PATTERN matches zsh function trap declarations.
-var FUNCTION_TRAP_PATTERN = regexp.MustCompile(`^TRAP.+\(\).+$`)
+// FunctionTrapPattern matches zsh function trap declarations.
+var FunctionTrapPattern = regexp.MustCompile(`^TRAP.+\(\).+$`)
 
-// EXEC_PATTERN matches POSIX exec commands.
-var EXEC_PATTERN = regexp.MustCompile("^exec .+$")
+// ExecPattern matches POSIX exec commands.
+var ExecPattern = regexp.MustCompile("^exec .+$")
 
-// SET_PATTERN matches set flags
-var SET_PATTERN = regexp.MustCompile("^set (?P<Flags>.+)$")
+// SetPattern matches set flags
+var SetPattern = regexp.MustCompile("^set (?P<Flags>.+)$")
 
-// ERRTRACE_FLAG_PATTERN matches GNU bash -E or -o errtrace flags.
-var ERRTRACE_FLAG_PATTERN = regexp.MustCompile(`^(-[^\s]*E)|-[^\s]*o errtrace$`)
+// ErrTraceFlagPattern matches GNU bash -E or -o errtrace flags.
+var ErrTraceFlagPattern = regexp.MustCompile(`^(-[^\s]*E)|-[^\s]*o errtrace$`)
 
 // CheckTrapHazards warns when traps risk colliding with other control flow semantics.
 func CheckTrapHazards(smell stank.Smell) bool {
@@ -375,24 +375,24 @@ func CheckTrapHazards(smell stank.Smell) bool {
 			continue
 		}
 
-		if LIST_TRAP_PATTERN.MatchString(line) {
+		if ListTrapPattern.MatchString(line) {
 			hasListTrap = true
 			hasTrap = true
 		}
 
-		if FUNCTION_TRAP_PATTERN.MatchString(line) {
+		if FunctionTrapPattern.MatchString(line) {
 			hasTrap = true
 		}
 
-		if EXEC_PATTERN.MatchString(line) {
+		if ExecPattern.MatchString(line) {
 			hasExec = true
 		}
 
-		if SET_PATTERN.MatchString(line) {
-			m := SET_PATTERN.FindStringSubmatch(line)
-			flags := m[SET_PATTERN.SubexpIndex("Flags")]
+		if SetPattern.MatchString(line) {
+			m := SetPattern.FindStringSubmatch(line)
+			flags := m[SetPattern.SubexpIndex("Flags")]
 
-			if ERRTRACE_FLAG_PATTERN.MatchString(flags) {
+			if ErrTraceFlagPattern.MatchString(flags) {
 				hasErrtraceFlag = true
 			}
 		}

@@ -19,6 +19,9 @@ var CoverHTML = "cover.html"
 // CoverProfile denotes the raw coverage data filename.
 var CoverProfile = "cover.out"
 
+// Audit runs a security audit.
+func Audit() error { return mageextras.SnykTest() }
+
 // CoverageHTML generates HTML formatted coverage data.
 func CoverageHTML() error { mg.Deps(CoverageProfile); return mageextras.CoverageHTML(CoverHTML, CoverProfile) }
 
@@ -46,6 +49,9 @@ func Errcheck() error { return mageextras.Errcheck("-blank") }
 // Nakedret runs nakedret.
 func Nakedret() error { return mageextras.Nakedret("-l", "0") }
 
+// Staticcheck runs staticcheck.
+func Staticcheck() error { return mageextras.Staticcheck() }
+
 // Lint runs the lint suite.
 func Lint() error {
 	mg.Deps(GoVet)
@@ -54,6 +60,7 @@ func Lint() error {
 	mg.Deps(GoImports)
 	mg.Deps(Errcheck)
 	mg.Deps(Nakedret)
+	mg.Deps(Staticcheck)
 	return nil
 }
 

@@ -27,6 +27,7 @@ $ mage noVendor
 
 mage-extras defines some reusable task predicates for common workflows, in a platform-agnostic way:
 
+* security audits
 * checking that Go source code actually compiles
 * running unit tests
 * generating code coverage reports
