@@ -15,4 +15,4 @@ packages:
 - name: "golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow"
   version: "latest"
 - name: "honnef.co/go/tools/cmd/staticcheck"
-  version: "2022.1"
+  version: "2023.1.3"
