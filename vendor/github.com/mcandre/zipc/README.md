@@ -27,6 +27,12 @@ https://github.com/mcandre/zipc/releases
 
 https://godoc.org/github.com/mcandre/zipc
 
+# INSTALL FROM SOURCE
+
+```console
+$ go install github.com/mcandre/zipc/cmd/zipc@latest
+```
+
 # RUNTIME REQUIREMENTS
 
 (None)

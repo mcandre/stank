@@ -54,8 +54,8 @@ https://godoc.org/github.com/mcandre/mage-extras
 
 ## Recommended
 
-* [accio](https://github.com/mcandre/accio) (e.g., `go install github.com/mcandre/accio/cmd/accio@v0.0.3`)
-* [karp](https://github.com/mcandre/karp) (e.g. `go install https://github.com/mcandre/karp/...`) for conveniently browsing coverage reports.
+* [accio](https://github.com/mcandre/accio) (e.g., `go install github.com/mcandre/accio/cmd/accio`)
+* [karp](https://github.com/mcandre/karp) (e.g. `go install github.com/mcandre/karp/...`) for conveniently browsing coverage reports.
 
 # CONTRIBUTING
 

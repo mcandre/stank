@@ -9,11 +9,11 @@ github.com/magefile/mage/mg
 # github.com/mcandre/factorio v0.0.3
 ## explicit; go 1.20
 github.com/mcandre/factorio
-# github.com/mcandre/mage-extras v0.0.9
+# github.com/mcandre/mage-extras v0.0.10
 ## explicit; go 1.20
 github.com/mcandre/mage-extras
-# github.com/mcandre/zipc v0.0.4
-## explicit; go 1.13
+# github.com/mcandre/zipc v0.0.7
+## explicit; go 1.20
 github.com/mcandre/zipc
 # mvdan.cc/sh v2.6.4+incompatible
 ## explicit
