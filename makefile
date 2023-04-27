@@ -1,7 +1,7 @@
 .PHONY: all
 
 all:
-	@cargo install --force unmake@0.0.6
+	@cargo install --force unmake@0.0.7
 
 	@go install github.com/alexkohler/nakedret@v1.0.1
 	@go install github.com/kisielk/errcheck@v1.6.3
