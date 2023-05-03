@@ -48,6 +48,10 @@ Mage is highly agnostic about workflows. mage-extras is a little more opinionate
 
 https://godoc.org/github.com/mcandre/mage-extras
 
+# LICENSE
+
+FreeBSD
+
 # RUNTIME REQUIREMENTS
 
 * [Mage](https://magefile.org/) (e.g., `go install github.com/magefile/mage`)
