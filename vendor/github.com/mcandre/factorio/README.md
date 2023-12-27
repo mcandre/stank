@@ -43,7 +43,7 @@ $ go install github.com/mcandre/factorio/cmd/factorio@latest
 
 # RUNTIME REQUIREMENTS
 
-* [Go](https://golang.org/) 1.20.2+
+* [Go](https://golang.org/) 1.21.5+
 
 ## Recommended
 
@@ -65,10 +65,8 @@ factorio is essentially compatible with `go build` flags and environment variabl
 
 ## SEE ALSO
 
-* [gox](https://github.com/mitchellh/gox), an older Go cross-compiler wrapper.
+* [crit](https://github.com/mcandre/crit) generates Rust ports
 * [LLVM](https://llvm.org/) bitcode offers an abstract assembler format for C/C++ code.
-* [snek](https://github.com/mcandre/snek) ports native C/C++ applications.
-* [tonixxx](https://github.com/mcandre/tonixxx) ports applications of any programming language.
 * [tug](https://github.com/mcandre/tug) automates multi-platform Docker image builds.
 * [WASM](https://webassembly.org/) provides a portable interface for C/C++ code.
 * [xgo](https://github.com/crazy-max/xgo) supports Go projects with native cgo dependencies.

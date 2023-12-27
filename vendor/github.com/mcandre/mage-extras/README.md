@@ -19,7 +19,6 @@ $ mage noVendor
 /Users/andrew/go/src/github.com/mcandre/mage-extras/binaries_test.go
 /Users/andrew/go/src/github.com/mcandre/mage-extras/sources_test.go
 /Users/andrew/go/src/github.com/mcandre/mage-extras/binaries.go
-/Users/andrew/go/src/github.com/mcandre/mage-extras/golint.go
 /Users/andrew/go/src/github.com/mcandre/mage-extras/install.go
 ```
 
@@ -58,7 +57,6 @@ FreeBSD
 
 ## Recommended
 
-* [accio](https://github.com/mcandre/accio) (e.g., `go install github.com/mcandre/accio/cmd/accio`)
 * [karp](https://github.com/mcandre/karp) (e.g. `go install github.com/mcandre/karp/...`) for conveniently browsing coverage reports.
 
 # CONTRIBUTING
