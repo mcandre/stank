@@ -253,7 +253,7 @@ The included `examples/` directory demonstrates many edge cases, such as empty s
 
 # LICENSE
 
-FreeBSD
+BSD-2-Clause
 
 # RUNTIME REQUIREMENTS
 
