@@ -1,4 +1,4 @@
 package stank
 
 // Version is semver.
-const Version = "0.0.24"
+const Version = "0.0.25"
