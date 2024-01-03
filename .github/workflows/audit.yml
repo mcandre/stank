@@ -1,0 +1,23 @@
+---
+name: "Audit"
+on: # yamllint disable-line rule:truthy
+  push:
+  pull_request:
+  schedule:
+  - cron: "0 0 * * 1"
+jobs:
+  Audit:
+    runs-on: "ubuntu-latest"
+    env:
+      GOPATH: "/home/runner/go"
+    steps:
+    - run: "echo \"/usr/local/go/bin\" >> $GITHUB_PATH"
+    - run: "echo \"${GOPATH}/bin\" >> $GITHUB_PATH"
+    - uses: "actions/checkout@v4"
+    - run: "sudo apt-get install -y cargo make npm wget"
+    - run: "wget https://go.dev/dl/go1.21.5.linux-amd64.tar.gz"
+    - run: "sudo tar -C /usr/local -xzf go1.21.5.linux-amd64.tar.gz"
+    - run: "make"
+    - run: "mage audit"
+      env:
+        SNYK_TOKEN: "${{ secrets.SNYK_TOKEN }}"
