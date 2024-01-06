@@ -81,7 +81,7 @@ func IntegrationTest() error {
 	return nil
 }
 
-// Text runs unit and integration tests.
+// Test runs unit and integration tests.
 func Test() error { mg.Deps(UnitTest); mg.Deps(IntegrationTest); return nil }
 
 // CoverHTML denotes the HTML formatted coverage filename.
@@ -118,7 +118,15 @@ func Nakedret() error { return mageextras.Nakedret("-l", "0") }
 func Staticcheck() error { return mageextras.Staticcheck() }
 
 // Unmake runs unmake.
-func Unmake() error { return mageextras.Unmake(".") }
+func Unmake() error {
+	err := mageextras.Unmake(".")
+
+	if err != nil {
+		return err
+	}
+
+	return mageextras.Unmake("-n", ".")
+}
 
 // Lint runs the lint suite.
 func Lint() error {
