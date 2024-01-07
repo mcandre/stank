@@ -15,6 +15,7 @@ import (
 var flagSh = flag.Bool("sh", false, "Limit results to specifically bare POSIX sh scripts")
 var flagAlt = flag.Bool("alt", false, "Limit results to specifically alternative, non-POSIX lowlevel shell scripts")
 var flagExcludeInterpreters = flag.String("exInterp", "", "Remove results with the given interpreter(s) (Comma separated)")
+var flagPrint0 = flag.Bool("print0", false, "Delimit file path results with a null terminator, suitable for consumption with xargs -0")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 
@@ -39,6 +40,20 @@ type Stanker struct {
 
 	// InterpreterExclusions remove results from scan report.
 	InterpreterExclusions []string
+
+	// Printer writes file path results.
+	Printer func(string)
+}
+
+// LineWriter emits file paths with line terminators.
+func LineWriter(pth string) {
+	fmt.Println(pth)
+}
+
+// NullWriter emits file paths with explicit null terminators.
+func NullWriter(pth string) {
+	os.Stdout.Write([]byte(pth))
+	os.Stdout.Write([]byte{0x00})
 }
 
 // Walk sniffs a file system node for POSIXyness.
@@ -64,15 +79,15 @@ func (o Stanker) Walk(pth string, info os.FileInfo, err error) error {
 	switch o.Mode {
 	case ModePureSh:
 		if smell.POSIXy && (smell.Interpreter == "sh" || smell.Interpreter == "generic-sh") {
-			fmt.Println(smell.Path)
+			o.Printer(smell.Path)
 		}
 	case ModeAltShellScript:
 		if smell.AltShellScript {
-			fmt.Println(smell.Path)
+			o.Printer(smell.Path)
 		}
 	default:
 		if smell.POSIXy {
-			fmt.Println(smell.Path)
+			o.Printer(smell.Path)
 		}
 	}
 
@@ -90,6 +105,12 @@ func main() {
 
 	if *flagAlt {
 		stanker.Mode = ModeAltShellScript
+	}
+
+	if *flagPrint0 {
+		stanker.Printer = NullWriter
+	} else {
+		stanker.Printer = LineWriter
 	}
 
 	stanker.InterpreterExclusions = strings.Split(*flagExcludeInterpreters, ",")

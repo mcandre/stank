@@ -22,8 +22,10 @@ $ stank .
 
 The `stank` command line utility searches file paths for shell scripts that may warrant linting.
 
+stank integrates with external linters, helping to feed them a more focused set of file paths to analyze within larger project directories.
+
 ```console
-$ stank . | xargs -n 1 shellcheck
+$ stank -print0 . | xargs -0 -n 1 shellcheck
 In welcome.sh line 1:
 #!bash
 ^----^ SC2239 (error): Ensure the shebang uses an absolute path to the interpreter.
@@ -31,8 +33,6 @@ In welcome.sh line 1:
 For more information:
   https://www.shellcheck.net/wiki/SC2239 -- Ensure the shebang uses an absolu...
 ```
-
-Take care when file paths may contain spaces, however.
 
 Machine-generated files, including git hook default `*.sample` files, are automatically skipped.
 
