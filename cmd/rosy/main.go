@@ -121,6 +121,10 @@ func (o *Rose) Walk(pth string, info os.FileInfo, err error) error {
 		log.Print(err)
 	}
 
+	if smell.MachineGenerated {
+		return nil
+	}
+
 	if (smell.POSIXy || smell.AltShellScript) &&
 		!(stank.LOWEREXTENSIONS2CONFIG[strings.ToLower(smell.Extension)] || stank.LOWERFILENAMES2CONFIG[strings.ToLower(smell.Filename)]) &&
 		!CheckShebang(smell) {

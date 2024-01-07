@@ -167,16 +167,6 @@ var LOWERFILENAMES2POSIXyNESS = map[string]bool{
 	"makefile":                  false,
 	"readme":                    false,
 	"changelog":                 false,
-	"applypatch-msg.sample":     false,
-	"commit-msg.sample":         false,
-	"post-update.sample":        false,
-	"pre-applypatch.sample":     false,
-	"pre-commit.sample":         false,
-	"pre-push.sample":           false,
-	"pre-rebase.sample":         false,
-	"pre-receive.sample":        false,
-	"prepare-commit-msg.sample": false,
-	"update.sample":             false,
 	"rc.elv":                    false,
 	"thumbs.db":                 false,
 }
@@ -410,7 +400,7 @@ var ALTINTERPRETERS = map[string]bool{
 	"elvish": true,
 }
 
-// ALTEXTENSIONS collets some alternative shell script file extensions.
+// ALTEXTENSIONS collects some alternative shell script file extensions.
 var ALTEXTENSIONS = map[string]bool{
 	".osh":    true,
 	".lksh":   true,
@@ -533,6 +523,13 @@ var Interpreter2SyntaxValidator = map[string]func(Smell) error{
 	"gawk":       GNUAwkCheckSyntax,
 }
 
+// LOWERMACHINEEXTENSIONS collects a rather truncated survey of
+// machine-generated file extensions likely to not be edited directly
+// by most shell script authors.
+var LOWERMACHINEEXTENSIONS = map[string]bool{
+	".sample": true, // git hooks, which violate every known shell script virtue
+}
+
 // Sniff analyzes the holistic smell of a given file path,
 // returning a Smell record of key indicators tending towards either POSIX compliance or noncompliance,
 // including a flag for the final "POSIXy" trace scent of the file.
@@ -571,6 +568,10 @@ func Sniff(pth string, config SniffConfig) (Smell, error) {
 	// Attempt to short-circuit for Emacs swap files
 	if strings.HasSuffix(smell.Filename, "~") {
 		return smell, nil
+	}
+
+	if _, extensionMachineOK := LOWERMACHINEEXTENSIONS[smell.Extension]; extensionMachineOK {
+		smell.MachineGenerated = true
 	}
 
 	extensionPOSIXy, extensionPOSIXyOK := LOWEREXTENSIONS2POSIXyNESS[strings.ToLower(smell.Extension)]

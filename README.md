@@ -11,59 +11,32 @@ Believe it or not, shell scripts are notoriously difficult to write well, so it 
 The stank system includes the stank Go library as well as several command line utilities for convenience. The `stank` application scans directories and files for POSIX-derived shell scripts and prints their paths, designed as a convenient standalone filter for linting large collections of source code. For example, use `stank` in combination with `xargs` to help per-file shell linters process large projects.
 
 ```console
-$ stank examples
-examples/.profile
-examples/.zshrc
-examples/badconfigs/.bash_profile
-examples/badconfigs/zprofile
-examples/blank.bash
-examples/derp.zsh
-examples/globs.bash
-examples/goodbye.sh
-examples/greetings.bash
-examples/hello
-examples/hello.sh
-examples/hooks/post-update
-examples/hooks/pre-applypatch
-examples/hooks/pre-commit
-examples/hooks/pre-push
-examples/hooks/pre-rebase
-examples/hooks/update
-examples/howdy
-examples/howdy.zsh
-examples/i-should-have-an-extension
-examples/just-eol.bash
-examples/just-shebang.bash
-examples/pipefail
-examples/salutations.bash
-examples/salutations.sh
-examples/salutations4.bash
-examples/sample.envrc
-examples/wednesday
-examples/welcome
-examples/welcome.sh
+$ cd examples
 
-$ stank examples/hooks | xargs shellcheck
-
-In examples/hooks/pre-applypatch line 11:
-. git-sh-setup
-  ^----------^ SC1091 (info): Not following: git-sh-setup was not specified as input (see shellcheck -x).
-
-
-In examples/hooks/pre-commit line 31:
-	test $(git diff --cached --name-only --diff-filter=A -z $against |
-             ^-- SC2046 (warning): Quote this to prevent word splitting.
-
-$ stank -help
-  -alt
-        Limit results to specifically alternative, non-POSIX lowlevel shell scripts
-  -help
-        Show usage information
-  -sh
-        Limit results to specifically bare POSIX sh scripts
-  -version
-        Show version information
+$ stank .
+.profile
+.shrc
+.zlogin
+...
 ```
+
+The `stank` command line utility searches file paths for shell scripts that may warrant linting.
+
+```console
+$ stank . | xargs -n 1 shellcheck
+In welcome.sh line 1:
+#!bash
+^----^ SC2239 (error): Ensure the shebang uses an absolute path to the interpreter.
+
+For more information:
+  https://www.shellcheck.net/wiki/SC2239 -- Ensure the shebang uses an absolu...
+```
+
+Take care when file paths may contain spaces, however.
+
+Machine-generated files, including git hook default `*.sample` files, are automatically skipped.
+
+See `stank -help` for additional options.
 
 # DOWNLOADS
 
@@ -258,6 +231,11 @@ BSD-2-Clause
 # RUNTIME REQUIREMENTS
 
 (None)
+
+## Recommended
+
+* GNU or BSD [findutils](https://en.wikipedia.org/wiki/Find_(Unix))
+* [jq](https://jqlang.github.io/jq/)
 
 # CONTRIBUTING
 

@@ -513,6 +513,10 @@ func (o *Funk) Walk(pth string, info os.FileInfo, err error) error {
 		fmt.Printf("%v\n", err)
 	}
 
+	if smell.MachineGenerated {
+		return nil
+	}
+
 	if (smell.POSIXy || smell.AltShellScript) && o.FunkyCheck(smell) {
 		o.FoundOdor = true
 	}

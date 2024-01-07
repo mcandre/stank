@@ -103,4 +103,5 @@ type Smell struct {
 	Ksh               bool
 	AltShellScript    bool
 	CoreConfiguration bool
+	MachineGenerated  bool
 }

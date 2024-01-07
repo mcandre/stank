@@ -51,6 +51,10 @@ func (o Stanker) Walk(pth string, info os.FileInfo, err error) error {
 		log.Print(err)
 	}
 
+	if smell.MachineGenerated {
+		return nil
+	}
+
 	for _, interpreterExclusion := range o.InterpreterExclusions {
 		if smell.Interpreter == interpreterExclusion {
 			return nil
