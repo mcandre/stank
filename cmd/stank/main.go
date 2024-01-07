@@ -15,7 +15,7 @@ import (
 var flagSh = flag.Bool("sh", false, "Limit results to specifically bare POSIX sh scripts")
 var flagAlt = flag.Bool("alt", false, "Limit results to specifically alternative, non-POSIX lowlevel shell scripts")
 var flagExcludeInterpreters = flag.String("exInterp", "", "Remove results with the given interpreter(s) (Comma separated)")
-var flagPrint0 = flag.Bool("print0", false, "Delimit file path results with a null terminator, suitable for consumption with xargs -0")
+var flagPrint0 = flag.Bool("print0", false, "Delimit file path results with a null terminator for conjunction with xargs -0")
 var flagHelp = flag.Bool("help", false, "Show usage information")
 var flagVersion = flag.Bool("version", false, "Show version information")
 

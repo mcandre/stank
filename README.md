@@ -8,7 +8,7 @@ Believe it or not, shell scripts are notoriously difficult to write well, so it 
 
 # EXAMPLES
 
-The stank system includes the stank Go library as well as several command line utilities for convenience. The `stank` application scans directories and files for POSIX-derived shell scripts and prints their paths, designed as a convenient standalone filter for linting large collections of source code. For example, use `stank` in combination with `xargs` to help per-file shell linters process large projects.
+The stank system includes the stank Go library as well as several command line utilities for convenience. The `stank` application scans directories and files for POSIX-derived shell scripts and prints their paths, designed as a convenient standalone filter for linting large collections of source code.
 
 ```console
 $ cd examples
@@ -282,7 +282,7 @@ Perhaps append a `.lisp` extension to such files. Or separate the modulino into 
 
 # Shell script linters
 
-These bad bois help to shore up ur shell scripts. Though they're designed to work on individual files, so be sure to stank-ify larger projects and pipe the results to `xargs shellcheck`, yo!
+These bad bois help to shore up ur shell scripts. Though they're designed to work on individual files, so be sure to stank-ify larger projects and pipe the results to `xargs [-0] [-n ... shellcheck`.
 
 * [bashate](https://pypi.python.org/pypi/bashate)
 * [shlint](https://rubygems.org/gems/shlint)
