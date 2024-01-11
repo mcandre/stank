@@ -293,6 +293,8 @@ These bad bois help to shore up ur shell scripts. Though they're designed to wor
 
 ## Honorable mentions
 
+[kirill](https://github.com/mcandre/kirill) identifies JSON documents.
+
 [sail](https://github.com/mcandre/sail) identifies C/C++ source code files.
 
 [ack](https://beyondgrep.com) offers `--shell [-f]` flags that act similarly to `stank`, with the caveat that ack includes nonPOSIX shells like csh, tcsh, and fish in these results; but as of this writing fails to include POSIX shells like ash, dash, posh, pdksh, ksh93, and mksh. ack also depends on Perl, making it more heavyweight for Docker microservices and other constrained platforms.
