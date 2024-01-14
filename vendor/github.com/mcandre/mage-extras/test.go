@@ -7,16 +7,10 @@ import (
 
 // UnitTest executes the Go unit test suite.
 func UnitTest(args ...string) error {
-	cmdName := "go"
-
-	cmdParameters := []string{cmdName}
-	cmdParameters = append(cmdParameters, "test")
-	cmdParameters = append(cmdParameters, args...)
-
-	cmd := exec.Command(cmdName)
-	cmd.Args = cmdParameters
+	cmd := exec.Command("go")
+	cmd.Args = append(cmd.Args, "test")
+	cmd.Args = append(cmd.Args, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-
 	return cmd.Run()
 }

@@ -7,15 +7,10 @@ import (
 
 // Compile runs go build recursively.
 func Compile(args ...string) error {
-	cmdName := "go"
-
-	cmdParameters := []string{cmdName}
-	cmdParameters = append(cmdParameters, "build")
-	cmdParameters = append(cmdParameters, args...)
-	cmdParameters = append(cmdParameters, "./...")
-
-	cmd := exec.Command(cmdName)
-	cmd.Args = cmdParameters
+	cmd := exec.Command("go", "build")
+	cmd.Args = append(cmd.Args, "build")
+	cmd.Args = append(cmd.Args, args...)
+	cmd.Args = append(cmd.Args, AllPackagesPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()

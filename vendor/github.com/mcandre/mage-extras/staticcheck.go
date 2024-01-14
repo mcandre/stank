@@ -8,7 +8,7 @@ import (
 // Staticcheck runs staticcheck.
 func Staticcheck(args ...string) error {
 	cmd := exec.Command("staticcheck")
-	cmd.Args = args
+	cmd.Args = append(cmd.Args, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()

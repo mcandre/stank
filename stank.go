@@ -1,7 +1,7 @@
 package stank
 
 import (
-	"mvdan.cc/sh/syntax"
+	"mvdan.cc/sh/v3/syntax"
 
 	"bufio"
 	"log"

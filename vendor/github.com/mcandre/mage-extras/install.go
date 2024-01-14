@@ -10,15 +10,10 @@ import (
 
 // Install builds and installs Go applications.
 func Install(args ...string) error {
-	cmdName := "go"
-
-	cmdParameters := []string{cmdName}
-	cmdParameters = append(cmdParameters, "install")
-	cmdParameters = append(cmdParameters, args...)
-	cmdParameters = append(cmdParameters, AllPackagesPath)
-
-	cmd := exec.Command(cmdName)
-	cmd.Args = cmdParameters
+	cmd := exec.Command("go")
+	cmd.Args = append(cmd.Args, "install")
+	cmd.Args = append(cmd.Args, args...)
+	cmd.Args = append(cmd.Args, AllPackagesPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()

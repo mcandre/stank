@@ -40,7 +40,7 @@ func paramNameOp(r rune) bool {
 // tokenize these inside arithmetic expansions
 func arithmOps(r rune) bool {
 	switch r {
-	case '+', '-', '!', '*', '/', '%', '(', ')', '^', '<', '>', ':', '=',
+	case '+', '-', '!', '~', '*', '/', '%', '(', ')', '^', '<', '>', ':', '=',
 		',', '?', '|', '&', '[', ']', '#':
 		return true
 	}
@@ -55,24 +55,43 @@ func bquoteEscaped(b byte) bool {
 	return false
 }
 
+const escNewl rune = utf8.RuneSelf + 1
+
 func (p *Parser) rune() rune {
-	if p.r == '\n' {
+	if p.r == '\n' || p.r == escNewl {
 		// p.r instead of b so that newline
 		// character positions don't have col 0.
-		p.npos.line++
-		p.npos.col = 0
+		if p.line++; p.line > lineMax {
+			p.lineOverflow = true
+		}
+		p.col = 0
+		p.colOverflow = false
 	}
-	p.npos.col += p.w
+	if p.col += p.w; p.col > colMax {
+		p.colOverflow = true
+	}
 	bquotes := 0
 retry:
 	if p.bsp < len(p.bs) {
 		if b := p.bs[p.bsp]; b < utf8.RuneSelf {
 			p.bsp++
-			if b == '\\' && p.openBquotes > 0 {
-				// don't do it for newlines, as we want
-				// the newlines to be eaten in p.next
-				if bquotes < p.openBquotes && p.bsp < len(p.bs) &&
-					bquoteEscaped(p.bs[p.bsp]) {
+			if b == '\x00' {
+				// Ignore null bytes while parsing, like bash.
+				goto retry
+			}
+			if b == '\\' {
+				if p.r == '\\' {
+				} else if p.peekByte('\n') {
+					p.bsp++
+					p.w, p.r = 1, escNewl
+					return escNewl
+				} else if p.peekBytes("\r\n") {
+					p.bsp += 2
+					p.w, p.r = 2, escNewl
+					return escNewl
+				}
+				if p.openBquotes > 0 && bquotes < p.openBquotes &&
+					p.bsp < len(p.bs) && bquoteEscaped(p.bs[p.bsp]) {
 					bquotes++
 					goto retry
 				}
@@ -97,9 +116,9 @@ retry:
 		}
 		p.bsp += w
 		if p.r == utf8.RuneError && w == 1 {
-			p.posErr(p.npos, "invalid UTF-8 encoding")
+			p.posErr(p.nextPos(), "invalid UTF-8 encoding")
 		}
-		p.w = uint16(w)
+		p.w = w
 	} else {
 		if p.r == utf8.RuneSelf {
 		} else if p.fill(); p.bs == nil {
@@ -147,13 +166,20 @@ readAgain:
 
 func (p *Parser) nextKeepSpaces() {
 	r := p.r
-	p.pos = p.getPos()
+	if p.quote != hdocBody && p.quote != hdocBodyTabs {
+		// Heredocs handle escaped newlines in a special way, but others
+		// do not.
+		for r == escNewl {
+			r = p.rune()
+		}
+	}
+	p.pos = p.nextPos()
 	switch p.quote {
 	case paramExpRepl:
 		switch r {
 		case '}', '/':
 			p.tok = p.paramToken(r)
-		case '`', '"', '$':
+		case '`', '"', '$', '\'':
 			p.tok = p.regToken(r)
 		default:
 			p.advanceLitOther(r)
@@ -166,11 +192,9 @@ func (p *Parser) nextKeepSpaces() {
 			p.advanceLitDquote(r)
 		}
 	case hdocBody, hdocBodyTabs:
-		switch {
-		case r == '`' || r == '$':
+		switch r {
+		case '`', '$':
 			p.tok = p.dqToken(r)
-		case p.hdocStop == nil:
-			p.tok = _Newl
 		default:
 			p.advanceLitHdoc(r)
 		}
@@ -200,12 +224,17 @@ func (p *Parser) next() {
 		return
 	}
 	r := p.r
+	for r == escNewl {
+		r = p.rune()
+	}
 skipSpace:
 	for {
 		switch r {
 		case utf8.RuneSelf:
 			p.tok = _EOF
 			return
+		case escNewl:
+			r = p.rune()
 		case ' ', '\t', '\r':
 			p.spaced = true
 			r = p.rune()
@@ -221,17 +250,11 @@ skipSpace:
 				p.doHeredocs()
 			}
 			return
-		case '\\':
-			if !p.peekByte('\n') {
-				break skipSpace
-			}
-			p.rune()
-			r = p.rune()
 		default:
 			break skipSpace
 		}
 	}
-	if p.stopAt != nil && (p.spaced || p.tok == illegalTok || stopToken(p.tok)) {
+	if p.stopAt != nil && (p.spaced || p.tok == illegalTok || p.stopToken()) {
 		w := utf8.RuneLen(r)
 		if bytes.HasPrefix(p.bs[p.bsp-w:], p.stopAt) {
 			p.r = utf8.RuneSelf
@@ -240,17 +263,40 @@ skipSpace:
 			return
 		}
 	}
-changedState:
-	p.pos = p.getPos()
+	p.pos = p.nextPos()
 	switch {
 	case p.quote&allRegTokens != 0:
 		switch r {
 		case ';', '"', '\'', '(', ')', '$', '|', '&', '>', '<', '`':
 			p.tok = p.regToken(r)
 		case '#':
+			// If we're parsing $foo#bar, ${foo}#bar, 'foo'#bar, or "foo"#bar,
+			// #bar is a continuation of the same word, not a comment.
+			// TODO: support $(foo)#bar and `foo`#bar as well, which is slightly tricky,
+			// as we can't easily tell them apart from (foo)#bar and `#bar`,
+			// where #bar should remain a comment.
+			if !p.spaced {
+				switch p.tok {
+				case _LitWord, rightBrace, sglQuote, dblQuote:
+					p.advanceLitNone(r)
+					return
+				}
+			}
 			r = p.rune()
 			p.newLit(r)
-			for r != utf8.RuneSelf && r != '\n' {
+		runeLoop:
+			for {
+				switch r {
+				case '\n', utf8.RuneSelf:
+					break runeLoop
+				case escNewl:
+					p.litBs = append(p.litBs, '\\', '\n')
+					break runeLoop
+				case '`':
+					if p.backquoteEnd() {
+						break runeLoop
+					}
+				}
 				r = p.rune()
 			}
 			if p.keepComments {
@@ -269,7 +315,7 @@ changedState:
 				p.advanceLitNone(r)
 			}
 		case '?', '*', '+', '@', '!':
-			if p.peekByte('(') {
+			if p.extendedGlob() {
 				switch r {
 				case '?':
 					p.tok = globQuest
@@ -294,10 +340,10 @@ changedState:
 		p.tok = p.arithmToken(r)
 	case p.quote&allParamExp != 0 && paramOps(r):
 		p.tok = p.paramToken(r)
-	case p.quote == testRegexp:
+	case p.quote == testExprRegexp:
 		if !p.rxFirstPart && p.spaced {
 			p.quote = noState
-			goto changedState
+			goto skipSpace
 		}
 		p.rxFirstPart = false
 		switch r {
@@ -310,6 +356,7 @@ changedState:
 			} else {
 				p.tok = rightParen
 				p.quote = noState
+				p.rune() // we are tokenizing manually
 			}
 		default: // including '(', '|'
 			p.advanceLitRe(r)
@@ -322,6 +369,34 @@ changedState:
 	if p.err != nil && p.tok != _EOF {
 		p.tok = _EOF
 	}
+}
+
+// extendedGlob determines whether we're parsing a Bash extended globbing expression.
+// For example, whether `*` or `@` are followed by `(` to form `@(foo)`.
+func (p *Parser) extendedGlob() bool {
+	if p.val == "function" {
+		return false
+	}
+	if p.peekByte('(') {
+		// NOTE: empty pattern list is a valid globbing syntax like `@()`,
+		// but we'll operate on the "likelihood" that it is a function;
+		// only tokenize if its a non-empty pattern list.
+		// We do this after peeking for just one byte, so that the input `echo *`
+		// followed by a newline does not hang an interactive shell parser until
+		// another byte is input.
+		return !p.peekBytes("()")
+	}
+	return false
+}
+
+func (p *Parser) peekBytes(s string) bool {
+	peekEnd := p.bsp + len(s)
+	// TODO: This should loop for slow readers, e.g. those providing one byte at
+	// a time. Use a loop and test it with testing/iotest.OneByteReader.
+	if peekEnd > len(p.bs) {
+		p.fill()
+	}
+	return peekEnd <= len(p.bs) && bytes.HasPrefix(p.bs[p.bsp:peekEnd], []byte(s))
 }
 
 func (p *Parser) peekByte(b byte) bool {
@@ -354,9 +429,6 @@ func (p *Parser) regToken(r rune) token {
 			p.rune()
 			return andAnd
 		case '>':
-			if p.lang == LangPOSIX {
-				break
-			}
 			if p.rune() == '>' {
 				p.rune()
 				return appAll
@@ -395,7 +467,7 @@ func (p *Parser) regToken(r rune) token {
 			p.rune()
 			return dollBrace
 		case '[':
-			if p.lang != LangBash || p.quote == paramExpName {
+			if !p.lang.isBash() || p.quote == paramExpName {
 				// latter to not tokenise ${$[@]} as $[
 				break
 			}
@@ -410,7 +482,7 @@ func (p *Parser) regToken(r rune) token {
 		}
 		return dollar
 	case '(':
-		if p.rune() == '(' && p.lang != LangPOSIX {
+		if p.rune() == '(' && p.lang != LangPOSIX && p.quote != testExpr {
 			p.rune()
 			return dblLeftParen
 		}
@@ -421,7 +493,7 @@ func (p *Parser) regToken(r rune) token {
 	case ';':
 		switch p.rune() {
 		case ';':
-			if p.rune() == '&' && p.lang == LangBash {
+			if p.rune() == '&' && p.lang.isBash() {
 				p.rune()
 				return dblSemiAnd
 			}
@@ -446,7 +518,7 @@ func (p *Parser) regToken(r rune) token {
 			if r = p.rune(); r == '-' {
 				p.rune()
 				return dashHdoc
-			} else if r == '<' && p.lang != LangPOSIX {
+			} else if r == '<' {
 				p.rune()
 				return wordHdoc
 			}
@@ -458,7 +530,7 @@ func (p *Parser) regToken(r rune) token {
 			p.rune()
 			return dplIn
 		case '(':
-			if p.lang != LangBash {
+			if !p.lang.isBash() {
 				break
 			}
 			p.rune()
@@ -477,7 +549,7 @@ func (p *Parser) regToken(r rune) token {
 			p.rune()
 			return clbOut
 		case '(':
-			if p.lang != LangBash {
+			if !p.lang.isBash() {
 				break
 			}
 			p.rune()
@@ -502,7 +574,7 @@ func (p *Parser) dqToken(r rune) token {
 			p.rune()
 			return dollBrace
 		case '[':
-			if p.lang != LangBash {
+			if !p.lang.isBash() {
 				break
 			}
 			p.rune()
@@ -613,6 +685,9 @@ func (p *Parser) arithmToken(r rune) token {
 			return equal
 		}
 		return assgn
+	case '~':
+		p.rune()
+		return tilde
 	case '(':
 		p.rune()
 		return leftParen
@@ -739,7 +814,7 @@ func (p *Parser) newLit(r rune) {
 	case r < utf8.RuneSelf:
 		p.litBs = p.litBuf[:1]
 		p.litBs[0] = byte(r)
-	case r > utf8.RuneSelf:
+	case r > escNewl:
 		w := utf8.RuneLen(r)
 		p.litBs = append(p.litBuf[:0], p.bs[p.bsp-w:p.bsp]...)
 	default:
@@ -749,13 +824,11 @@ func (p *Parser) newLit(r rune) {
 	}
 }
 
-func (p *Parser) discardLit(n int) { p.litBs = p.litBs[:len(p.litBs)-n] }
-
 func (p *Parser) endLit() (s string) {
-	if p.r == utf8.RuneSelf {
+	if p.r == utf8.RuneSelf || p.r == escNewl {
 		s = string(p.litBs)
 	} else {
-		s = string(p.litBs[:len(p.litBs)-int(p.w)])
+		s = string(p.litBs[:len(p.litBs)-p.w])
 	}
 	p.litBs = nil
 	return
@@ -781,17 +854,11 @@ func (p *Parser) advanceNameCont(r rune) {
 loop:
 	for p.newLit(r); r != utf8.RuneSelf; r = p.rune() {
 		switch {
-		case r == '\\':
-			if p.peekByte('\n') {
-				p.rune()
-				p.discardLit(2)
-			} else {
-				break loop
-			}
 		case 'a' <= r && r <= 'z':
 		case 'A' <= r && r <= 'Z':
 		case r == '_':
 		case '0' <= r && r <= '9':
+		case r == escNewl:
 		default:
 			break loop
 		}
@@ -805,10 +872,8 @@ loop:
 	for p.newLit(r); r != utf8.RuneSelf; r = p.rune() {
 		switch r {
 		case '\\': // escaped byte follows
-			if r = p.rune(); r == '\n' {
-				p.discardLit(2)
-			}
-		case '"', '`', '$':
+			p.rune()
+		case '\'', '"', '`', '$':
 			tok = _Lit
 			break loop
 		case '}':
@@ -819,7 +884,7 @@ loop:
 			if p.quote != paramExpExp {
 				break loop
 			}
-		case ':', '=', '%', '^', ',', '?', '!', '*':
+		case ':', '=', '%', '^', ',', '?', '!', '~', '*':
 			if p.quote&allArithmExpr != 0 || p.quote == paramExpName {
 				break loop
 			}
@@ -832,7 +897,7 @@ loop:
 			if p.quote&allParamReg != 0 {
 				break loop
 			}
-		case '\'', '+', '-', ' ', '\t', ';', '&', '>', '<', '|', '(', ')', '\n', '\r':
+		case '+', '-', ' ', '\t', ';', '&', '>', '<', '|', '(', ')', '\n', '\r':
 			if p.quote&allKeepSpaces == 0 {
 				break loop
 			}
@@ -842,7 +907,7 @@ loop:
 }
 
 func (p *Parser) advanceLitNone(r rune) {
-	p.eqlOffs = 0
+	p.eqlOffs = -1
 	tok := _LitWord
 loop:
 	for p.newLit(r); r != utf8.RuneSelf; r = p.rune() {
@@ -850,13 +915,11 @@ loop:
 		case ' ', '\t', '\n', '\r', '&', '|', ';', '(', ')':
 			break loop
 		case '\\': // escaped byte follows
-			if r = p.rune(); r == '\n' {
-				p.discardLit(2)
-			}
+			p.rune()
 		case '>', '<':
-			if p.peekByte('(') || !p.isLitRedir() {
+			if p.peekByte('(') {
 				tok = _Lit
-			} else {
+			} else if p.isLitRedir() {
 				tok = _LitRedir
 			}
 			break loop
@@ -869,12 +932,12 @@ loop:
 			tok = _Lit
 			break loop
 		case '?', '*', '+', '@', '!':
-			if p.peekByte('(') {
+			if p.extendedGlob() {
 				tok = _Lit
 				break loop
 			}
 		case '=':
-			if p.eqlOffs == 0 {
+			if p.eqlOffs < 0 {
 				p.eqlOffs = len(p.litBs) - 1
 			}
 		case '[':
@@ -896,7 +959,7 @@ loop:
 			break loop
 		case '\\': // escaped byte follows
 			p.rune()
-		case '`', '$':
+		case escNewl, '`', '$':
 			tok = _Lit
 			break loop
 		}
@@ -905,6 +968,16 @@ loop:
 }
 
 func (p *Parser) advanceLitHdoc(r rune) {
+	// Unlike the rest of nextKeepSpaces quote states, we handle escaped
+	// newlines here. If lastTok==_Lit, then we know we're following an
+	// escaped newline, so the first line can't end the heredoc.
+	lastTok := p.tok
+	for r == escNewl {
+		r = p.rune()
+		lastTok = _Lit
+	}
+	p.pos = p.nextPos()
+
 	p.tok = _Lit
 	p.newLit(r)
 	if p.quote == hdocBodyTabs {
@@ -913,32 +986,48 @@ func (p *Parser) advanceLitHdoc(r rune) {
 		}
 	}
 	lStart := len(p.litBs) - 1
-	if lStart < 0 {
-		return
-	}
+	stop := p.hdocStops[len(p.hdocStops)-1]
 	for ; ; r = p.rune() {
 		switch r {
-		case '`', '$':
+		case escNewl, '$':
 			p.val = p.endLit()
 			return
 		case '\\': // escaped byte follows
 			p.rune()
+		case '`':
+			if !p.backquoteEnd() {
+				p.val = p.endLit()
+				return
+			}
+			fallthrough
 		case '\n', utf8.RuneSelf:
 			if p.parsingDoc {
 				if r == utf8.RuneSelf {
+					p.tok = _LitWord
 					p.val = p.endLit()
 					return
 				}
-			} else if bytes.HasPrefix(p.litBs[lStart:], p.hdocStop) {
-				p.val = p.endLit()[:lStart]
-				if p.val == "" {
-					p.tok = _Newl
+			} else if lStart == 0 && lastTok == _Lit {
+				// This line starts right after an escaped
+				// newline, so it should never end the heredoc.
+			} else if lStart >= 0 {
+				// Compare the current line with the stop word.
+				line := p.litBs[lStart:]
+				if r != utf8.RuneSelf && len(line) > 0 {
+					line = line[:len(line)-1] // minus trailing character
 				}
-				p.hdocStop = nil
-				return
+				if bytes.Equal(line, stop) {
+					p.tok = _LitWord
+					p.val = p.endLit()[:lStart]
+					if p.val == "" {
+						p.tok = _Newl
+					}
+					p.hdocStops[len(p.hdocStops)-1] = nil
+					return
+				}
 			}
-			if r == utf8.RuneSelf {
-				return
+			if r != '\n' {
+				return // hit an unexpected EOF or closing backquote
 			}
 			if p.quote == hdocBodyTabs {
 				for p.peekByte('\t') {
@@ -953,7 +1042,8 @@ func (p *Parser) advanceLitHdoc(r rune) {
 func (p *Parser) quotedHdocWord() *Word {
 	r := p.r
 	p.newLit(r)
-	pos := p.getPos()
+	pos := p.nextPos()
+	stop := p.hdocStops[len(p.hdocStops)-1]
 	for ; ; r = p.rune() {
 		if r == utf8.RuneSelf {
 			return nil
@@ -964,19 +1054,36 @@ func (p *Parser) quotedHdocWord() *Word {
 			}
 		}
 		lStart := len(p.litBs) - 1
-		if lStart < 0 {
-			return nil
-		}
-		for r != utf8.RuneSelf && r != '\n' {
+	runeLoop:
+		for {
+			switch r {
+			case utf8.RuneSelf, '\n':
+				break runeLoop
+			case '`':
+				if p.backquoteEnd() {
+					break runeLoop
+				}
+			case escNewl:
+				p.litBs = append(p.litBs, '\\', '\n')
+				break runeLoop
+			}
 			r = p.rune()
 		}
-		if bytes.HasPrefix(p.litBs[lStart:], p.hdocStop) {
-			p.hdocStop = nil
+		if lStart < 0 {
+			continue
+		}
+		// Compare the current line with the stop word.
+		line := p.litBs[lStart:]
+		if r != utf8.RuneSelf && len(line) > 0 {
+			line = line[:len(line)-1] // minus \n
+		}
+		if bytes.Equal(line, stop) {
+			p.hdocStops[len(p.hdocStops)-1] = nil
 			val := p.endLit()[:lStart]
 			if val == "" {
 				return nil
 			}
-			return p.word(p.wps(p.lit(pos, val)))
+			return p.wordOne(p.lit(pos, val))
 		}
 	}
 }
@@ -994,7 +1101,7 @@ func (p *Parser) advanceLitRe(r rune) {
 				p.quote = noState
 				return
 			}
-		case ' ', '\t', '\r', '\n':
+		case ' ', '\t', '\r', '\n', ';', '&', '>', '<':
 			if p.rxOpenParens <= 0 {
 				p.tok, p.val = _LitWord, p.endLit()
 				p.quote = noState
@@ -1003,7 +1110,7 @@ func (p *Parser) advanceLitRe(r rune) {
 		case '"', '\'', '$', '`':
 			p.tok, p.val = _Lit, p.endLit()
 			return
-		case utf8.RuneSelf, ';', '&', '>', '<':
+		case utf8.RuneSelf:
 			p.tok, p.val = _LitWord, p.endLit()
 			p.quote = noState
 			return
@@ -1070,7 +1177,9 @@ func testUnaryOp(val string) UnTestOperator {
 
 func testBinaryOp(val string) BinTestOperator {
 	switch val {
-	case "==", "=":
+	case "=":
+		return TsMatchShort
+	case "==":
 		return TsMatch
 	case "!=":
 		return TsNoMatch

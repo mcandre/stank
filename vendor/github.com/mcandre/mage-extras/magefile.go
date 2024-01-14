@@ -54,7 +54,15 @@ func Nakedret() error { return mageextras.Nakedret("-l", "0") }
 func Staticcheck() error { return mageextras.Staticcheck() }
 
 // Unmake runs unmake.
-func Unmake() error { return mageextras.Unmake(".") }
+func Unmake() error {
+	err := mageextras.Unmake(".")
+
+	if err != nil {
+		return err
+	}
+
+	return mageextras.Unmake("-n", ".")
+}
 
 // Lint runs the lint suite.
 func Lint() error {

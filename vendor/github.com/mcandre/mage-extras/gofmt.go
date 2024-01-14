@@ -11,15 +11,10 @@ import (
 func GoFmt(args ...string) error {
 	mg.Deps(CollectGoFiles)
 
-	cmdName := "gofmt"
-
 	for pth := range CollectedGoFiles {
-		cmdParameters := []string{cmdName}
-		cmdParameters = append(cmdParameters, args...)
-		cmdParameters = append(cmdParameters, pth)
-
-		cmd := exec.Command(cmdName)
-		cmd.Args = cmdParameters
+		cmd := exec.Command("gofmt")
+		cmd.Args = append(cmd.Args, args...)
+		cmd.Args = append(cmd.Args, pth)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 

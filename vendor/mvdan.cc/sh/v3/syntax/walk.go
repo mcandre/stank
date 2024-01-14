@@ -9,11 +9,11 @@ import (
 	"reflect"
 )
 
-func walkStmts(sl StmtList, f func(Node) bool) {
-	for _, s := range sl.Stmts {
+func walkStmts(stmts []*Stmt, last []Comment, f func(Node) bool) {
+	for _, s := range stmts {
 		Walk(s, f)
 	}
-	for _, c := range sl.Last {
+	for _, c := range last {
 		Walk(&c, f)
 	}
 }
@@ -35,7 +35,7 @@ func Walk(node Node, f func(Node) bool) {
 
 	switch x := node.(type) {
 	case *File:
-		walkStmts(x.StmtList, f)
+		walkStmts(x.Stmts, x.Last, f)
 	case *Comment:
 	case *Stmt:
 		for _, c := range x.Comments {
@@ -78,19 +78,21 @@ func Walk(node Node, f func(Node) bool) {
 		}
 		walkWords(x.Args, f)
 	case *Subshell:
-		walkStmts(x.StmtList, f)
+		walkStmts(x.Stmts, x.Last, f)
 	case *Block:
-		walkStmts(x.StmtList, f)
+		walkStmts(x.Stmts, x.Last, f)
 	case *IfClause:
-		walkStmts(x.Cond, f)
-		walkStmts(x.Then, f)
-		walkStmts(x.Else, f)
+		walkStmts(x.Cond, x.CondLast, f)
+		walkStmts(x.Then, x.ThenLast, f)
+		if x.Else != nil {
+			Walk(x.Else, f)
+		}
 	case *WhileClause:
-		walkStmts(x.Cond, f)
-		walkStmts(x.Do, f)
+		walkStmts(x.Cond, x.CondLast, f)
+		walkStmts(x.Do, x.DoLast, f)
 	case *ForClause:
 		Walk(x.Loop, f)
-		walkStmts(x.Do, f)
+		walkStmts(x.Do, x.DoLast, f)
 	case *WordIter:
 		Walk(x.Name, f)
 		walkWords(x.Items, f)
@@ -121,7 +123,7 @@ func Walk(node Node, f func(Node) bool) {
 			Walk(wp, f)
 		}
 	case *CmdSubst:
-		walkStmts(x.StmtList, f)
+		walkStmts(x.Stmts, x.Last, f)
 	case *ParamExp:
 		Walk(x.Param, f)
 		if x.Index != nil {
@@ -173,12 +175,11 @@ func Walk(node Node, f func(Node) bool) {
 			Walk(&c, f)
 		}
 		walkWords(x.Patterns, f)
-		walkStmts(x.StmtList, f)
+		walkStmts(x.Stmts, x.Last, f)
 	case *TestClause:
 		Walk(x.X, f)
 	case *DeclClause:
-		walkWords(x.Opts, f)
-		for _, a := range x.Assigns {
+		for _, a := range x.Args {
 			Walk(a, f)
 		}
 	case *ArrayExpr:
@@ -205,7 +206,7 @@ func Walk(node Node, f func(Node) bool) {
 	case *ExtGlob:
 		Walk(x.Pattern, f)
 	case *ProcSubst:
-		walkStmts(x.StmtList, f)
+		walkStmts(x.Stmts, x.Last, f)
 	case *TimeClause:
 		if x.Stmt != nil {
 			Walk(x.Stmt, f)
@@ -219,6 +220,9 @@ func Walk(node Node, f func(Node) bool) {
 		for _, expr := range x.Exprs {
 			Walk(expr, f)
 		}
+	case *TestDecl:
+		Walk(x.Description, f)
+		Walk(x.Body, f)
 	default:
 		panic(fmt.Sprintf("syntax.Walk: unexpected node type %T", x))
 	}
@@ -240,7 +244,7 @@ type debugPrinter struct {
 	err   error
 }
 
-func (p *debugPrinter) printf(format string, args ...interface{}) {
+func (p *debugPrinter) printf(format string, args ...any) {
 	_, err := fmt.Fprintf(p.out, format, args...)
 	if err != nil && p.err == nil {
 		p.err = err

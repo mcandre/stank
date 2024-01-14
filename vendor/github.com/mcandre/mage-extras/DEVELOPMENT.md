@@ -1,15 +1,16 @@
 # BUILDTIME REQUIREMENTS
 
 * [Go](https://golang.org/) 1.21.5+
-* [Node.js](https://nodejs.org/en) 16.14.2+
-* [Rust](https://www.rust-lang.org/) 1.68.2+
-* a POSIX compliant [make](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/make.html) implementation (e.g. GNU make, BSD make, etc.)
+* POSIX compatible [make](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/make.html)
+* [Node.js](https://nodejs.org/en) 20.10.0+
+* [Rust](https://www.rust-lang.org/) 1.75.0+
 * Provision additional dev tools with `make`
 
 ## Recommended
 
 * [ASDF](https://asdf-vm.com/) 0.10 (run `asdf reshim` after provisioning)
 * [direnv](https://direnv.net/) 2
+* macOS [open](https://ss64.com/mac/open.html) or equivalent alias
 
 # AUDIT
 
@@ -27,7 +28,7 @@ $ mage test
 
 ```console
 $ mage coverageHTML
-$ karp cover.html
+$ open cover.html
 ```
 
 # LINT

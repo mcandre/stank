@@ -22,15 +22,10 @@ func GoVetShadow(args ...string) error {
 
 // GoVet runs go vet against all Go packages in a project.
 func GoVet(args ...string) error {
-	cmdName := "go"
-
-	cmdParameters := []string{cmdName}
-	cmdParameters = append(cmdParameters, "vet")
-	cmdParameters = append(cmdParameters, args...)
-	cmdParameters = append(cmdParameters, AllPackagesPath)
-
-	cmd := exec.Command(cmdName)
-	cmd.Args = cmdParameters
+	cmd := exec.Command("go")
+	cmd.Args = append(cmd.Args, "vet")
+	cmd.Args = append(cmd.Args, args...)
+	cmd.Args = append(cmd.Args, AllPackagesPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
