@@ -50,7 +50,7 @@ $ go install github.com/mcandre/stank/...@latest
 
 # DOCUMENTATION
 
-http://godoc.org/github.com/mcandre/stank
+https://pkg.go.dev/github.com/mcandre/stank
 
 # MORE EXAMPLES
 

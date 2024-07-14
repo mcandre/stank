@@ -1,6 +1,4 @@
 //go:build mage
-// +build mage
-
 package main
 
 import (
@@ -20,8 +18,17 @@ var CoverHTML = "cover.html"
 // CoverProfile denotes the raw coverage data filename.
 var CoverProfile = "cover.out"
 
+// Govulncheck runs govulncheck.
+func Govulncheck() error { return mageextras.Govulncheck("./...") }
+
+// SnykTest runs Snyk SCA.
+func SnykTest() error { return mageextras.SnykTest() }
+
 // Audit runs a security audit.
-func Audit() error { return mageextras.SnykTest() }
+func Audit() error {
+	mg.Deps(mageextras.Govulncheck("./..."))
+	return SnykTest()
+}
 
 // CoverageHTML generates HTML formatted coverage data.
 func CoverageHTML() error {
