@@ -9,10 +9,11 @@ all:
 	go install github.com/kisielk/errcheck@v1.7.0
 	go install github.com/magefile/mage@v1.14.0
 	go install github.com/mcandre/factorio/cmd/factorio@v0.0.6
+	go install golang.org/x/tools/cmd/deadcode@latest
 	go install golang.org/x/tools/cmd/goimports@latest
 	go install golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow@latest
 	go install golang.org/x/vuln/cmd/govulncheck@latest
-	go install honnef.co/go/tools/cmd/staticcheck@2023.1.3
+	go install honnef.co/go/tools/cmd/staticcheck@2024.1
 	go mod tidy
 
 	npm install -g snyk

@@ -1,7 +1,7 @@
 # BUILDTIME REQUIREMENTS
 
 * GNU or BSD [findutils](https://en.wikipedia.org/wiki/Find_(Unix))
-* [Go](https://go.dev/) 1.22.5+
+* [Go](https://go.dev/) 1.23.0+
 * [jq](https://jqlang.github.io/jq/)
 * POSIX compatible [make](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/make.html)
 * [Node.js](https://nodejs.org/en) 20.10.0+

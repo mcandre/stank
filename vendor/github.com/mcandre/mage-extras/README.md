@@ -45,7 +45,7 @@ Mage is highly agnostic about workflows. mage-extras is a little more opinionate
 
 # DOCUMENTATION
 
-https://godoc.org/github.com/mcandre/mage-extras
+https://pkg.go.dev/github.com/mcandre/mage-extras
 
 # LICENSE
 
@@ -53,6 +53,7 @@ BSD-2-Clause
 
 # RUNTIME REQUIREMENTS
 
+* [Go](https://go.dev/) 1.23.0+
 * [Mage](https://magefile.org/) (e.g., `go install github.com/magefile/mage`)
 
 ## Recommended

@@ -19,15 +19,15 @@ var CoverHTML = "cover.html"
 var CoverProfile = "cover.out"
 
 // Govulncheck runs govulncheck.
-func Govulncheck() error { return mageextras.Govulncheck("./...") }
+func Govulncheck() error { return mageextras.Govulncheck("-scan", "package", "./...") }
 
-// SnykTest runs Snyk SCA.
-func SnykTest() error { return mageextras.SnykTest() }
+// Snyk runs Snyk SCA.
+func Snyk() error { return mageextras.SnykTest() }
 
 // Audit runs a security audit.
 func Audit() error {
-	mg.Deps(mageextras.Govulncheck("./..."))
-	return SnykTest()
+	mg.Deps(Govulncheck)
+	return Snyk()
 }
 
 // CoverageHTML generates HTML formatted coverage data.
@@ -42,20 +42,23 @@ func CoverageProfile() error { return mageextras.CoverageProfile(CoverProfile) }
 // Test executes the unit test suite.
 func Test() error { return mageextras.UnitTest() }
 
-// GoVet runs go vet with shadow checks enabled.
-func GoVet() error { return mageextras.GoVetShadow() }
-
 // Gofmt runs gofmt.
 func GoFmt() error { return mageextras.GoFmt("-s", "-w") }
 
 // GoImports runs goimports.
 func GoImports() error { return mageextras.GoImports("-w") }
 
+// GoVet runs default go vet analyzers.
+func GoVet() error { return mageextras.GoVet() }
+
 // Errcheck runs errcheck.
 func Errcheck() error { return mageextras.Errcheck("-blank") }
 
 // Nakedret runs nakedret.
 func Nakedret() error { return mageextras.Nakedret("-l", "0") }
+
+// Shadow runs go vet with shadow checks enabled.
+func Shadow() error { return mageextras.GoVetShadow() }
 
 // Staticcheck runs staticcheck.
 func Staticcheck() error { return mageextras.Staticcheck() }
@@ -73,11 +76,12 @@ func Unmake() error {
 
 // Lint runs the lint suite.
 func Lint() error {
-	mg.Deps(GoVet)
 	mg.Deps(GoFmt)
 	mg.Deps(GoImports)
+	mg.Deps(GoVet)
 	mg.Deps(Errcheck)
 	mg.Deps(Nakedret)
+	mg.Deps(Shadow)
 	mg.Deps(Staticcheck)
 	mg.Deps(Unmake)
 	return nil

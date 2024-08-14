@@ -106,8 +106,8 @@ func CoverageHTML() error {
 // CoverageProfile generates raw coverage data.
 func CoverageProfile() error { return mageextras.CoverageProfile(CoverProfile) }
 
-// GoVet runs go vet with shadow checks enabled.
-func GoVet() error { return mageextras.GoVetShadow() }
+// Deadcode runs deadcode.
+func Deadcode() error { return mageextras.Deadcode("./...") }
 
 // Gofmt runs gofmt.
 func GoFmt() error { return mageextras.GoFmt("-s", "-w") }
@@ -115,11 +115,17 @@ func GoFmt() error { return mageextras.GoFmt("-s", "-w") }
 // GoImports runs goimports.
 func GoImports() error { return mageextras.GoImports("-w") }
 
+// GoVet runs default go vet analyzers.
+func GoVet() error { return mageextras.GoVet() }
+
 // Errcheck runs errcheck.
 func Errcheck() error { return mageextras.Errcheck("-blank") }
 
 // Nakedret runs nakedret.
 func Nakedret() error { return mageextras.Nakedret("-l", "0") }
+
+// Shadow runs go vet with shadow checks enabled.
+func Shadow() error { return mageextras.GoVetShadow() }
 
 // Staticcheck runs staticcheck.
 func Staticcheck() error { return mageextras.Staticcheck() }
@@ -137,11 +143,13 @@ func Unmake() error {
 
 // Lint runs the lint suite.
 func Lint() error {
-	mg.Deps(GoVet)
+	mg.Deps(Deadcode)
 	mg.Deps(GoFmt)
 	mg.Deps(GoImports)
+	mg.Deps(GoVet)
 	mg.Deps(Errcheck)
 	mg.Deps(Nakedret)
+	mg.Deps(Shadow)
 	mg.Deps(Staticcheck)
 	mg.Deps(Unmake)
 	return nil
