@@ -17,6 +17,10 @@
 
 Non-UNIX environments may produce subtle adverse effects when linting or generating application ports.
 
+## Windows
+
+Apply a user environment variable `GODEBUG=modcacheunzipinplace=1` per [access denied resolution](https://github.com/golang/go/wiki/Modules/e93463d3e853031af84204dc5d3e2a9a710a7607#go-115), for native Windows development environments (Command Prompt / PowerShell, not WLS, not Cygwin, not MSYS2, not MinGW, not msysGit, not Git Bash, not etc).
+
 # AUDIT
 
 ```console
