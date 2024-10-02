@@ -15,5 +15,3 @@ all:
 	go install golang.org/x/vuln/cmd/govulncheck@latest
 	go install honnef.co/go/tools/cmd/staticcheck@2024.1
 	go mod tidy
-
-	npm install -g snyk

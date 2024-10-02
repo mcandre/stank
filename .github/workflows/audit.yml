@@ -7,7 +7,7 @@ on: # yamllint disable-line rule:truthy
   - cron: "0 0 * * 1"
 jobs:
   Audit:
-    runs-on: "ubuntu-22.04"
+    runs-on: "ubuntu-24.04"
     env:
       GOPATH: "/home/runner/go"
     steps:
@@ -16,8 +16,8 @@ jobs:
     - uses: "actions/checkout@v4"
     - run: "sudo apt-get update"
     - run: "sudo apt-get install -y cargo curl make"
-    - run: "curl -LO https://go.dev/dl/go1.23.0.linux-amd64.tar.gz"
-    - run: "sudo tar -C /usr/local -xzf go1.23.0.linux-amd64.tar.gz"
+    - run: "curl -LO https://go.dev/dl/go1.23.2.linux-amd64.tar.gz"
+    - run: "sudo tar -C /usr/local -xzf go1.23.2.linux-amd64.tar.gz"
     - run: "curl -LO https://downloads.snyk.io/cli/stable/snyk-linux"
     - run: "sudo cp snyk-linux /bin/snyk"
     - run: "sudo chmod a+x /bin/snyk"
