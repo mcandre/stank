@@ -48,6 +48,9 @@ func GoFmt() error { return mageextras.GoFmt("-s", "-w") }
 // GoImports runs goimports.
 func GoImports() error { return mageextras.GoImports("-w") }
 
+// GoLint runs golint.
+func GoLint() error { return mageextras.GoLint() }
+
 // GoVet runs default go vet analyzers.
 func GoVet() error { return mageextras.GoVet() }
 
@@ -78,6 +81,7 @@ func Unmake() error {
 func Lint() error {
 	mg.Deps(GoFmt)
 	mg.Deps(GoImports)
+	mg.Deps(GoLint)
 	mg.Deps(GoVet)
 	mg.Deps(Errcheck)
 	mg.Deps(Nakedret)
