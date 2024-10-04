@@ -12,6 +12,31 @@ import (
 	"strings"
 )
 
+// Ignores is a poor man's gitignore.
+//
+// TODO: https://github.com/mcandre/stank/issues/1
+var Ignores = []string{
+	".git",
+	".venv",
+	"node_modules",
+	"vendor",
+}
+
+// Ignore is a poor man's gitignore.
+//
+// TODO: https://github.com/mcandre/stank/issues/1
+func Ignore(pth string) bool {
+	for _, part := range strings.Split(pth, string(os.PathSeparator)) {
+		for _, ignore := range Ignores {
+			if part == ignore {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 // LOWEREXTENSIONS2POSIXyNESS is a fairly exhaustive map of lowercase file extensions to whether or not they represent POSIX shell scripts.
 // Newly minted extensions can be added by stank contributors.
 var LOWEREXTENSIONS2POSIXyNESS = map[string]bool{

@@ -66,6 +66,10 @@ func (o Stanker) Walk(pth string, info os.FileInfo, err error) error {
 		log.Print(err)
 	}
 
+	if stank.Ignore(pth) {
+		return nil
+	}
+
 	if smell.MachineGenerated {
 		return nil
 	}

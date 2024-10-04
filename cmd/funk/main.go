@@ -477,33 +477,9 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 		resTrapHazards
 }
 
-// Ignores is a poor man's gitignore.
-//
-// TODO: https://github.com/mcandre/stank/issues/1
-var Ignores = []string{
-	".git",
-	"vendor",
-	"node_modules",
-}
-
-// Ignore is a poor man's gitignore.
-//
-// TODO: https://github.com/mcandre/stank/issues/1
-func Ignore(pth string) bool {
-	for _, part := range strings.Split(pth, string(os.PathSeparator)) {
-		for _, ignore := range Ignores {
-			if part == ignore {
-				return true
-			}
-		}
-	}
-
-	return false
-}
-
 // Walk is a callback for filepath.Walk to lint shell scripts.
 func (o *Funk) Walk(pth string, info os.FileInfo, err error) error {
-	if Ignore(pth) {
+	if stank.Ignore(pth) {
 		return nil
 	}
 
