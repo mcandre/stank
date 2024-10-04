@@ -9,7 +9,7 @@ all:
 	go install github.com/kisielk/errcheck@v1.7.0
 	go install github.com/magefile/mage@v1.14.0
 	go install github.com/mcandre/factorio/cmd/factorio@v0.0.8
-	go install golang.org/x/lint/golint@latest
+	go install github.com/mgechev/revive@v1.4.0
 	go install golang.org/x/tools/cmd/deadcode@latest
 	go install golang.org/x/tools/cmd/goimports@latest
 	go install golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow@latest

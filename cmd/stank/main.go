@@ -1,3 +1,8 @@
+// Package main implements a CLI application to recursively identify POSIX shell scripts
+// in large, complex directories.
+//
+// The user may then feed these file paths into shell script linters.
+// (Many linters fail to implement recursion or basic file extension / shebang language detection.)
 package main
 
 import (
@@ -59,11 +64,11 @@ func NullWriter(pth string) {
 // Walk sniffs a file system node for POSIXyness.
 // If the file smells sufficiently POSIXy, the path is printed.
 // Otherwise, the path is omitted.
-func (o Stanker) Walk(pth string, info os.FileInfo, err error) error {
-	smell, err := stank.Sniff(pth, stank.SniffConfig{})
+func (o Stanker) Walk(pth string, _ os.FileInfo, _ error) error {
+	smell, err2 := stank.Sniff(pth, stank.SniffConfig{})
 
-	if err != nil && err != io.EOF {
-		log.Print(err)
+	if err2 != nil && err2 != io.EOF {
+		log.Print(err2)
 	}
 
 	if stank.Ignore(pth) {

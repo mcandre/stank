@@ -10,7 +10,7 @@ import (
 // with variable shadow checking enabled.
 //
 // Depends on golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow
-func GoVetShadow(args ...string) error {
+func GoVetShadow() error {
 	shadowPath, err := exec.LookPath("shadow")
 
 	if err != nil {

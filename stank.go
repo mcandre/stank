@@ -1,3 +1,5 @@
+// Package stank provides primitives for analyzing programming scripts,
+// especially shell scripts.
 package stank
 
 import (

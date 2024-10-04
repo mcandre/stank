@@ -48,9 +48,6 @@ func GoFmt() error { return mageextras.GoFmt("-s", "-w") }
 // GoImports runs goimports.
 func GoImports() error { return mageextras.GoImports("-w") }
 
-// GoLint runs golint.
-func GoLint() error { return mageextras.GoLint() }
-
 // GoVet runs default go vet analyzers.
 func GoVet() error { return mageextras.GoVet() }
 
@@ -59,6 +56,9 @@ func Errcheck() error { return mageextras.Errcheck("-blank") }
 
 // Nakedret runs nakedret.
 func Nakedret() error { return mageextras.Nakedret("-l", "0") }
+
+// Revive runs revive.
+func Revive() error { return mageextras.Revive() }
 
 // Shadow runs go vet with shadow checks enabled.
 func Shadow() error { return mageextras.GoVetShadow() }
@@ -81,10 +81,10 @@ func Unmake() error {
 func Lint() error {
 	mg.Deps(GoFmt)
 	mg.Deps(GoImports)
-	mg.Deps(GoLint)
 	mg.Deps(GoVet)
 	mg.Deps(Errcheck)
 	mg.Deps(Nakedret)
+	mg.Deps(Revive)
 	mg.Deps(Shadow)
 	mg.Deps(Staticcheck)
 	mg.Deps(Unmake)

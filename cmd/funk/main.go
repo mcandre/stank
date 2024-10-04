@@ -1,3 +1,5 @@
+// Package main implements a shell script linter CLI application,
+// with unique checks on fundamental portability, safety, and security concerns.
 package main
 
 import (
@@ -478,7 +480,7 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 }
 
 // Walk is a callback for filepath.Walk to lint shell scripts.
-func (o *Funk) Walk(pth string, info os.FileInfo, err error) error {
+func (o *Funk) Walk(pth string, _ os.FileInfo, err error) error {
 	if stank.Ignore(pth) {
 		return nil
 	}

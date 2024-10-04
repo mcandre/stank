@@ -67,21 +67,11 @@ func IntegrationTest() error {
 		return err
 	}
 
-	cmdRosy := exec.Command("rosy", "-kame", examplesDir)
-	cmdRosy.Stdout = os.Stdout
-	cmdRosy.Stderr = os.Stderr
-	err := cmdRosy.Run()
-
-	if err == nil {
-		return errors.New("Expected non-zero exit status from rosy")
-	}
-
 	cmdFunk := exec.Command("funk", examplesDir)
 	cmdFunk.Stdout = os.Stdout
 	cmdFunk.Stderr = os.Stderr
-	err = cmdFunk.Run()
 
-	if err == nil {
+	if err := cmdFunk.Run(); err == nil {
 		return errors.New("Expected non-zero exit status from funk")
 	}
 
@@ -115,9 +105,6 @@ func GoFmt() error { return mageextras.GoFmt("-s", "-w") }
 // GoImports runs goimports.
 func GoImports() error { return mageextras.GoImports("-w") }
 
-// GoLint runs golint.
-func GoLint() error { return mageextras.GoLint() }
-
 // GoVet runs default go vet analyzers.
 func GoVet() error { return mageextras.GoVet() }
 
@@ -126,6 +113,9 @@ func Errcheck() error { return mageextras.Errcheck("-blank") }
 
 // Nakedret runs nakedret.
 func Nakedret() error { return mageextras.Nakedret("-l", "0") }
+
+// Revive runs revive.
+func Revive() error { return mageextras.Revive() }
 
 // Shadow runs go vet with shadow checks enabled.
 func Shadow() error { return mageextras.GoVetShadow() }
@@ -149,10 +139,10 @@ func Lint() error {
 	mg.Deps(Deadcode)
 	mg.Deps(GoFmt)
 	mg.Deps(GoImports)
-	mg.Deps(GoLint)
 	mg.Deps(GoVet)
 	mg.Deps(Errcheck)
 	mg.Deps(Nakedret)
+	mg.Deps(Revive)
 	mg.Deps(Shadow)
 	mg.Deps(Staticcheck)
 	mg.Deps(Unmake)
@@ -175,7 +165,7 @@ func Port() error { mg.Deps(Factorio); return mageextras.Archive(portBasename, a
 func Install() error { return mageextras.Install() }
 
 // Uninstall deletes installed Go applications.
-func Uninstall() error { return mageextras.Uninstall("stink", "stank", "funk", "rosy") }
+func Uninstall() error { return mageextras.Uninstall("stink", "stank", "funk") }
 
 // CleanCoverage deletes coverage data.
 func CleanCoverage() error {

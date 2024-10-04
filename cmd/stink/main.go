@@ -1,3 +1,4 @@
+// Package main implements a CLI application for identifying script metadata.
 package main
 
 import (
@@ -29,13 +30,12 @@ type Stinker struct {
 // printing the smell of the script.
 //
 // If PrettyPrint is false, then the smell is minified.
-func (o Stinker) Walk(pth string, info os.FileInfo, err error) error {
-	smell, err := stank.Sniff(pth, stank.SniffConfig{EOLCheck: o.EOLCheck, CRCheck: o.CRCheck})
+func (o Stinker) Walk(pth string, _ os.FileInfo, _ error) error {
+	smell, err2 := stank.Sniff(pth, stank.SniffConfig{EOLCheck: o.EOLCheck, CRCheck: o.CRCheck})
 
-	if err != nil && err != io.EOF {
-		log.Print(err)
-
-		return err
+	if err2 != nil && err2 != io.EOF {
+		log.Print(err2)
+		return err2
 	}
 
 	if smell.Directory {
@@ -51,10 +51,8 @@ func (o Stinker) Walk(pth string, info os.FileInfo, err error) error {
 	}
 
 	smellJSON := string(smellBytes)
-
 	fmt.Println(smellJSON)
-
-	return err
+	return nil
 }
 
 func main() {
