@@ -39,7 +39,7 @@ $ mage install
 $ mage uninstall
 ```
 
-# TEST: UNIT + INTEGRATION
+# TEST
 
 ```console
 $ mage test

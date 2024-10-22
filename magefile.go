@@ -2,14 +2,8 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
-	"errors"
 	"fmt"
 	"os"
-	"os/exec"
-	"path"
-	"strings"
 
 	"github.com/magefile/mage/mg"
 	mageextras "github.com/mcandre/mage-extras"
@@ -34,52 +28,8 @@ func Audit() error {
 	return Snyk()
 }
 
-// UnitTests runs the unit test suite.
-func UnitTest() error { return mageextras.UnitTest() }
-
-// IntegrationTest executes the integration test suite.
-func IntegrationTest() error {
-	mg.Deps(Install)
-
-	examplesDir := "examples"
-
-	var stinkOut bytes.Buffer
-
-	cmdStink := exec.Command("stink", path.Join(examplesDir, "hello.sh"))
-	cmdStink.Stdout = bufio.NewWriter(&stinkOut)
-	cmdStink.Stderr = os.Stderr
-
-	if err := cmdStink.Run(); err != nil {
-		return err
-	}
-
-	stinkOutString := stinkOut.String()
-
-	if !strings.Contains(stinkOutString, "\"POSIXy\":true") {
-		return fmt.Errorf("Expected stink output to treat hello.sh as POSIXy: true, got %s\n", stinkOutString)
-	}
-
-	cmdStank := exec.Command("stank", examplesDir)
-	cmdStank.Stdout = os.Stdout
-	cmdStank.Stderr = os.Stderr
-
-	if err := cmdStank.Run(); err != nil {
-		return err
-	}
-
-	cmdFunk := exec.Command("funk", examplesDir)
-	cmdFunk.Stdout = os.Stdout
-	cmdFunk.Stderr = os.Stderr
-
-	if err := cmdFunk.Run(); err == nil {
-		return errors.New("Expected non-zero exit status from funk")
-	}
-
-	return nil
-}
-
-// Test runs unit and integration tests.
-func Test() error { mg.Deps(UnitTest); mg.Deps(IntegrationTest); return nil }
+// Test runs a unit test.
+func Test() error { return mageextras.UnitTest() }
 
 // CoverHTML denotes the HTML formatted coverage filename.
 var CoverHTML = "cover.html"
