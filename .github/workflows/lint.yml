@@ -16,5 +16,5 @@ jobs:
     - run: "sudo apt-get install -y cargo curl make"
     - run: "curl -LO https://go.dev/dl/go1.23.2.linux-amd64.tar.gz"
     - run: "sudo tar -C /usr/local -xzf go1.23.2.linux-amd64.tar.gz"
-    - run: "make"
+    - run: "make -j 4"
     - run: "mage lint"
