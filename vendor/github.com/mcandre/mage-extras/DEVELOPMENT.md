@@ -1,10 +1,10 @@
 # BUILDTIME REQUIREMENTS
 
 * [Go](https://go.dev/) 1.23.2+
-* POSIX compatible [make](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/make.html)
+* [GNU](https://www.gnu.org/software/make/) / [BSD](https://man.freebsd.org/cgi/man.cgi?make(1)) make
 * [Rust](https://www.rust-lang.org/) 1.75.0+
 * [Snyk](https://snyk.io/)
-* Provision additional dev tools with `make`
+* Provision additional dev tools with `make -j 4`
 
 ## Recommended
 
@@ -24,7 +24,7 @@ Apply a user environment variable `GODEBUG=modcacheunzipinplace=1` per [access d
 $ mage audit
 ```
 
-# UNIT TEST
+# TEST
 
 ```console
 $ mage test
