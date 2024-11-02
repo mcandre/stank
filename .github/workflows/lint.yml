@@ -13,7 +13,7 @@ jobs:
     - run: "echo \"${GOPATH}/bin\" >> \"$GITHUB_PATH\""
     - uses: "actions/checkout@v4"
     - run: "sudo apt-get update"
-    - run: "sudo apt-get install -y cargo curl make"
+    - run: "sudo apt-get install -y cargo curl"
     - run: "curl -LO https://go.dev/dl/go1.23.2.linux-amd64.tar.gz"
     - run: "sudo tar -C /usr/local -xzf go1.23.2.linux-amd64.tar.gz"
     - run: "make -j 4"
