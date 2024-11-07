@@ -1,0 +1,20 @@
+---
+name: "Test-Crosscompile"
+on: # yamllint disable-line rule:truthy
+  push:
+  pull_request:
+jobs:
+  Test-Crosscompile:
+    runs-on: "ubuntu-24.04"
+    env:
+      GOPATH: "/home/runner/go"
+    steps:
+    - run: "echo \"/usr/local/go/bin\" >> \"$GITHUB_PATH\""
+    - run: "echo \"${GOPATH}/bin\" >> \"$GITHUB_PATH\""
+    - uses: "actions/checkout@v4"
+    - run: "sudo apt-get update"
+    - run: "sudo apt-get install -y cargo curl"
+    - run: "curl -LO https://go.dev/dl/go1.23.2.linux-amd64.tar.gz"
+    - run: "sudo tar -C /usr/local -xzf go1.23.2.linux-amd64.tar.gz"
+    - run: "make -j 4 go"
+    - run: "mage port"
