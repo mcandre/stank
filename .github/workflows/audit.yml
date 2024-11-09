@@ -8,16 +8,13 @@ on: # yamllint disable-line rule:truthy
 jobs:
   Audit:
     runs-on: "ubuntu-24.04"
-    env:
-      GOPATH: "/home/runner/go"
     steps:
-    - run: "echo \"/usr/local/go/bin\" >> \"$GITHUB_PATH\""
-    - run: "echo \"${GOPATH}/bin\" >> \"$GITHUB_PATH\""
+    - uses: actions/setup-go@v5
+      with:
+        go-version: '1.23.3'
     - uses: "actions/checkout@v4"
     - run: "sudo apt-get update"
     - run: "sudo apt-get install -y cargo curl"
-    - run: "curl -LO https://go.dev/dl/go1.23.2.linux-amd64.tar.gz"
-    - run: "sudo tar -C /usr/local -xzf go1.23.2.linux-amd64.tar.gz"
     - run: "curl -LO https://downloads.snyk.io/cli/stable/snyk-linux"
     - run: "sudo cp snyk-linux /bin/snyk"
     - run: "sudo chmod a+x /bin/snyk"

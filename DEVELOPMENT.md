@@ -1,7 +1,7 @@
 # BUILDTIME REQUIREMENTS
 
 * GNU or BSD [findutils](https://en.wikipedia.org/wiki/Find_(Unix))
-* [Go](https://go.dev/) 1.23.2+
+* [Go](https://go.dev/) 1.23.3+
 * [jq](https://jqlang.github.io/jq/)
 * [GNU](https://www.gnu.org/software/make/) / [BSD](https://man.freebsd.org/cgi/man.cgi?make(1)) make
 * [Rust](https://www.rust-lang.org/) 1.75.0+

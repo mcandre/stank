@@ -1,15 +1,22 @@
 ---
-name: "Test"
+name: "Test-Futureproof-Language"
 on: # yamllint disable-line rule:truthy
   push:
   pull_request:
+  # POSIX cron format
+  # https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html
+  schedule:
+  # Once every 5 minutes
+  # - cron: "*/5 * * * *"
+  # Once a day
+  - cron: "0 0 * * *"
 jobs:
-  Test:
+  Test-Futureproof-Language:
     runs-on: "ubuntu-24.04"
     steps:
     - uses: actions/setup-go@v5
       with:
-        go-version: '1.23.3'
+        go-version: 'stable'
     - uses: "actions/checkout@v4"
     - run: "sudo apt-get update"
     - run: "sudo apt-get install -y cargo"
