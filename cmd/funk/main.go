@@ -178,7 +178,7 @@ func CheckIFSReset(smell stank.Smell) bool {
 	fd, err := os.Open(smell.Path)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, err.Error())
+		fmt.Fprintln(os.Stderr, err.Error())
 		return true
 	}
 
@@ -186,14 +186,14 @@ func CheckIFSReset(smell stank.Smell) bool {
 		err = fd.Close()
 
 		if err != nil {
-			fmt.Fprintf(os.Stderr, err.Error())
+			fmt.Fprintln(os.Stderr, err.Error())
 		}
 	}()
 
 	fi, err := os.Lstat(smell.Path)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, err.Error())
+		fmt.Fprintln(os.Stderr, err.Error())
 		return true
 	}
 
@@ -253,7 +253,7 @@ func CheckSafetyFlags(smell stank.Smell) bool {
 	fd, err := os.Open(smell.Path)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, err.Error())
+		fmt.Fprintln(os.Stderr, err.Error())
 		return true
 	}
 
@@ -261,14 +261,14 @@ func CheckSafetyFlags(smell stank.Smell) bool {
 		err = fd.Close()
 
 		if err != nil {
-			fmt.Fprintf(os.Stderr, err.Error())
+			fmt.Fprintln(os.Stderr, err.Error())
 		}
 	}()
 
 	fi, err := os.Lstat(smell.Path)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, err.Error())
+		fmt.Fprintln(os.Stderr, err.Error())
 		return true
 	}
 
@@ -338,7 +338,7 @@ func CheckTrapHazards(smell stank.Smell) bool {
 	fd, err := os.Open(smell.Path)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, err.Error())
+		fmt.Fprintln(os.Stderr, err.Error())
 		return true
 	}
 
@@ -346,14 +346,14 @@ func CheckTrapHazards(smell stank.Smell) bool {
 		err = fd.Close()
 
 		if err != nil {
-			fmt.Fprintf(os.Stderr, err.Error())
+			fmt.Fprintln(os.Stderr, err.Error())
 		}
 	}()
 
 	fi, err := os.Lstat(smell.Path)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, err.Error())
+		fmt.Fprintln(os.Stderr, err.Error())
 		return true
 	}
 
@@ -480,15 +480,15 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 }
 
 // Walk is a callback for filepath.Walk to lint shell scripts.
-func (o *Funk) Walk(pth string, _ os.FileInfo, err error) error {
+func (o *Funk) Walk(pth string, _ os.FileInfo, _ error) error {
 	if stank.Ignore(pth) {
 		return nil
 	}
 
-	smell, err := stank.Sniff(pth, stank.SniffConfig{EOLCheck: o.EOLCheck, CRCheck: o.CRCheck})
+	smell, err2 := stank.Sniff(pth, stank.SniffConfig{EOLCheck: o.EOLCheck, CRCheck: o.CRCheck})
 
-	if err != nil && err != io.EOF {
-		fmt.Printf("%v\n", err)
+	if err2 != nil && err2 != io.EOF {
+		fmt.Printf("%v\n", err2)
 	}
 
 	if smell.MachineGenerated {
