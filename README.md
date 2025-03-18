@@ -201,7 +201,7 @@ BSD-2-Clause
 
 ## Recommended
 
-* GNU or BSD [findutils](https://en.wikipedia.org/wiki/Find_(Unix))
+* [GNU](https://www.gnu.org/)/[BSD](https://en.wikipedia.org/wiki/Berkeley_Software_Distribution) [findutils](https://en.wikipedia.org/wiki/Find_(Unix))
 * [jq](https://jqlang.github.io/jq/)
 
 # CONTRIBUTING
