@@ -1,7 +1,7 @@
 # BUILDTIME REQUIREMENTS
 
 * [GNU](https://www.gnu.org/)/[BSD](https://en.wikipedia.org/wiki/Berkeley_Software_Distribution) [findutils](https://en.wikipedia.org/wiki/Find_(Unix))
-* [Go](https://go.dev/) 1.24.0+
+* [Go](https://go.dev/) 1.24.1+
 * [jq](https://jqlang.github.io/jq/)
 * POSIX compatible [make](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/make.html)
 * [Rust](https://www.rust-lang.org/) 1.75.0+
