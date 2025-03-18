@@ -1,4 +1,5 @@
 //go:build mage
+
 package main
 
 import (
@@ -53,7 +54,7 @@ func Revive() error { return mageextras.Revive("-set_exit_status") }
 func Shadow() error { return mageextras.GoVetShadow() }
 
 // Staticcheck runs staticcheck.
-func Staticcheck() error { return mageextras.Staticcheck() }
+func Staticcheck() error { return mageextras.Staticcheck("./...") }
 
 // Unmake runs unmake.
 func Unmake() error {
