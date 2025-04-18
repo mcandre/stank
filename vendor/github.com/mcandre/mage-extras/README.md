@@ -53,12 +53,12 @@ BSD-2-Clause
 
 # RUNTIME REQUIREMENTS
 
-* [Go](https://go.dev/) 1.23.2+
-* [Mage](https://magefile.org/) (e.g., `go install github.com/magefile/mage`)
+* [Go](https://go.dev/) 1.24.2+
+* [Mage](https://magefile.org/) (e.g., `go get -tool github.com/magefile/mage`)
 
 ## Recommended
 
-* POSIX compatible [tar](https://pubs.opengroup.org/onlinepubs/7908799/xcu/tar.html)
+* [POSIX](https://pubs.opengroup.org/onlinepubs/9799919799/) compatible [tar](https://en.wikipedia.org/wiki/Tar_(computing))
 * [tree](https://linux.die.net/man/1/tree)
 * a UNIX environment, such as macOS, Linux, BSD, [WSL](https://learn.microsoft.com/en-us/windows/wsl/), etc.
 

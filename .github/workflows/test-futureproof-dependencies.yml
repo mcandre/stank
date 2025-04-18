@@ -1,5 +1,5 @@
 ---
-name: "Test-Futureproof-OS"
+name: "Test-Futureproof-Dependencies"
 on: # yamllint disable-line rule:truthy
   push:
   pull_request:
@@ -12,13 +12,15 @@ on: # yamllint disable-line rule:truthy
   - cron: "0 0 * * *"
   workflow_dispatch:
 jobs:
-  Test-Futureproof-OS:
-    runs-on: "ubuntu-latest"
+  Test-Futureproof-Dependencies:
+    runs-on: "ubuntu-24.04"
     steps:
     - uses: "actions/checkout@v4"
     - uses: "actions/setup-go@v5"
       with:
         go-version: "1.24.2"
-    - name: "provision go"
-      run: "make go"
-    - run: "mage test"
+    - run: |
+        go get -u all
+        sh -c "go mod download && go mod vendor && go mod tidy" || echo 'go mod is silly'
+        sh -c "go mod download && go mod vendor && go mod tidy"
+        go test

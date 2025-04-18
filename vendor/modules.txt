@@ -1,9 +1,9 @@
-# github.com/BurntSushi/toml v1.4.1-0.20240526193622-a339e1f7089c
+# github.com/BurntSushi/toml v1.5.0
 ## explicit; go 1.18
 github.com/BurntSushi/toml
 github.com/BurntSushi/toml/internal
-# github.com/alexkohler/nakedret/v2 v2.0.5 => github.com/aep-sunlife/nakedret/v2 v2.0.0-20250227175454-3fb3a0f5caba
-## explicit; go 1.22.0
+# github.com/alexkohler/nakedret/v2 v2.0.6
+## explicit; go 1.23.0
 github.com/alexkohler/nakedret/v2
 github.com/alexkohler/nakedret/v2/cmd/nakedret
 # github.com/chavacava/garif v0.1.0
@@ -39,18 +39,18 @@ github.com/mattn/go-isatty
 # github.com/mattn/go-runewidth v0.0.16
 ## explicit; go 1.9
 github.com/mattn/go-runewidth
-# github.com/mcandre/factorio v0.0.10
+# github.com/mcandre/factorio v0.0.11
 ## explicit; go 1.24
 github.com/mcandre/factorio
 github.com/mcandre/factorio/cmd/factorio
-# github.com/mcandre/mage-extras v0.0.21
-## explicit; go 1.23
+# github.com/mcandre/mage-extras v0.0.24
+## explicit; go 1.24.2
 github.com/mcandre/mage-extras
 # github.com/mgechev/dots v0.0.0-20210922191527-e955255bf517
 ## explicit
 github.com/mgechev/dots
-# github.com/mgechev/revive v1.7.0
-## explicit; go 1.22.1
+# github.com/mgechev/revive v1.9.0
+## explicit; go 1.23.0
 github.com/mgechev/revive
 github.com/mgechev/revive/cli
 github.com/mgechev/revive/config
@@ -68,34 +68,34 @@ github.com/olekukonko/tablewriter
 # github.com/rivo/uniseg v0.4.7
 ## explicit; go 1.18
 github.com/rivo/uniseg
-# github.com/spf13/afero v1.12.0
-## explicit; go 1.21
+# github.com/spf13/afero v1.14.0
+## explicit; go 1.23.0
 github.com/spf13/afero
 github.com/spf13/afero/internal/common
 github.com/spf13/afero/mem
-# golang.org/x/exp/typeparams v0.0.0-20231108232855-2478ac86f678
-## explicit; go 1.18
+# golang.org/x/exp/typeparams v0.0.0-20250408133849-7e4ce0ab07d0
+## explicit; go 1.23.0
 golang.org/x/exp/typeparams
-# golang.org/x/mod v0.23.0
-## explicit; go 1.22.0
+# golang.org/x/mod v0.24.0
+## explicit; go 1.23.0
 golang.org/x/mod/internal/lazyregexp
 golang.org/x/mod/modfile
 golang.org/x/mod/module
 golang.org/x/mod/semver
-# golang.org/x/sync v0.11.0
-## explicit; go 1.18
+# golang.org/x/sync v0.13.0
+## explicit; go 1.23.0
 golang.org/x/sync/errgroup
-# golang.org/x/sys v0.30.0
-## explicit; go 1.18
+# golang.org/x/sys v0.32.0
+## explicit; go 1.23.0
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/text v0.22.0
-## explicit; go 1.18
+# golang.org/x/text v0.24.0
+## explicit; go 1.23.0
 golang.org/x/text/runes
 golang.org/x/text/transform
 golang.org/x/text/unicode/norm
-# golang.org/x/tools v0.30.0
-## explicit; go 1.22.0
+# golang.org/x/tools v0.32.0
+## explicit; go 1.23.0
 golang.org/x/tools/go/analysis
 golang.org/x/tools/go/analysis/checker
 golang.org/x/tools/go/analysis/internal
@@ -115,6 +115,7 @@ golang.org/x/tools/go/types/objectpath
 golang.org/x/tools/go/types/typeutil
 golang.org/x/tools/internal/aliases
 golang.org/x/tools/internal/analysisinternal
+golang.org/x/tools/internal/astutil/cursor
 golang.org/x/tools/internal/astutil/edge
 golang.org/x/tools/internal/diff
 golang.org/x/tools/internal/diff/lcs
@@ -131,7 +132,7 @@ golang.org/x/tools/internal/stdlib
 golang.org/x/tools/internal/typeparams
 golang.org/x/tools/internal/typesinternal
 golang.org/x/tools/internal/versions
-# honnef.co/go/tools v0.6.0
+# honnef.co/go/tools v0.6.1
 ## explicit; go 1.23
 honnef.co/go/tools/analysis/callcheck
 honnef.co/go/tools/analysis/code
@@ -334,7 +335,7 @@ honnef.co/go/tools/stylecheck/st1021
 honnef.co/go/tools/stylecheck/st1022
 honnef.co/go/tools/stylecheck/st1023
 honnef.co/go/tools/unused
-# mvdan.cc/sh/v3 v3.10.0
-## explicit; go 1.22
+# mvdan.cc/sh/v3 v3.11.0
+## explicit; go 1.23
 mvdan.cc/sh/v3/fileutil
 mvdan.cc/sh/v3/syntax

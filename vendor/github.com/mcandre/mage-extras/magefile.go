@@ -1,4 +1,5 @@
 //go:build mage
+
 package main
 
 import (
@@ -58,13 +59,13 @@ func Errcheck() error { return mageextras.Errcheck("-blank") }
 func Nakedret() error { return mageextras.Nakedret("-l", "0") }
 
 // Revive runs revive.
-func Revive() error { return mageextras.Revive() }
+func Revive() error { return mageextras.Revive("-set_exit_status") }
 
 // Shadow runs go vet with shadow checks enabled.
 func Shadow() error { return mageextras.GoVetShadow() }
 
 // Staticcheck runs staticcheck.
-func Staticcheck() error { return mageextras.Staticcheck() }
+func Staticcheck() error { return mageextras.Staticcheck("./...") }
 
 // Unmake runs unmake.
 func Unmake() error {

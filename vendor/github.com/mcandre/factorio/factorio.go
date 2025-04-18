@@ -94,9 +94,7 @@ func Platforms() ([]Platform, error) {
 }
 
 // Build generates binaries for the given platform.
-func Build(platform Platform, artifactToplevelDir string, args []string) error {
-	artifactDir := path.Join(artifactToplevelDir, platform.Os, platform.Arch)
-
+func Build(platform Platform, artifactDir string, args []string) error {
 	log.Printf("building %s\n", artifactDir)
 
 	if err := os.MkdirAll(artifactDir, 0755); err != nil {
@@ -146,12 +144,14 @@ func Port(args []string) error {
 	}
 
 	for _, platform := range platforms {
+		artifactDir := path.Join(artifactToplevelDir, platform.Os, platform.Arch)
+
 		if platformBlocklist.MatchString(platform.String()) {
-			log.Printf("skipping %s", platform)
+			log.Printf("skipping %s", artifactDir)
 			continue
 		}
 
-		if err := Build(platform, artifactToplevelDir, args); err != nil {
+		if err := Build(platform, artifactDir, args); err != nil {
 			return err
 		}
 	}
