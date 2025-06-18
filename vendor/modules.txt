@@ -39,8 +39,8 @@ github.com/mattn/go-isatty
 # github.com/mattn/go-runewidth v0.0.16
 ## explicit; go 1.9
 github.com/mattn/go-runewidth
-# github.com/mcandre/factorio v0.0.11
-## explicit; go 1.24
+# github.com/mcandre/factorio v0.0.12
+## explicit; go 1.24.4
 github.com/mcandre/factorio
 github.com/mcandre/factorio/cmd/factorio
 # github.com/mcandre/mage-extras v0.0.24

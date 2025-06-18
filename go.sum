@@ -32,8 +32,8 @@ github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D
 github.com/mattn/go-runewidth v0.0.9/go.mod h1:H031xJmbD/WCDINGzjvQ9THkh0rPKHF+m2gUSrubnMI=
 github.com/mattn/go-runewidth v0.0.16 h1:E5ScNMtiwvlvB5paMFdw9p4kSQzbXFikJ5SQO6TULQc=
 github.com/mattn/go-runewidth v0.0.16/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
-github.com/mcandre/factorio v0.0.11 h1:Nj7UhG5FNeUwx2QH/6dBR7k9FwiAo9NUMyflMT5vxUE=
-github.com/mcandre/factorio v0.0.11/go.mod h1:7Dqn51prkR4XTOpCF4qP1bNsZqU9lEasoh7bXp2QPgw=
+github.com/mcandre/factorio v0.0.12 h1:6MQvWJ1WOJPCLnvfsc6S09Z+QnSthbmsz7cB/BJIOXc=
+github.com/mcandre/factorio v0.0.12/go.mod h1:LrAJfUFKNH56I3cG3rFSNEzneL6XB62aUxmWC4dCYsM=
 github.com/mcandre/mage-extras v0.0.24 h1:r0sStsVbiPRlKcdOi/nm3PUzYWKW1ImJhamaETYybno=
 github.com/mcandre/mage-extras v0.0.24/go.mod h1:zhbIqQ1YJruJ41ESXxc4Fb8rrLG/zE5MYBQkPPpopd8=
 github.com/mgechev/dots v0.0.0-20210922191527-e955255bf517 h1:zpIH83+oKzcpryru8ceC6BxnoG8TBrhgAvRg8obzup0=
