@@ -14,7 +14,7 @@ jobs:
         go-version: "1.24.4"
     - uses: "dtolnay/rust-toolchain@stable"
       with:
-        toolchain: "1.86.0"
+        toolchain: "1.87.0"
     - name: "provision dev tools"
       run: "make -j 4"
     - run: "mage lint"
