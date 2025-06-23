@@ -1,8 +1,8 @@
 # BUILDTIME REQUIREMENTS
 
-* [Go](https://go.dev/) 1.24.2+
+* [Go](https://go.dev/) 1.24.4+
 * [POSIX](https://pubs.opengroup.org/onlinepubs/9799919799/) compatible [make](https://en.wikipedia.org/wiki/Make_(software))
-* [Rust](https://www.rust-lang.org/) 1.86.0+
+* [Rust](https://www.rust-lang.org/) 1.87.0+
 * [Snyk](https://snyk.io/)
 * Provision additional dev tools with `make [-j 4]`
 

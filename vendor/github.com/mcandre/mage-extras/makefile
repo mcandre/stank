@@ -1,9 +1,7 @@
 .POSIX:
 .SILENT:
-.PHONY: \
-	all \
-	go \
-	rust
+ALLTARGETS!=ls -a
+.PHONY: $(ALLTARGETS)
 
 all: go rust
 
@@ -15,4 +13,4 @@ go:
 	go mod tidy
 
 rust:
-	cargo install --force unmake@0.0.17
+	cargo install --force unmake@0.0.20

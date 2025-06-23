@@ -9,6 +9,7 @@ import (
 func SnykTest(args ...string) error {
 	cmd := exec.Command("snyk")
 	cmd.Args = append(cmd.Args, "test")
+	cmd.Args = append(cmd.Args, "--all-projects")
 	cmd.Args = append(cmd.Args, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

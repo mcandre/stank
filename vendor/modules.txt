@@ -43,8 +43,8 @@ github.com/mattn/go-runewidth
 ## explicit; go 1.24.4
 github.com/mcandre/factorio
 github.com/mcandre/factorio/cmd/factorio
-# github.com/mcandre/mage-extras v0.0.24
-## explicit; go 1.24.2
+# github.com/mcandre/mage-extras v0.0.25
+## explicit; go 1.24.4
 github.com/mcandre/mage-extras
 # github.com/mgechev/dots v0.0.0-20210922191527-e955255bf517
 ## explicit
