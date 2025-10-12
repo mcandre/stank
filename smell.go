@@ -1,7 +1,10 @@
 package stank
 
 import (
+	"encoding/json"
+	"fmt"
 	"os"
+	"strconv"
 )
 
 // Smell describes the overall impression of a file's POSIXyness,
@@ -82,26 +85,84 @@ import (
 // Languages with duplicate names (e.g. oil shell osh vs. OpenSolaris oil shell) are generally assumed not to be POSIXy.
 // Unable to disambiguate without more specific information (shebang names, file extentions).
 type Smell struct {
-	Path              string
-	Filename          string
-	Basename          string
-	Extension         string
-	Symlink           bool
-	Shebang           string
-	Interpreter       string
-	InterpreterFlags  []string
-	LineEnding        string
-	FinalEOL          *bool
-	ContainsCR        bool
-	Permissions       os.FileMode
-	Directory         bool
-	OwnerExecutable   bool
-	Library           bool
-	BOM               bool
-	POSIXy            bool
-	Bash              bool
-	Ksh               bool
-	AltShellScript    bool
-	CoreConfiguration bool
-	MachineGenerated  bool
+	Path              string      `json:"path"`
+	Filename          string      `json:"filename"`
+	Basename          string      `json:"basename"`
+	Extension         string      `json:"extension"`
+	Symlink           bool        `json:"symlink"`
+	Shebang           string      `json:"shebang"`
+	Interpreter       string      `json:"interpreter"`
+	InterpreterFlags  []string    `json:"interpreter_flags"`
+	LineEnding        string      `json:"line_ending"`
+	FinalEOL          *bool       `json:"final_eol"`
+	ContainsCR        bool        `json:"contains_cr"`
+	Permissions       os.FileMode `json:"permissions"`
+	Directory         bool        `json:"directory"`
+	OwnerExecutable   bool        `json:"owner_executable"`
+	Library           bool        `json:"library"`
+	BOM               bool        `json:"bom"`
+	POSIXy            bool        `json:"posixy"`
+	Bash              bool        `json:"bash"`
+	Ksh               bool        `json:"ksh"`
+	AltShellScript    bool        `json:"alt_shell_script"`
+	CoreConfiguration bool        `json:"core_configuration"`
+	MachineGenerated  bool        `json:"machine_generated"`
+}
+
+// smellAlias encodes fields with poor serialization support.
+type smellAlias Smell
+
+// MarshalJSON encodes a Smell as JSON.
+func (o Smell) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		smellAlias
+		Permissions string `json:"permissions"`
+	}{
+		smellAlias:  (smellAlias)(o),
+		Permissions: fmt.Sprintf("0%o", o.Permissions),
+	})
+}
+
+// UnmarshallJSON decodes a Smell from JSON.
+func (o *Smell) UnmarshalJSON(bs []byte) error {
+	aux := &struct {
+		*smellAlias
+		Permissions string `json:"permissions"`
+	}{
+		smellAlias: (*smellAlias)(o),
+	}
+
+	if err := json.Unmarshal(bs, &aux); err != nil {
+		return err
+	}
+
+	permissions, err := strconv.ParseInt(aux.Permissions, 8, 32)
+
+	if err != nil {
+		return err
+	}
+
+	o.Path = aux.Path
+	o.Filename = aux.Filename
+	o.Basename = aux.Basename
+	o.Extension = aux.Extension
+	o.Symlink = aux.Symlink
+	o.Shebang = aux.Shebang
+	o.Interpreter = aux.Interpreter
+	o.InterpreterFlags = aux.InterpreterFlags
+	o.LineEnding = aux.LineEnding
+	o.FinalEOL = aux.FinalEOL
+	o.ContainsCR = aux.ContainsCR
+	o.Permissions = os.FileMode(permissions)
+	o.Directory = aux.Directory
+	o.OwnerExecutable = aux.OwnerExecutable
+	o.Library = aux.Library
+	o.BOM = aux.BOM
+	o.POSIXy = aux.POSIXy
+	o.Bash = aux.Bash
+	o.Ksh = aux.Ksh
+	o.AltShellScript = aux.AltShellScript
+	o.CoreConfiguration = aux.CoreConfiguration
+	o.MachineGenerated = aux.MachineGenerated
+	return nil
 }
