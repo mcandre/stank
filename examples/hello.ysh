@@ -1,2 +1,2 @@
-#!/usr/bin/env osh
+#!/usr/bin/env ysh
 echo 'Hello, World!'
