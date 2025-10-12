@@ -1,6 +1,6 @@
 module github.com/mcandre/stank
 
-go 1.24.5
+go 1.24.6
 
 tool (
 	github.com/alexkohler/nakedret/v2/cmd/nakedret
