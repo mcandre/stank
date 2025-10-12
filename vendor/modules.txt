@@ -275,7 +275,7 @@ honnef.co/go/tools/stylecheck/st1021
 honnef.co/go/tools/stylecheck/st1022
 honnef.co/go/tools/stylecheck/st1023
 honnef.co/go/tools/unused
-# mvdan.cc/sh/v3 v3.11.0
-## explicit; go 1.23
+# mvdan.cc/sh/v3 v3.12.0
+## explicit; go 1.23.0
 mvdan.cc/sh/v3/fileutil
 mvdan.cc/sh/v3/syntax
