@@ -47,25 +47,11 @@ func Errcheck() error { return mageextras.Errcheck("-blank") }
 // Nakedret runs nakedret.
 func Nakedret() error { return mageextras.Nakedret("-l", "0") }
 
-// Revive runs revive.
-func Revive() error { return mageextras.Revive("-set_exit_status") }
-
 // Shadow runs go vet with shadow checks enabled.
 func Shadow() error { return mageextras.GoVetShadow() }
 
 // Staticcheck runs staticcheck.
 func Staticcheck() error { return mageextras.Staticcheck("./...") }
-
-// Unmake runs unmake.
-func Unmake() error {
-	err := mageextras.Unmake(".")
-
-	if err != nil {
-		return err
-	}
-
-	return mageextras.Unmake("-n", ".")
-}
 
 // Lint runs the lint suite.
 func Lint() error {
@@ -75,10 +61,8 @@ func Lint() error {
 	mg.Deps(GoVet)
 	mg.Deps(Errcheck)
 	mg.Deps(Nakedret)
-	mg.Deps(Revive)
 	mg.Deps(Shadow)
 	mg.Deps(Staticcheck)
-	mg.Deps(Unmake)
 	return nil
 }
 

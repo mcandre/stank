@@ -1,19 +1,16 @@
 # BUILDTIME REQUIREMENTS
 
-* [Go](https://go.dev/) 1.24.5+
-* [POSIX](https://pubs.opengroup.org/onlinepubs/9799919799/) compatible [make](https://en.wikipedia.org/wiki/Make_(software))
-* [Rust](https://www.rust-lang.org/) 1.87.0+
+* a UNIX-like environment (e.g. [WSL](https://learn.microsoft.com/en-us/windows/wsl/))
+* [Go](https://go.dev/) 1.25.3+
 * [Snyk](https://snyk.io/)
 * [POSIX](https://pubs.opengroup.org/onlinepubs/9799919799/) compatible [tar](https://en.wikipedia.org/wiki/Tar_(computing))
-* Provision additional dev tools with `make [-j 4]`
+* Provision additional dev tools with `./install`
 
 ## Recommended
 
 * [ASDF](https://asdf-vm.com/) 0.10 (run `asdf reshim` after provisioning)
 * [direnv](https://direnv.net/) 2
-* [GNU](https://www.gnu.org/)/[BSD](https://en.wikipedia.org/wiki/Berkeley_Software_Distribution) [make](https://en.wikipedia.org/wiki/Make_(software))
 * [GNU](https://www.gnu.org/)/[BSD](https://en.wikipedia.org/wiki/Berkeley_Software_Distribution) [tar](https://en.wikipedia.org/wiki/Tar_(computing))
-* a [UNIX](https://en.wikipedia.org/wiki/Unix)-like environment
 
 ## Windows
 
