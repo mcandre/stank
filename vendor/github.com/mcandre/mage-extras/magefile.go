@@ -58,9 +58,6 @@ func Errcheck() error { return mageextras.Errcheck("-blank") }
 // Nakedret runs nakedret.
 func Nakedret() error { return mageextras.Nakedret("-l", "0") }
 
-// Revive runs revive.
-func Revive() error { return mageextras.Revive("-set_exit_status") }
-
 // Shadow runs go vet with shadow checks enabled.
 func Shadow() error { return mageextras.GoVetShadow() }
 
@@ -85,7 +82,6 @@ func Lint() error {
 	mg.Deps(GoVet)
 	mg.Deps(Errcheck)
 	mg.Deps(Nakedret)
-	mg.Deps(Revive)
 	mg.Deps(Shadow)
 	mg.Deps(Staticcheck)
 	mg.Deps(Unmake)
