@@ -19,6 +19,4 @@ jobs:
     - uses: "actions/setup-go@v5"
       with:
         go-version: "stable"
-    - name: "provision go"
-      run: "make go"
-    - run: "mage test"
+    - run: "go test"
