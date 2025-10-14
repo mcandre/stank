@@ -21,7 +21,7 @@ var Default = Test
 func Govulncheck() error { return mageextras.Govulncheck("-scan", "package", "./...") }
 
 // SnykTest runs Snyk SCA.
-func Snyk() error { return mageextras.SnykTest() }
+func Snyk() error { return mageextras.SnykTest("--dev") }
 
 // Audit runs a security audit.
 func Audit() error {
