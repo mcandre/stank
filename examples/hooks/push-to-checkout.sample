@@ -44,7 +44,7 @@ die () {
 #
 # Note that the hook will be executed from the repository directory,
 # not from the working tree, so if you want to perform operations on
-# the working tree, you will have to adapt your code accordingly, e.g.
+# the working tree, you will have to adapt-get your code accordingly, e.g.
 # by adding "cd .." or using relative paths.
 
 if ! git update-index -q --ignore-submodules --refresh
