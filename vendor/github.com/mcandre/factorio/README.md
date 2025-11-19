@@ -43,7 +43,7 @@ $ go install github.com/mcandre/factorio/cmd/factorio@latest
 
 # RUNTIME REQUIREMENTS
 
-* [Go](https://go.dev/) 1.25.3+
+* [Go](https://go.dev/) 1.25.4+
 
 ## Recommended
 
@@ -71,6 +71,7 @@ factorio is essentially compatible with `go build` flags and environment variabl
 
 ## SEE ALSO
 
+* [chandler](https://github.com/mcandre/chandler) normalizes executable archives
 * [crit](https://github.com/mcandre/crit) generates Rust ports
 * [LLVM](https://llvm.org/) bitcode offers an abstract assembler format for C/C++ code.
 * [tug](https://github.com/mcandre/tug) automates multi-platform Docker image builds.

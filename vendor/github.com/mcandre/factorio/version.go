@@ -1,4 +1,4 @@
 package factorio
 
 // Version is semver.
-const Version = "0.0.15"
+const Version = "0.0.16"
