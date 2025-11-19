@@ -17,7 +17,7 @@ jobs:
       with:
         go-version: "1.25.3"
     - name: "provision dev tools"
-      run: "./install"
+      run: "make"
     - name: "install synk"
       run: |
         curl -LO https://downloads.snyk.io/cli/stable/snyk-linux

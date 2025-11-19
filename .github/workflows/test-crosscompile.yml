@@ -13,5 +13,5 @@ jobs:
       with:
         go-version: "1.25.3"
     - name: "provision dev tools"
-      run: "./install"
+      run: "make"
     - run: "mage port"
