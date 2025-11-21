@@ -12,7 +12,7 @@ tool (
 
 require (
 	github.com/magefile/mage v1.15.0
-	github.com/mcandre/mage-extras v0.0.29
+	github.com/mcandre/mage-extras v0.0.30
 	mvdan.cc/sh/v3 v3.12.0
 )
 

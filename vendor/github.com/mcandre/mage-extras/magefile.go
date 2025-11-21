@@ -37,9 +37,6 @@ func CoverageProfile() error { return mageextras.CoverageProfile(CoverProfile) }
 // Test executes the unit test suite.
 func Test() error { return mageextras.UnitTest() }
 
-// Gofmt runs gofmt.
-func GoFmt() error { return mageextras.GoFmt("-s", "-w") }
-
 // GoImports runs goimports.
 func GoImports() error { return mageextras.GoImports("-w") }
 
@@ -60,7 +57,6 @@ func Staticcheck() error { return mageextras.Staticcheck("./...") }
 
 // Lint runs the lint suite.
 func Lint() error {
-	mg.Deps(GoFmt)
 	mg.Deps(GoImports)
 	mg.Deps(GoVet)
 	mg.Deps(Errcheck)

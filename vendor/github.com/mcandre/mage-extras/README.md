@@ -7,7 +7,6 @@ $ mage noVendor
 /Users/andrew/go/src/github.com/mcandre/mage-extras/test.go
 /Users/andrew/go/src/github.com/mcandre/mage-extras/mageextras_test.go
 /Users/andrew/go/src/github.com/mcandre/mage-extras/errcheck.go
-/Users/andrew/go/src/github.com/mcandre/mage-extras/gofmt.go
 /Users/andrew/go/src/github.com/mcandre/mage-extras/sources.go
 /Users/andrew/go/src/github.com/mcandre/mage-extras/gox.go
 /Users/andrew/go/src/github.com/mcandre/mage-extras/nakedret.go
