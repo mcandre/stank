@@ -22,14 +22,8 @@ var CoverProfile = "cover.out"
 // Govulncheck runs govulncheck.
 func Govulncheck() error { return mageextras.Govulncheck("-scan", "package", "./...") }
 
-// Snyk runs Snyk SCA.
-func Snyk() error { return mageextras.SnykTest() }
-
 // Audit runs a security audit.
-func Audit() error {
-	mg.Deps(Govulncheck)
-	return Snyk()
-}
+func Audit() error { return Govulncheck() }
 
 // CoverageHTML generates HTML formatted coverage data.
 func CoverageHTML() error {

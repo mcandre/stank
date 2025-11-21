@@ -22,8 +22,8 @@ github.com/magefile/mage/sh
 ## explicit; go 1.25.4
 github.com/mcandre/factorio
 github.com/mcandre/factorio/cmd/factorio
-# github.com/mcandre/mage-extras v0.0.28
-## explicit; go 1.25.3
+# github.com/mcandre/mage-extras v0.0.29
+## explicit; go 1.25.4
 github.com/mcandre/mage-extras
 # golang.org/x/exp/typeparams v0.0.0-20250408133849-7e4ce0ab07d0
 ## explicit; go 1.23.0
