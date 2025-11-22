@@ -274,4 +274,6 @@ These bad bois help to shore up ur shell scripts. Though they're designed to wor
 
 [slick](https://github.com/mcandre/slick) offers `sh -n` syntax checking against pure POSIX syntax, whereas actual `sh` on most systems symlinks to bash.
 
+[todolint](https://github.com/mcandre/todolint) finds bugs by code comments.
+
 [unmake](https://github.com/mcandre/unmake), a linter for makefiles.
