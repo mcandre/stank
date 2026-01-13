@@ -1,4 +1,4 @@
 package mageextras
 
 // Version is semver.
-var Version = "0.0.30"
+var Version = "0.0.32"

@@ -5,9 +5,9 @@ import (
 	"os/exec"
 )
 
-// Errcheck runs errcheck.
-func Errcheck(args ...string) error {
-	cmd := exec.Command("errcheck")
+// Tuggy runs tuggy.
+func Tuggy(args ...string) error {
+	cmd := exec.Command("tuggy")
 	cmd.Args = append(cmd.Args, args...)
 	cmd.Env = os.Environ()
 	cmd.Stdout = os.Stdout

@@ -12,6 +12,7 @@ func Archive(portBasename string, artifactsPath string) error {
 	cmd := exec.Command("tar")
 	cmd.Args = append(cmd.Args, "czf", archiveFilename, portBasename)
 	cmd.Dir = artifactsPath
+	cmd.Env = os.Environ()
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()

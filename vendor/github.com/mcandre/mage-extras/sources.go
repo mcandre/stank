@@ -41,6 +41,7 @@ func CollectGoFiles() error {
 		GoListSourceFilesTemplate,
 		AllPackagesPath,
 	)
+	cmdSource.Env = os.Environ()
 	cmdSource.Stdout = &sourceOut
 	cmdSource.Stderr = os.Stderr
 
@@ -64,6 +65,7 @@ func CollectGoFiles() error {
 		GoListTestFilesTemplate,
 		AllPackagesPath,
 	)
+	cmdTest.Env = os.Environ()
 	cmdTest.Stdout = &testOut
 	cmdTest.Stderr = os.Stderr
 

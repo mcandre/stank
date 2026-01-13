@@ -1,5 +1,11 @@
 # mage-extras: some predefined tasks for common mage workflows
 
+[![Donate](https://img.shields.io/badge/GUMROAD-36a9ae?style=flat&logo=gumroad&logoColor=white)](https://mcandre.gumroad.com/)
+
+# SUMMARY
+
+mage-extras provides a collection of prebaked tasks for common Go project software development needs.
+
 # EXAMPLE
 
 ```console

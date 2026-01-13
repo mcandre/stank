@@ -14,6 +14,7 @@ func Install(args ...string) error {
 	cmd.Args = append(cmd.Args, "install")
 	cmd.Args = append(cmd.Args, args...)
 	cmd.Args = append(cmd.Args, AllPackagesPath)
+	cmd.Env = os.Environ()
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()

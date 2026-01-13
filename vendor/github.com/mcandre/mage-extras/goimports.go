@@ -15,6 +15,7 @@ func GoImports(args ...string) error {
 		cmd := exec.Command("goimports")
 		cmd.Args = append(cmd.Args, args...)
 		cmd.Args = append(cmd.Args, pth)
+		cmd.Env = os.Environ()
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 

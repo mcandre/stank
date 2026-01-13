@@ -1,4 +1,4 @@
-# stank: analyzers for determining whether files smell like rotten POSIX shell scripts, or faintly rosy like Ruby and Python scripts
+# stank: shell script linters
 
 # ABOUT
 
@@ -38,7 +38,11 @@ Machine-generated files, including git hook default `*.sample` files, are automa
 
 See `stank -help` for additional options.
 
-# DOWNLOADS
+# DOCKER HUB
+
+https://hub.docker.com/r/n4jm4/stank
+
+# DOWNLOAD
 
 https://github.com/mcandre/stank/releases
 

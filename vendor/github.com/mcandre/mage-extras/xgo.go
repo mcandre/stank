@@ -20,6 +20,7 @@ func Xgo(outputPath string, args ...string) error {
 		"xgo",
 		xgoParts...,
 	)
+	cmd.Env = os.Environ()
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()

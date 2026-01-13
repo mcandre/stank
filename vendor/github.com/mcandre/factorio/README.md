@@ -1,5 +1,23 @@
 # factorio: Go cross-compiler
 
+[![Donate](https://img.shields.io/badge/GUMROAD-36a9ae?style=flat&logo=gumroad&logoColor=white)](https://mcandre.gumroad.com/)
+
+```text
+    /)        _/_
+   // __.  _. /  __ __  o __
+  //_(_/|_(__<__(_)/ (_<_(_)
+ />
+</
+```
+
+# ABOUT
+
+factorio accelerates Go application development, by automating the process of generating binaries for a multitude of platforms. Your time is valuable. Spend it developing software, not tinkering with toolchains.
+
+factorio is fast. It has no intrinsic dependency on any containers or virtual machines. Factorio plugs directly into the standard `go` command line system.
+
+No relation to the video game *Factorio*.
+
 # EXAMPLE
 
 ```console
@@ -17,12 +35,6 @@ bin/artifact-dev
 ...
 ```
 
-# ABOUT
-
-factorio accelerates Go application development, by automating the process of generating binaries for a multitude of platforms. Your time is valuable. Spend it developing software, not tinkering with toolchains.
-
-factorio is fast. It has no intrinsic dependency on any containers or virtual machines. Factorio plugs directly into the standard `go` command line system.
-
 # LICENSE
 
 BSD-2-Clause
@@ -30,6 +42,10 @@ BSD-2-Clause
 # DOCUMENTATION
 
 https://pkg.go.dev/github.com/mcandre/factorio
+
+# DOCKER HUB
+
+https://hub.docker.com/r/n4jm4/factorio
 
 # DOWNLOAD
 
@@ -74,6 +90,6 @@ factorio is essentially compatible with `go build` flags and environment variabl
 * [chandler](https://github.com/mcandre/chandler) normalizes executable archives
 * [crit](https://github.com/mcandre/crit) generates Rust ports
 * [LLVM](https://llvm.org/) bitcode offers an abstract assembler format for C/C++ code.
-* [tug](https://github.com/mcandre/tug) automates multi-platform Docker image builds.
+* [tuggy](https://github.com/mcandre/tuggy) automates multiplatform Docker image builds.
 * [WASM](https://webassembly.org/) provides a portable interface for C/C++ code.
 * [xgo](https://github.com/techknowlogick/xgo) supports Go projects with native cgo dependencies.
