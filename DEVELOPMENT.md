@@ -18,48 +18,48 @@ Apply a user environment variable `GODEBUG=modcacheunzipinplace=1` per [access d
 
 # AUDIT
 
-```console
-$ mage audit
+```sh
+mage audit
 ```
 
 # INSTALL
 
-```console
-$ mage install
+```sh
+mage install
 ```
 
 # UNINSTALL
 
-```console
-$ mage uninstall
+```sh
+mage uninstall
 ```
 
 # TEST
 
-```console
-$ mage test
+```sh
+mage test
 ```
 
 # LINT
 
-```console
-$ mage lint
+```sh
+mage lint
 ```
 
 # PORT
 
-```console
-$ mage port
+```sh
+mage port
 ```
 
 # TEST DOCKER IMAGES
 
-```console
-$ mage dockerTest
+```sh
+mage dockerTest
 ```
 
 # PUSH DOCKER IMAGES
 
-```console
-$ mage dockerPush
+```sh
+mage dockerPush
 ```

@@ -46,6 +46,11 @@ https://pkg.go.dev/github.com/mcandre/stank
 
 See [INSTALL.md](INSTALL.md).
 
+## Recommended
+
+* [GNU](https://www.gnu.org/)/[BSD](https://en.wikipedia.org/wiki/Berkeley_Software_Distribution) [findutils](https://en.wikipedia.org/wiki/Find_(Unix))
+* [jq](https://jqlang.github.io/jq/)
+
 # LICENSE
 
 BSD-2-Clause
@@ -189,15 +194,6 @@ Regardless, the particular programming language is a less important, concern, as
 
 Fortunately, the list of shell scripts that `stank` emits, can help engineers to identify program candidates to rewrite in more mature programming languages.
 
-## Recommended
-
-* [GNU](https://www.gnu.org/)/[BSD](https://en.wikipedia.org/wiki/Berkeley_Software_Distribution) [findutils](https://en.wikipedia.org/wiki/Find_(Unix))
-* [jq](https://jqlang.github.io/jq/)
-
-# CONTRIBUTING
-
-For more details on developing stank itself, see [DEVELOPMENT.md](DEVELOPMENT.md).
-
 # WARNING ON FALSE NEGATIVES
 
 Note that very many software components have a bad habit of encouraging embedded, inline shell script snippets into non-shell script files. For example, CI/CD job configurations, Dockerfile RUN steps, Kubernetes resources, and make. Most linter tools (for shell scripts and other languages) have very limited or nonexistent support for linting inline shell script snippets.
@@ -250,20 +246,11 @@ These bad bois help to shore up ur shell scripts. Though they're designed to wor
 
 ## Honorable mentions
 
-[ack](https://beyondgrep.com) offers `--shell [-f]` flags that act similarly to `stank`, with the caveat that ack includes nonPOSIX shells like csh, tcsh, and fish in these results; but as of this writing fails to include POSIX shells like ash, dash, posh, pdksh, ksh93, and mksh. ack also depends on Perl, making it more heavyweight for Docker microservices and other constrained platforms.
-
-[kirill](https://github.com/mcandre/kirill) identifies JSON documents.
-
-[linguist](https://github.com/github/linguist), GitHub's extraordinary effort to identify which language each of its millions of repositories are written in. While this stanky Go project does not employ linguist in automated analysis, it's worth mentioning for forensic purposes, if you ever come across a strange, unidentified (or misidentified!) source code file.
-
-[linters](https://github.com/mcandre/linters), a wiki of common programming language linters and SAST tools.
-
-[periscope](https://github.com/mcandre/periscope) warns on unscoped NPM packages.
-
-[sail](https://github.com/mcandre/sail) identifies C/C++ source code files.
-
-[slick](https://github.com/mcandre/slick) offers `sh -n` syntax checking against pure POSIX syntax, whereas actual `sh` on most systems symlinks to bash.
-
-[todolint](https://github.com/mcandre/todolint) finds bugs by code comments.
-
-[unmake](https://github.com/mcandre/unmake), a linter for makefiles.
+* [ack](https://beyondgrep.com) offers `--shell [-f]` flags that act similarly to `stank`, with the caveat that ack includes nonPOSIX shells like csh, tcsh, and fish in these results; but as of this writing fails to include POSIX shells like ash, dash, posh, pdksh, ksh93, and mksh. ack also depends on Perl, making it more heavyweight for Docker microservices and other constrained platforms.
+* [kirill](https://github.com/mcandre/kirill) identifies JSON documents.
+* [linguist](https://github.com/github/linguist), GitHub's extraordinary effort to identify which language each of its millions of repositories are written in. While this stanky Go project does not employ linguist in automated analysis, it's worth mentioning for forensic purposes, if you ever come across a strange, unidentified (or misidentified!) source code file.
+* [linters](https://github.com/mcandre/linters), a wiki of common programming language linters and SAST tools.
+* [periscope](https://github.com/mcandre/periscope) warns on unscoped NPM packages.
+* [slick](https://github.com/mcandre/slick) offers `sh -n` syntax checking against pure POSIX syntax, whereas actual `sh` on most systems symlinks to bash.
+* [todolint](https://github.com/mcandre/todolint) finds bugs by code comments.
+* [unmake](https://github.com/mcandre/unmake), a linter for makefiles.
