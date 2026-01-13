@@ -2,14 +2,6 @@ module github.com/mcandre/stank
 
 go 1.25.4
 
-tool (
-	github.com/alexkohler/nakedret/v2/cmd/nakedret
-	github.com/kisielk/errcheck
-	github.com/magefile/mage
-	github.com/mcandre/factorio/cmd/factorio
-	honnef.co/go/tools/cmd/staticcheck
-)
-
 require (
 	github.com/magefile/mage v1.15.0
 	github.com/mcandre/mage-extras v0.0.32
@@ -26,4 +18,12 @@ require (
 	golang.org/x/sync v0.13.0 // indirect
 	golang.org/x/tools v0.32.0 // indirect
 	honnef.co/go/tools v0.6.1 // indirect
+)
+
+tool (
+	github.com/alexkohler/nakedret/v2/cmd/nakedret
+	github.com/kisielk/errcheck
+	github.com/magefile/mage
+	github.com/mcandre/factorio/cmd/factorio
+	honnef.co/go/tools/cmd/staticcheck
 )

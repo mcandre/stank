@@ -38,23 +38,17 @@ Machine-generated files, including git hook default `*.sample` files, are automa
 
 See `stank -help` for additional options.
 
-# DOCKER HUB
-
-https://hub.docker.com/r/n4jm4/stank
-
-# DOWNLOAD
-
-https://github.com/mcandre/stank/releases
-
-# INSTALL FROM SOURCE
-
-```console
-$ go install github.com/mcandre/stank/...@latest
-```
-
-# DOCUMENTATION
+# API DOCUMENTATION
 
 https://pkg.go.dev/github.com/mcandre/stank
+
+# INSTALLTION
+
+See [INSTALL.md](INSTALL.md).
+
+# LICENSE
+
+BSD-2-Clause
 
 # MORE EXAMPLES
 
@@ -194,14 +188,6 @@ The Rust programming language has best in class performance, reliability, and se
 Regardless, the particular programming language is a less important, concern, as long as it is not shell. Notoriously hazardous programming languages like JavaScript and Perl, are still safer than shell. Shell (any flavor) is a trash fire waiting for a spark.
 
 Fortunately, the list of shell scripts that `stank` emits, can help engineers to identify program candidates to rewrite in more mature programming languages.
-
-# LICENSE
-
-BSD-2-Clause
-
-# RUNTIME REQUIREMENTS
-
-(None)
 
 ## Recommended
 
