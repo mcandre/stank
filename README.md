@@ -1,6 +1,6 @@
 # stank: shell script linters
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/n4jm4/stank)](https://hub.docker.com/r/n4jm4/stank) [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/mcandre/stank) [![Test](https://github.com/mcandre/stank/actions/workflows/test.yml/badge.svg)](https://github.com/mcandre/stank/actions/workflows/test.yml) [![license](https://img.shields.io/badge/license-BSD-3)](LICENSE.md)
+[![Docker Pulls](https://img.shields.io/docker/pulls/n4jm4/stank)](https://hub.docker.com/r/n4jm4/stank) [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/mcandre/stank) [![Test](https://github.com/mcandre/stank/actions/workflows/test.yml/badge.svg)](https://github.com/mcandre/stank/actions/workflows/test.yml) [![Test-Futureproof-Dependencies](https://github.com/mcandre/stank/actions/workflows/test-futureproof-dependencies.yml/badge.svg)](https://github.com/mcandre/stank/actions/workflows/test-futureproof-dependencies.yml) [![Test-Futureproof-Language](https://github.com/mcandre/stank/actions/workflows/test-futureproof-language.yml/badge.svg)](https://github.com/mcandre/stank/actions/workflows/test-futureproof-language.yml) [![Test-Futureproof-OS](https://github.com/mcandre/stank/actions/workflows/test-futureproof-os.yml/badge.svg)](https://github.com/mcandre/stank/actions/workflows/test-futureproof-os.yml) [![license](https://img.shields.io/badge/license-BSD-3)](LICENSE.md)
 
 # ABOUT
 
