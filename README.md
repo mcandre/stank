@@ -1,6 +1,6 @@
 # stank: shell script linters
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/n4jm4/stank)](https://hub.docker.com/r/n4jm4/stank) [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/mcandre/stank) [![license](https://img.shields.io/badge/license-BSD-3)](LICENSE.md) [![Donate](https://img.shields.io/badge/GUMROAD-36a9ae?style=flat&logo=gumroad&logoColor=white)](https://mcandre.gumroad.com/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/n4jm4/stank)](https://hub.docker.com/r/n4jm4/stank) [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/mcandre/stank) [![license](https://img.shields.io/badge/license-BSD-3)](LICENSE.md)
 
 # ABOUT
 
