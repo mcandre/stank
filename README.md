@@ -1,5 +1,7 @@
 # stank: shell script linters
 
+[![Docker Pulls](https://img.shields.io/docker/pulls/n4jm4/stank)](https://hub.docker.com/r/n4jm4/stank)
+
 # ABOUT
 
 stank is a library and collection of command line utilities for sniffing files to identify shell scripts like bash, sh, zsh, ksh and so on, those funky farmfresh gobs of garbaggio; versus other more palatable files like rb, py, pl.
