@@ -34,7 +34,7 @@ docker pull n4jm4/stank
 
 ## Requirements
 
-* [Go](https://go.dev/) 1.25.4+
+* [Go](https://go.dev/) 1.26.1+
 * Ensure `GOBIN` is registered in `$PATH`. Validate like `go env GOBIN; echo "$PATH"`
 
 ## Instructions
