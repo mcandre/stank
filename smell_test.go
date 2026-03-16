@@ -1,11 +1,11 @@
 package stank_test
 
 import (
-	"github.com/mcandre/stank"
-
 	"encoding/json"
 	"reflect"
 	"testing"
+
+	"github.com/mcandre/stank"
 )
 
 func TestSmellJSONCodecIdempotent(t *testing.T) {

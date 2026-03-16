@@ -1,12 +1,10 @@
 # stank: shell script linters
 
-[![GitHub Downloads](https://img.shields.io/github/downloads/mcandre/stank/total?logo=github)](https://github.com/mcandre/stank/releases) [![Docker Pulls](https://img.shields.io/docker/pulls/n4jm4/stank)](https://hub.docker.com/r/n4jm4/stank) [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/mcandre/stank) [![Test](https://github.com/mcandre/stank/actions/workflows/test.yml/badge.svg)](https://github.com/mcandre/stank/actions/workflows/test.yml) [![license](https://img.shields.io/badge/license-BSD-3)](LICENSE.md)
+[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/mcandre/stank) [![Test](https://github.com/mcandre/stank/actions/workflows/test.yml/badge.svg)](https://github.com/mcandre/stank/actions/workflows/test.yml) [![license](https://img.shields.io/badge/license-BSD-3)](LICENSE.md)
 
-# ABOUT
+# SUMMARY
 
-stank is a library and collection of command line utilities for sniffing files to identify shell scripts like bash, sh, zsh, ksh and so on, those funky farmfresh gobs of garbaggio; versus other more palatable files like rb, py, pl.
-
-Believe it or not, shell scripts are notoriously difficult to write well, so it behooves a developer to either write shell scripts in safer languages, or else wargame your scripts with an armada of linters. Trouble is, in large projects one can never be too sure which files are honest to dog POSIX compliant shell scripts, and which are pretenders. csh, tcsh, fish, ion, rc, and most other nonderivatives of bash tend to be NOT POSIX compatible. If you're geeky enough to have followed thus far, let's get crackalackin with some fruity examples dammit!
+stank recursively lints shell scripts.
 
 # EXAMPLES
 
@@ -40,14 +38,23 @@ Machine-generated files, including git hook default `*.sample` files, are automa
 
 See `stank -help` for additional options.
 
-# INSTALLTION
+# DOWNLOAD
 
-See [INSTALL.md](INSTALL.md).
+```sh
+go install github.com/mcandre/stank/cmd/...@latest
+```
 
-## Recommended
+## Prerequisites
 
-* [GNU](https://www.gnu.org/)/[BSD](https://en.wikipedia.org/wiki/Berkeley_Software_Distribution) [findutils](https://en.wikipedia.org/wiki/Find_(Unix))
-* [jq](https://jqlang.github.io/jq/)
+* [Go](https://go.dev/)
+
+For information on developing stank, see our [development guide](DEVELOPMENT.md).
+
+# ABOUT
+
+stank is a library and collection of command line utilities for sniffing files to identify shell scripts like bash, sh, zsh, ksh and so on, those funky farmfresh gobs of garbaggio; versus other more palatable files like rb, py, pl.
+
+Believe it or not, shell scripts are notoriously difficult to write well, so it behooves a developer to either write shell scripts in safer languages, or else wargame your scripts with an armada of linters. Trouble is, in large projects one can never be too sure which files are honest to dog POSIX compliant shell scripts, and which are pretenders. csh, tcsh, fish, ion, rc, and most other nonderivatives of bash tend to be NOT POSIX compatible. If you're geeky enough to have followed thus far, let's get crackalackin with some fruity examples dammit!
 
 # MORE EXAMPLES
 
@@ -227,24 +234,9 @@ $ stink -pp examples/i-should-have-an-extension
 
 Perhaps append a `.lisp` extension to such files. Or separate the modulino into clear library vs. command line modules. Or extract the shell interaction into a dedicated script. Or convince the language maintainers to treat shebangs as comments. Write your congressman. However you resolve this, know that the current situation is far outside the norm, and likely to break in a suitably arcane and dramatic fashion. With wyverns and flaming seas and portents of all ill manner.
 
-# Shell script linters
+# RESOURCES
 
-These bad bois help to shore up ur shell scripts. Though they're designed to work on individual files, so be sure to stank-ify larger projects and pipe the results to `xargs [-0] [-n ... shellcheck`.
+Prior art, personal plugs, and tools for developing applications (including non-shell projects)!
 
-* [bashate](https://pypi.python.org/pypi/bashate)
-* [shlint](https://rubygems.org/gems/shlint)
-* [ShellCheck](https://hackage.haskell.org/package/ShellCheck)
-* [editorconfig-cli](https://github.com/amyboyd/editorconfig-cli)
-* [shfmt](https://github.com/mvdan/sh)
-* [astyle](http://astyle.sourceforge.net)
-
-## Honorable mentions
-
-* [ack](https://beyondgrep.com) offers `--shell [-f]` flags that act similarly to `stank`, with the caveat that ack includes nonPOSIX shells like csh, tcsh, and fish in these results; but as of this writing fails to include POSIX shells like ash, dash, posh, pdksh, ksh93, and mksh. ack also depends on Perl, making it more heavyweight for Docker microservices and other constrained platforms.
-* [kirill](https://github.com/mcandre/kirill) identifies JSON documents.
-* [linguist](https://github.com/github/linguist), GitHub's extraordinary effort to identify which language each of its millions of repositories are written in. While this stanky Go project does not employ linguist in automated analysis, it's worth mentioning for forensic purposes, if you ever come across a strange, unidentified (or misidentified!) source code file.
-* [linters](https://github.com/mcandre/linters), a wiki of common programming language linters and SAST tools.
-* [periscope](https://github.com/mcandre/periscope) warns on unscoped NPM packages.
-* [slick](https://github.com/mcandre/slick) offers `sh -n` syntax checking against pure POSIX syntax, whereas actual `sh` on most systems symlinks to bash.
-* [todolint](https://github.com/mcandre/todolint) finds bugs by code comments.
-* [unmake](https://github.com/mcandre/unmake), a linter for makefiles.
+* [jq](https://jqlang.org/) - JSON transformer
+* [mcandre/linters](https://github.com/mcandre/linters) - curated linter collection

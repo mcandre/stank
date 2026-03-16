@@ -3,8 +3,6 @@
 package stank
 
 import (
-	"mvdan.cc/sh/v3/syntax"
-
 	"bufio"
 	"bytes"
 	"log"
@@ -13,6 +11,8 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+
+	"mvdan.cc/sh/v3/syntax"
 )
 
 // Ignores is a poor man's gitignore.

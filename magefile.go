@@ -3,90 +3,61 @@
 package main
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/magefile/mage/mg"
-	mageextras "github.com/mcandre/mage-extras"
-	"github.com/mcandre/stank"
+	"github.com/magefile/mage/sh"
+	"github.com/mcandre/mx"
 )
-
-// artifactsPath describes where artifacts are produced.
-var artifactsPath = "bin"
 
 // Default references the default build task.
 var Default = Test
 
-// Govulncheck runs govulncheck.
-func Govulncheck() error { return mageextras.Govulncheck("-scan", "package", "./...") }
+// CoverHTML denotes the HTML formatted coverage filename.
+const CoverHTML = "cover.html"
+
+// CoverProfile denotes the raw coverage data filename.
+const CoverProfile = "cover.out"
 
 // Audit runs a security audit.
 func Audit() error { return Govulncheck() }
 
-// Test runs a unit test.
-func Test() error { return mageextras.UnitTest() }
+// Clean deletes artifacts.
+func Clean() error { return CleanCoverage() }
 
-// CoverHTML denotes the HTML formatted coverage filename.
-var CoverHTML = "cover.html"
+// CleanCoverage deletes coverage data.
+func CleanCoverage() error {
+	if err := sh.Rm(CoverHTML); err != nil {
+		return err
+	}
 
-// CoverProfile denotes the raw coverage data filename.
-var CoverProfile = "cover.out"
+	return sh.Rm(CoverProfile)
+}
 
 // CoverageHTML generates HTML formatted coverage data.
 func CoverageHTML() error {
 	mg.Deps(CoverageProfile)
-	return mageextras.CoverageHTML(CoverHTML, CoverProfile)
+	return mx.CoverageHTML(CoverHTML, CoverProfile)
 }
 
 // CoverageProfile generates raw coverage data.
-func CoverageProfile() error { return mageextras.CoverageProfile(CoverProfile) }
+func CoverageProfile() error { return mx.CoverageProfile(CoverProfile) }
 
 // Deadcode runs deadcode.
-func Deadcode() error { return mageextras.Deadcode("./...") }
-
-// DockerBuild creates local Docker buildx images.
-func DockerBuild() error {
-	return mageextras.Tuggy(
-		"-t", fmt.Sprintf("n4jm4/stank:%s", stank.Version),
-		"--load",
-	)
-}
-
-// DockerPush creates and tag aliases remote Docker buildx images.
-func DockerPush() error {
-	return mageextras.Tuggy(
-		"-t", fmt.Sprintf("n4jm4/stank:%s", stank.Version),
-		"-a", "n4jm4/stank",
-		"--push",
-	)
-}
-
-// DockerTest creates and tag aliases remote test Docker buildx images.
-func DockerTest() error {
-	if err := mageextras.Tuggy("-t", "n4jm4/stank:test", "--load"); err != nil {
-		return err
-	}
-
-	return mageextras.Tuggy("-t", "n4jm4/stank:test", "--push")
-}
-
-// GoImports runs goimports.
-func GoImports() error { return mageextras.GoImports("-w") }
-
-// GoVet runs default go vet analyzers.
-func GoVet() error { return mageextras.GoVet() }
+func Deadcode() error { return sh.RunV("deadcode", "./...") }
 
 // Errcheck runs errcheck.
-func Errcheck() error { return mageextras.Errcheck("-blank") }
+func Errcheck() error { return sh.RunV("errcheck", "-blank") }
 
-// Nakedret runs nakedret.
-func Nakedret() error { return mageextras.Nakedret("-l", "0") }
+// GoImports runs goimports.
+func GoImports() error { return mx.GoImports("-w") }
 
-// Shadow runs go vet with shadow checks enabled.
-func Shadow() error { return mageextras.GoVetShadow() }
+// GoVet runs default go vet analyzers.
+func GoVet() error { return mx.GoVet() }
 
-// Staticcheck runs staticcheck.
-func Staticcheck() error { return mageextras.Staticcheck("./...") }
+// Govulncheck runs govulncheck.
+func Govulncheck() error { return sh.RunV("govulncheck", "-scan", "package", "./...") }
+
+// Install builds and installs Go applications.
+func Install() error { return mx.Install() }
 
 // Lint runs the lint suite.
 func Lint() error {
@@ -100,42 +71,17 @@ func Lint() error {
 	return nil
 }
 
-// portBasename labels the artifact basename.
-var portBasename = fmt.Sprintf("stank-%s", stank.Version)
+// Nakedret runs nakedret.
+func Nakedret() error { return mx.Nakedret("-l", "0") }
 
-// repoNamespace identifies the Go namespace for this project.
-var repoNamespace = "github.com/mcandre/stank"
+// Shadow runs go vet with shadow checks enabled.
+func Shadow() error { return mx.GoVetShadow() }
 
-// Factorio cross-compiles Go binaries for a multitude of platforms.
-func Factorio() error { return mageextras.Factorio(portBasename) }
+// Staticcheck runs staticcheck.
+func Staticcheck() error { return sh.RunV("staticcheck", "./...") }
 
-// Port builds and compresses artifacts.
-func Port() error {
-	mg.Deps(Factorio);
-
-	return mageextras.Chandler(
-		"-C",
-		artifactsPath,
-		"-czf",
-		fmt.Sprintf("%s.tgz", portBasename),
-		portBasename,
-	)
-}
-
-// Install builds and installs Go applications.
-func Install() error { return mageextras.Install() }
+// Test runs a unit test.
+func Test() error { return mx.UnitTest() }
 
 // Uninstall deletes installed Go applications.
-func Uninstall() error { return mageextras.Uninstall("stink", "stank", "funk") }
-
-// CleanCoverage deletes coverage data.
-func CleanCoverage() error {
-	if err := os.RemoveAll(CoverHTML); err != nil {
-		return err
-	}
-
-	return os.RemoveAll(CoverProfile)
-}
-
-// Clean deletes artifacts.
-func Clean() error { mg.Deps(CleanCoverage); return os.RemoveAll(artifactsPath) }
+func Uninstall() error { return mx.Uninstall("stink", "stank", "funk") }
