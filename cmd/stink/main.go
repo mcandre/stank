@@ -21,9 +21,24 @@ var flagVersion = flag.Bool("version", false, "Show version information")
 
 // Stinker holds configuration for a stinky walk.
 type Stinker struct {
-	EOLCheck    bool
-	CRCheck     bool
+	// EOLCheck enables final line terminator checks.
+	EOLCheck bool
+
+	// CRCheck enables carriage return checks.
+	CRCheck bool
+
+	// PrettyPrint expands formatting.
 	PrettyPrint bool
+
+	// sniffer analyzes files.
+	sniffer stank.Sniffer
+}
+
+// NewStinker returns a Stinker.
+func NewStinker() Stinker {
+	var stinker Stinker
+	stinker.sniffer = stank.NewSniffer()
+	return stinker
 }
 
 // Walk sniffs a path,
@@ -31,7 +46,7 @@ type Stinker struct {
 //
 // If PrettyPrint is false, then the smell is minified.
 func (o Stinker) Walk(pth string, _ os.FileInfo, _ error) error {
-	smell, err2 := stank.Sniff(pth, stank.SniffConfig{EOLCheck: o.EOLCheck, CRCheck: o.CRCheck})
+	smell, err2 := o.sniffer.Sniff(pth, stank.SniffConfig{EOLCheck: o.EOLCheck, CRCheck: o.CRCheck})
 
 	if err2 != nil && err2 != io.EOF {
 		log.Print(err2)
@@ -57,8 +72,7 @@ func (o Stinker) Walk(pth string, _ os.FileInfo, _ error) error {
 
 func main() {
 	flag.Parse()
-
-	stinker := Stinker{}
+	stinker := NewStinker()
 
 	if *flagPrettyPrint {
 		stinker.PrettyPrint = true

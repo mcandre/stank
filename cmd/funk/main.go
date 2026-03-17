@@ -24,10 +24,27 @@ var flagVersion = flag.Bool("version", false, "Show version information")
 
 // Funk holds configuration for a funky walk.
 type Funk struct {
-	EOLCheck      bool
-	CRCheck       bool
+	// EOLCheck enables final end of line checks.
+	EOLCheck bool
+
+	// CRCheck enables carriage return checks.
+	CRCheck bool
+
+	// ModulinoCheck enables modulino checks.
 	ModulinoCheck bool
-	FoundOdor     bool
+
+	// FoundOdor indicates the presence of warnings.
+	FoundOdor bool
+
+	// sniffer analyzes files.
+	sniffer stank.Sniffer
+}
+
+// NewFunk constructs a Funk.
+func NewFunk() Funk {
+	var funk Funk
+	funk.sniffer = stank.NewSniffer()
+	return funk
 }
 
 // CheckEOL analyzes POSIXy scripts for the presence/absence of a final end of line sequence such as \n at the end of a file, \r\n, etc.
@@ -50,9 +67,9 @@ func CheckCR(smell stank.Smell) bool {
 	return false
 }
 
-// CheckBOMs analyzes POSIXy scripts for byte order markers. If a BOM is found, CheckBOMs prints a warning and returns true.
-// Otherwise, CheckBOMs returns false.
-func CheckBOMs(smell stank.Smell) bool {
+// CheckBoms() analyzes POSIXy scripts for byte order markers. If a BOM is found, CheckBoms() prints a warning and returns true.
+// Otherwise, CheckBoms() returns false.
+func CheckBoms(smell stank.Smell) bool {
 	if smell.BOM {
 		fmt.Printf("Leading BOM reduces portability: %s\n", smell.Path)
 
@@ -69,8 +86,8 @@ func CheckBOMs(smell stank.Smell) bool {
 // Unfortunately many non-POSIXy languages unfortunately require such flags:
 // sed, awk, Emacs Lisp, Fourth, Octave, Mathematica, ...
 // Therefore, CheckShebangs may trigger unactionable warnings when run on non-POSIXy files.
-func CheckShebangs(smell stank.Smell) bool {
-	if stank.LOWEREXTENSIONS2CONFIG[strings.ToLower(smell.Extension)] || stank.LOWERFILENAMES2CONFIG[strings.ToLower(smell.Filename)] {
+func (o Funk) CheckShebangs(smell stank.Smell) bool {
+	if stank.LowerExtensionsToConfig()[strings.ToLower(smell.Extension)] || o.sniffer.LowerFilenamesToConfig[strings.ToLower(smell.Filename)] {
 		return false
 	}
 
@@ -122,8 +139,8 @@ func CheckPermissions(smell stank.Smell) bool {
 // CheckModulino warns when a smell features some aspects of an application, such as executable bits, and simultaneously some aspects of a library, such as a non-empty file extension.
 // If the file is a pure application or library, CheckModulino returns false.
 // Otherwise, CheckModulino returns true.
-func CheckModulino(smell stank.Smell) bool {
-	if stank.LOWEREXTENSIONS2CONFIG[strings.ToLower(smell.Extension)] || stank.LOWERFILENAMES2CONFIG[strings.ToLower(smell.Filename)] {
+func (o Funk) CheckModulino(smell stank.Smell) bool {
+	if stank.LowerExtensionsToConfig()[strings.ToLower(smell.Extension)] || o.sniffer.LowerFilenamesToConfig[strings.ToLower(smell.Filename)] {
 		return false
 	}
 
@@ -452,11 +469,11 @@ func (o Funk) FunkyCheck(smell stank.Smell) bool {
 	var resModulino bool
 
 	if o.ModulinoCheck {
-		resModulino = CheckModulino(smell)
+		resModulino = o.CheckModulino(smell)
 	}
 
-	resBOM := CheckBOMs(smell)
-	resShebang := CheckShebangs(smell)
+	resBOM := CheckBoms(smell)
+	resShebang := o.CheckShebangs(smell)
 	resPerms := CheckPermissions(smell)
 	resSyntax := CheckSyntax(smell)
 
@@ -485,7 +502,7 @@ func (o *Funk) Walk(pth string, _ os.FileInfo, _ error) error {
 		return nil
 	}
 
-	smell, err2 := stank.Sniff(pth, stank.SniffConfig{EOLCheck: o.EOLCheck, CRCheck: o.CRCheck})
+	smell, err2 := o.sniffer.Sniff(pth, stank.SniffConfig{EOLCheck: o.EOLCheck, CRCheck: o.CRCheck})
 
 	if err2 != nil && err2 != io.EOF {
 		fmt.Printf("%v\n", err2)
@@ -505,7 +522,7 @@ func (o *Funk) Walk(pth string, _ os.FileInfo, _ error) error {
 func main() {
 	flag.Parse()
 
-	funk := Funk{}
+	funk := NewFunk()
 
 	if *flagEOL {
 		funk.EOLCheck = true

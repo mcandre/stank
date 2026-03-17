@@ -49,7 +49,7 @@ import (
 // For performance reasons, the stank library will not attempt to discern the exact encoding of a file,
 // but merely report whether the file leads with a byte order marker such as 0xEFBBBF (UTF-8) or 0xFEFF (UTF-16, UTF-32).
 // If BOM, then the file is Unicode, which may lead to a stank warning, as POSIX shell scripts are best written in pure ASCII,
-// for maximum cross-platform compatibliity. BOMs are outside of the 127 max integer range for ASCII values,
+// for maximum cross-platform compatibliity. Boms() are outside of the 127 max integer range for ASCII values,
 // so a file with a BOM is likely not a POSIX shell script, while a file without a BOM may be a POSIX shell script.
 //
 // Line endings for POSIX shell scripts should LF="\n" in C-style notation. Alternative line endings such as CRLF="\r\n",

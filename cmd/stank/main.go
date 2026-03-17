@@ -48,6 +48,17 @@ type Stanker struct {
 
 	// Printer writes file path results.
 	Printer func(string)
+
+	// sniffer analyzes files.
+	sniffer stank.Sniffer
+}
+
+// NewStanker constructs a Stanker.
+func NewStanker() Stanker {
+	var stanker Stanker
+	stanker.Mode = ModePOSIXy
+	stanker.sniffer = stank.NewSniffer()
+	return stanker
 }
 
 // LineWriter emits file paths with line terminators.
@@ -65,7 +76,7 @@ func NullWriter(pth string) {
 // If the file smells sufficiently POSIXy, the path is printed.
 // Otherwise, the path is omitted.
 func (o Stanker) Walk(pth string, _ os.FileInfo, _ error) error {
-	smell, err2 := stank.Sniff(pth, stank.SniffConfig{})
+	smell, err2 := o.sniffer.Sniff(pth, stank.SniffConfig{})
 
 	if err2 != nil && err2 != io.EOF {
 		log.Print(err2)
@@ -105,8 +116,7 @@ func (o Stanker) Walk(pth string, _ os.FileInfo, _ error) error {
 
 func main() {
 	flag.Parse()
-
-	stanker := Stanker{Mode: ModePOSIXy}
+	stanker := NewStanker()
 
 	if *flagSh {
 		stanker.Mode = ModePureSh
