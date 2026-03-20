@@ -1,15 +1,18 @@
 package mx
 
 import (
-	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 )
 
 // GoImports runs goimports.
 func GoImports(args ...string) error {
-	mg.Deps(CollectGoFiles)
+	gopaths, err := NoVendor()
 
-	for pth := range CollectedGoFiles {
+	if err != nil {
+		return err
+	}
+
+	for pth := range gopaths.All {
 		var as []string
 		as = append(as, args...)
 		as = append(as, pth)

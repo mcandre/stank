@@ -9,28 +9,36 @@ import (
 
 // GoListSourceFilesTemplate provides a standard Go template for querying
 // a project's Go source file paths.
-var GoListSourceFilesTemplate = "{{$p := .}}{{range $f := .GoFiles}}{{$p.Dir}}/{{$f}}\n{{end}}"
+const GoListSourceFilesTemplate = "{{$p := .}}{{range $f := .GoFiles}}{{$p.Dir}}/{{$f}}\n{{end}}"
 
 // GoListTestFilesTemplate provides a standard Go template for querying
 // a project's Go test file paths.
-var GoListTestFilesTemplate = "{{$p := .}}{{range $f := .XTestGoFiles}}{{$p.Dir}}/{{$f}}\n{{end}}"
+const GoListTestFilesTemplate = "{{$p := .}}{{range $f := .XTestGoFiles}}{{$p.Dir}}/{{$f}}\n{{end}}"
 
-// CollectedGoFiles represents source and test Go files in a project.
-// Populdated with CollectGoFiles().
-var CollectedGoFiles = make(map[string]bool)
+// GoPaths models information about Go project source trees.
+type GoPaths struct {
+	// All collects Go source file paths.
+	All map[string]bool
 
-// CollectedGoSourceFiles represents the set of Go source files in a project.
-// Populated with CollectGoFiles().
-var CollectedGoSourceFiles = make(map[string]bool)
+	// Regular collects non-unit-test Go source file paths.
+	Regular map[string]bool
 
-// CollectedGoTestFiles represents the set of Go test files in a project.
-// Populdated with CollectGoFiles().
-var CollectedGoTestFiles = make(map[string]bool)
+	// Test collects unit test Go source file paths.
+	Test map[string]bool
+}
 
-// CollectGoFiles populates CollectedGoFiles, CollectedGoSourceFiles, and CollectedGoTestFiles.
-//
-// Vendored files are ignored.
-func CollectGoFiles() error {
+// NewGoPaths constructs a GoPaths.
+func NewGoPaths() GoPaths {
+	return GoPaths{
+		All:     make(map[string]bool),
+		Regular: make(map[string]bool),
+		Test:    make(map[string]bool),
+	}
+}
+
+// NoVendor queries Go source file paths,
+// excluding vendored paths.
+func NoVendor() (*GoPaths, error) {
 	var sourceOut bytes.Buffer
 	var testOut bytes.Buffer
 
@@ -46,16 +54,17 @@ func CollectGoFiles() error {
 	cmdSource.Stdout = &sourceOut
 
 	if err := cmdSource.Run(); err != nil {
-		return err
+		return nil, err
 	}
 
+	gopaths := NewGoPaths()
 	scannerSource := bufio.NewScanner(&sourceOut)
 
 	for scannerSource.Scan() {
 		pth := scannerSource.Text()
 
-		CollectedGoFiles[pth] = true
-		CollectedGoSourceFiles[pth] = true
+		gopaths.All[pth] = true
+		gopaths.Regular[pth] = true
 	}
 
 	cmdTest := exec.Command(
@@ -70,7 +79,7 @@ func CollectGoFiles() error {
 	cmdTest.Stdout = &testOut
 
 	if err := cmdTest.Run(); err != nil {
-		return err
+		return nil, err
 	}
 
 	scannerTest := bufio.NewScanner(&testOut)
@@ -78,9 +87,9 @@ func CollectGoFiles() error {
 	for scannerTest.Scan() {
 		pth := scannerTest.Text()
 
-		CollectedGoFiles[pth] = true
-		CollectedGoTestFiles[pth] = true
+		gopaths.All[pth] = true
+		gopaths.Test[pth] = true
 	}
 
-	return nil
+	return &gopaths, nil
 }

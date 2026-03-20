@@ -3,21 +3,19 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 	"github.com/mcandre/mx"
 )
 
-// Default references the default build task.
-var Default = CoverageHTML
-
 // CoverHTML denotes the HTML formatted coverage filename.
-var CoverHTML = "cover.html"
+const CoverHTML = "cover.html"
 
 // CoverProfile denotes the raw coverage data filename.
-var CoverProfile = "cover.out"
+const CoverProfile = "cover.out"
+
+// Default references the default build task.
+var Default = Test
 
 // Audit runs a security audit.
 func Audit() error { return Govulncheck() }
@@ -68,17 +66,6 @@ func Lint() error {
 
 // Nakedret runs nakedret.
 func Nakedret() error { return mx.Nakedret("-l", "0") }
-
-// NoVendor lists non-vendored Go source files.
-func NoVendor() error {
-	mg.Deps(mx.CollectGoFiles)
-
-	for pth, _ := range mx.CollectedGoFiles {
-		fmt.Println(pth)
-	}
-
-	return nil
-}
 
 // Shadow runs go vet with shadow checks enabled.
 func Shadow() error { return mx.GoVetShadow() }

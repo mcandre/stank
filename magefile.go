@@ -9,37 +9,13 @@ import (
 )
 
 // Default references the default build task.
-var Default = Test
-
-// CoverHTML denotes the HTML formatted coverage filename.
-const CoverHTML = "cover.html"
-
-// CoverProfile denotes the raw coverage data filename.
-const CoverProfile = "cover.out"
+var Default = Build
 
 // Audit runs a security audit.
 func Audit() error { return Govulncheck() }
 
-// Clean deletes artifacts.
-func Clean() error { return CleanCoverage() }
-
-// CleanCoverage deletes coverage data.
-func CleanCoverage() error {
-	if err := sh.Rm(CoverHTML); err != nil {
-		return err
-	}
-
-	return sh.Rm(CoverProfile)
-}
-
-// CoverageHTML generates HTML formatted coverage data.
-func CoverageHTML() error {
-	mg.Deps(CoverageProfile)
-	return mx.CoverageHTML(CoverHTML, CoverProfile)
-}
-
-// CoverageProfile generates raw coverage data.
-func CoverageProfile() error { return mx.CoverageProfile(CoverProfile) }
+// Build compiles Go projects.
+func Build() error { return sh.RunV("go", "build", "./...") }
 
 // Deadcode runs deadcode.
 func Deadcode() error { return sh.RunV("deadcode", "./...") }

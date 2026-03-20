@@ -18,7 +18,7 @@ github.com/magefile/mage/mage
 github.com/magefile/mage/mg
 github.com/magefile/mage/parse
 github.com/magefile/mage/sh
-# github.com/mcandre/mx v0.0.45
+# github.com/mcandre/mx v0.0.47
 ## explicit; go 1.26.1
 github.com/mcandre/mx
 # golang.org/x/exp/typeparams v0.0.0-20250408133849-7e4ce0ab07d0

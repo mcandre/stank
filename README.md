@@ -1,6 +1,6 @@
 # stank: shell script linters
 
-[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/mcandre/stank) [![Test](https://github.com/mcandre/stank/actions/workflows/test.yml/badge.svg)](https://github.com/mcandre/stank/actions/workflows/test.yml) [![license](https://img.shields.io/badge/license-BSD-3)](LICENSE.md)
+[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/mcandre/stank) [![Test](https://github.com/mcandre/stank/actions/workflows/test.yml/badge.svg)](https://github.com/mcandre/stank/actions/workflows/test.yml) [![license](https://img.shields.io/badge/license-BSD-0)](LICENSE.md)
 
 # SUMMARY
 
@@ -11,9 +11,9 @@ stank recursively lints shell scripts.
 The stank system includes the stank Go library as well as several command line utilities for convenience. The `stank` application scans directories and files for POSIX-derived shell scripts and prints their paths, designed as a convenient standalone filter for linting large collections of source code.
 
 ```console
-$ cd examples
+% cd examples
 
-$ stank .
+% stank .
 .profile
 .shrc
 .zlogin
@@ -25,7 +25,7 @@ The `stank` command line utility searches file paths for shell scripts that may 
 stank integrates with external linters, helping to feed them a more focused set of file paths to analyze within larger project directories.
 
 ```console
-$ stank -print0 . | xargs -0 -n 1 shellcheck
+% stank -print0 . | xargs -0 -n 1 shellcheck
 In welcome.sh line 1:
 #!bash
 ^----^ SC2239 (error): Ensure the shebang uses an absolute path to the interpreter.
@@ -36,7 +36,7 @@ For more information:
 
 Machine-generated files, including git hook default `*.sample` files, are automatically skipped.
 
-See `stank -help` for additional options.
+For details on tuning stank, run `stank -help`.
 
 # DOWNLOAD
 
@@ -48,7 +48,11 @@ go install github.com/mcandre/stank/cmd/...@latest
 
 * [Go](https://go.dev/)
 
-For information on developing stank, see our [development guide](DEVELOPMENT.md).
+## Postinstall
+
+Register output of `go env GOBIN` to `PATH` environment variable.
+
+For details on building from source, see [development](DEVELOPMENT.md).
 
 # ABOUT
 
@@ -61,7 +65,7 @@ Believe it or not, shell scripts are notoriously difficult to write well, so it 
 The `funk` linter reports strange odors emanating from scripts, such as improper line endings, the presence of Byte Order Marker's in some Unicode scripts.
 
 ```console
-$ funk examples
+% funk examples
 Ambiguous launch style. Either feature a file extensions, or else feature executable bits: examples/.shrc
 Tokenize like `unset IFS` at the top of executable scripts: examples/.shrc
 Control program flow like `set -euf` at the top of executable scripts: examples/.shrc
@@ -73,7 +77,7 @@ Missing shebang: examples/goodbye.sh
 Missing shebang: examples/greetings.bash
 Control program flow like `set -euf` at the top of executable scripts: examples/hello-commented
 
-$ funk -modulino examples
+% funk -modulino examples
 Configuration features shebang: examples/badconfigs/.bash_profile
 Configuration features executable permissions: examples/badconfigs/zprofile
 Missing final end of line sequence: examples/blank.bash
@@ -95,19 +99,9 @@ Modulino ambiguity. Either have owner executable permissions with no extension, 
 Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/wednesday-bom
 Leading BOM reduces portability: examples/wednesday-bom
 Modulino ambiguity. Either have owner executable permissions with no extension, or else remove executable bits and use an extension like .lib.sh: examples/welcome
-
-$ funk -help
-  -cr
-        Report presence/absence of final end of line sequence (default true)
-  -eol
-        Report presence/absence of final end of line sequence (default true)
-  -help
-        Show usage information
-  -modulino
-        Enforce strict separation of application scripts vs. library scripts
-  -version
-        Show version information
 ```
+
+For details on tuning funk, run `funk -help`.
 
 Both `stank` and `funk` have the ability to select low level, nonPOSIX scripts as well, such as csh/tcsh scripts used in FreeBSD.
 
@@ -128,11 +122,11 @@ Note that legacy systems, packages, and shell scripts referencing "sh" may refer
 Similarly, the old Bourne shell AKA "sh" AKA "bsh" presents language identification difficulties. Old Bourne shell scripts are most likely to present themselves with "sh" shebangs, which is okay as Bourne sh and ksh88/pdksh/ksh served as the bases for the POSIX sh standard. Some modern systems may present a Bourne shell as a "sh" or "bsh" binary. The former presents few problems for stank identification, though "bsh" is tricky, as the majority of its uses today are not associated with the Bourne shell but with the Java BeanShell. So stank may default to treating `bsh` scripts as non-POSIXy, and any such Bourne shell scripts are advised to feature either `bash` or `sh` shebangs, and perhaps `.sh` or `.bash` extensions, in order to self-identify as modern, POSIX compliant scripts.
 
 ```console
-$ stink examples/hello
+% stink examples/hello
 {"Path":"examples/hello","Filename":"hello","Basename":"hello","Extension":"","Shebang":"#!/bin/sh","Interpreter":"sh","LineEnding":"\n","FinalEOL":false,"ContainsCR":false
 ,"Permissions":509,"Directory":false,"OwnerExecutable":true,"BOM":false,"POSIXy":true,"AltShellScript":false}
 
-$ stink -pp examples/hello
+% stink -pp examples/hello
 {
   "Path": "examples/hello",
   "Filename": "hello",
@@ -151,7 +145,7 @@ $ stink -pp examples/hello
   "AltShellScript": false
 }
 
-$ stink -pp examples/hello.py
+% stink -pp examples/hello.py
 {
   "Path": "examples/hello.py",
   "Filename": "hello.py",
@@ -169,19 +163,9 @@ $ stink -pp examples/hello.py
   "POSIXy": false,
   "AltShellScript": false
 }
-
-$ stink -help
-  -cr
-        Report presence/absence of any CR/CRLF's
-  -eol
-        Report presence/absence of final end of line sequence
-  -help
-        Show usage information
-  -pp
-        Prettyprint smell records
-  -version
-        Show version information
 ```
+
+For details on tuning stink, run `stink -help`.
 
 The included `examples/` directory demonstrates many edge cases, such as empty scripts, shebang-less scripts, extensioned and extensionless scripts, and various Hello World applications in across many programming languages. Some files, such as `examples/goodbye` may contain 100% valid POSIX shell script content, but fail to self-identify with either shebangs or relevant file extensions. In a large project, such files may be mistakenly treated as whoknowswhat format, or simply plain text. Perhaps statistical methods could help identify POSIX grammars, but even an empty file is technically POSIX, which is unhelpful from a reliable classification standpoint. In any case, `examples/` hopefully covers the more common edge cases.
 
@@ -206,7 +190,7 @@ Accordingly, move shell script snippets to a dedicated shell script file. And th
 Some rather obscure files, such as Common Lisp source code with multiline, polyglot shebangs and no file extension, may falsely trigger the stank library, and the stink and stank applications, which short-circuit on the first line of the hacky shebang. Such files may be falsely identified as "POSIX" code, which is actually the intended behavior! This is because the polyglot shebang is a hack to work around limitations in the Common Lisp language, which ordinarily does not accept POSIX shebang comments, in order to get Common Lisp scripts to be dot-slashable in bash. For this situation, it is best to supply a proper file extension to such files.
 
 ```console
-$ head examples/i-should-have-an-extension
+% head examples/i-should-have-an-extension
 #!/usr/bin/env sh
 #|
 exec clisp -q -q $0 $0 ${1+"$@"}
@@ -218,7 +202,7 @@ exec clisp -q -q $0 $0 ${1+"$@"}
 ;;; With help from Francois-Rene Rideau
 ;;; http://tinyurl.com/cli-args
 
-$ stink -pp examples/i-should-have-an-extension
+% stink -pp examples/i-should-have-an-extension
 {
   "Path": "examples/i-should-have-an-extension",
   "Filename": "i-should-have-an-extension",

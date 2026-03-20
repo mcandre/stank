@@ -11,7 +11,7 @@
 
 # SUMMARY
 
-mx streamlines common Go development tasks for projects built with [mage](https://magefile.org/).
+mx streamlines common Go development tasks for projects built with mage.
 
 # ABOUT
 
@@ -29,6 +29,8 @@ Examples:
   * `GoVetShadow`
   * `Nakedret`
 * `UnitTest` - trigger unit test suite
+* `NoVendor` - Query Go source file paths excluding vendoring
+* `ExecSilent`, `RunVSilent` - Reduce command log noise
 
 # SYSTEM REQUIREMENTS
 
@@ -36,5 +38,14 @@ Examples:
 * [Mage](https://magefile.org/) 1.16.1+
 
 For details on developing mx, see our [development guide](DEVELOPMENT.md).
+
+# RESOURCES
+
+Prior art and personal plugs.
+
+* [invoke](https://pypi.org/project/invoke/) - 100% Python task runner
+* [mage](https://magefile.org/) - 100% Go task runner
+* [mcandre/tinyrick](https://github.com/mcandre/tinyrick) - 100% Rust task runner
+* [Shake](https://shakebuild.com/) - 100% Haskell task runner
 
 🐱

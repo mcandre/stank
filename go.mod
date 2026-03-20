@@ -4,7 +4,7 @@ go 1.26.1
 
 require (
 	github.com/magefile/mage v1.16.1
-	github.com/mcandre/mx v0.0.45
+	github.com/mcandre/mx v0.0.47
 	mvdan.cc/sh/v3 v3.13.0
 )
 

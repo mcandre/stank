@@ -1,52 +1,61 @@
-# DEVELOPMENT GUIDE
+# DEVELOPMENT
 
-stank follows standard, cargo based operations for compiling and unit testing Go code.
+We follow standard, `go` based operations for compiling and unit testing Go code.
 
 For advanced operations, such as linting, we further supplement with some software industry tools.
 
-# BUILDTIME REQUIREMENTS
+# DEV ENVIRONMENT
+
+## Prerequisites
 
 * [Go](https://go.dev/)
-* POSIX compliant [make](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/make.html)
-* Provision additional dev tools with `make`
+* [make](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/make.html)
+* Provision additional dev tools with `make -f install.mk`
 
 ## Recommended
 
-* a UNIX-like environment (e.g. [WSL](https://learn.microsoft.com/en-us/windows/wsl/))
-* [ASDF](https://asdf-vm.com/) 0.18 (run `asdf reshim` after provisioning)
+* [asdf](https://asdf-vm.com/)
 
-# AUDIT
+## Postinstall
+
+Register output of `go env GOBIN` to `PATH` environment variable.
+
+# TASKS
+
+We automate engineering tasks.
+
+## Build
 
 ```sh
-mage audit
+mage
 ```
 
-# INSTALL
+## Install
 
 ```sh
 mage install
 ```
 
-# UNINSTALL
+## Uninstall
 
 ```sh
 mage uninstall
 ```
 
-# TEST
+## Security Audit
 
 ```sh
-mage test
+mage audit
 ```
 
-# LINT
+## Lint
 
 ```sh
 mage lint
 ```
 
-# CLEAN
+## Test
 
 ```sh
-mage clean
+mage test
 ```
