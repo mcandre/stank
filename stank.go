@@ -11,19 +11,20 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"mvdan.cc/sh/v3/syntax"
 )
 
-// Ignores is a poor man's gitignore.
-func Ignores() []string {
+// Ignores generates common exclusion file paths.
+var Ignores = sync.OnceValue(func() []string {
 	return []string{
 		".git",
 		".venv",
 		"node_modules",
 		"vendor",
 	}
-}
+})
 
 // Ignore is a poor man's gitignore.
 //
@@ -44,7 +45,7 @@ func Ignore(pth string) bool {
 
 // LowerExtensionsToPosixyness() provides a fairly exhaustive map of lowercase file extensions to whether or not they represent POSIX shell scripts.
 // Newly minted extensions can be added by stank contributors.
-func LowerExtensionsToPosixyness() map[string]bool {
+var LowerExtensionsToPosixyness = sync.OnceValue(func() map[string]bool {
 	return map[string]bool{
 		".ada":          false,
 		".ash":          true,
@@ -148,11 +149,11 @@ func LowerExtensionsToPosixyness() map[string]bool {
 		".zshenv":       true,
 		".zshrc":        true,
 	}
-}
+})
 
 // LowerExtensionsToConfig() provides a fairly exhaustive map of lowercase file extensions to whether or not they represent shell script configurations.
 // Newly minted extensions can be added by stank contributors.
-func LowerExtensionsToConfig() map[string]bool {
+var LowerExtensionsToConfig = sync.OnceValue(func() map[string]bool {
 	return map[string]bool{
 		".ashrc":        true,
 		".bash_login":   true,
@@ -175,11 +176,11 @@ func LowerExtensionsToConfig() map[string]bool {
 		".zshenv":       true,
 		".zshrc":        true,
 	}
-}
+})
 
 // LowerFilenamesToPosixyness() provides a fairly exhaustive map of lowercase filenames to whether or not they represent POSIX shell scripts.
 // Newly minted config filenames can be added by stank contributors.
-func LowerFilenamesToPosixyness() map[string]bool {
+var LowerFilenamesToPosixyness = sync.OnceValue(func() map[string]bool {
 	return map[string]bool{
 		".profile":    true,
 		"bash_login":  true,
@@ -208,11 +209,11 @@ func LowerFilenamesToPosixyness() map[string]bool {
 		"zshenv":      true,
 		"zshrc":       true,
 	}
-}
+})
 
 // LowerFilenamesToConfig() provides a fairly exhaustive map of lowercase filenames to whether or not they represent shell script configurations.
 // Newly minted config filenames can be added by stank contributors.
-func LowerFilenamesToConfig() map[string]bool {
+var LowerFilenamesToConfig = sync.OnceValue(func() map[string]bool {
 	return map[string]bool{
 		"bash_login":  true,
 		"bash_logout": true,
@@ -236,11 +237,11 @@ func LowerFilenamesToConfig() map[string]bool {
 		"zshenv":      true,
 		"zshrc":       true,
 	}
-}
+})
 
 // LowerExtensionsToInterpreter() is a fairly exhaustive map of lowercase file extensions to their corresponding interpreters.
 // Newly minted config extensions can be added by stank contributors.
-func LowerExtensionsToInterpreter() map[string]string {
+var LowerExtensionsToInterpreter = sync.OnceValue(func() map[string]string {
 	return map[string]string{
 		".ashrc":        "ash",
 		".awk":          "awk",
@@ -298,11 +299,11 @@ func LowerExtensionsToInterpreter() map[string]string {
 		".zshrc":        "zsh",
 		"ash":           "ash",
 	}
-}
+})
 
 // LowerFilenamesToInterpreter() provides a fairly exhaustive map of lowercase filenames to their corresponding interpreters.
 // Newly minted config filenames can be added by stank contributors.
-func LowerFilenamesToInterpreter() map[string]string {
+var LowerFilenamesToInterpreter = sync.OnceValue(func() map[string]string {
 	return map[string]string{
 		".ashrc":      "ash",
 		".bashrc":     "bash",
@@ -346,11 +347,11 @@ func LowerFilenamesToInterpreter() map[string]string {
 		"zshenv":      "zsh",
 		"zshrc":       "zsh",
 	}
-}
+})
 
 // Boms() provides a set of known Byte Order mark sequences.
 // See https://en.wikipedia.org/wiki/Byte_order_mark for more information.
-func Boms() [][]byte {
+var Boms = sync.OnceValue(func() [][]byte {
 	return [][]byte{
 		{0x00, 0x00, 0xFE, 0xFF},
 		{0x2B, 0x2F, 0x76, 0x2B},
@@ -368,7 +369,7 @@ func Boms() [][]byte {
 		{0xF7, 0x64, 0x4C},
 		{0xFB, 0xEE, 0x28},
 	}
-}
+})
 
 // IsBOM checks whether a byte sequence is a BOM.
 func (o Sniffer) IsBOM(bs []byte) bool {
@@ -385,7 +386,7 @@ func (o Sniffer) IsBOM(bs []byte) bool {
 
 // InterpretersToPosixyness provides a fairly exhaustive map of interpreters to whether or not the interpreter is a POSIX compatible shell.
 // Newly minted interpreters can be added by stank contributors.
-func InterpretersToPosixyness() map[string]bool {
+var InterpretersToPosixyness = sync.OnceValue(func() map[string]bool {
 	return map[string]bool{
 		"ash":    true,
 		"awk":    false,
@@ -433,19 +434,19 @@ func InterpretersToPosixyness() map[string]bool {
 		"ysh":    false,
 		"zsh":    true,
 	}
-}
+})
 
 // FullBashInterpreters note when a shell has the basic modern bash features,
 // as opposed to subsets such as ash, dash, posh, ksh, zsh.
-func FullBashInterpreters() map[string]bool {
+var FullBashInterpreters = sync.OnceValue(func() map[string]bool {
 	return map[string]bool{
 		"bash":  true,
 		"bash4": true,
 	}
-}
+})
 
 // KshInterpreters note when a shell is a member of the modern ksh family.
-func KshInterpreters() map[string]bool {
+var KshInterpreters = sync.OnceValue(func() map[string]bool {
 	return map[string]bool{
 		"ksh":   true,
 		"ksh88": true,
@@ -455,16 +456,19 @@ func KshInterpreters() map[string]bool {
 		"pdksh": true,
 		"rksh":  true,
 	}
-}
+})
 
 // SniffConfig bundles together the various options when sniffing files for POSIXyNESS.
 type SniffConfig struct {
+	// EOLCheck analyzes End Of Line termination.
 	EOLCheck bool
-	CRCheck  bool
+
+	// CRCheck analyzes line terminations.
+	CRCheck bool
 }
 
 // AltInterpreters provides some alternative shell interpreters.
-func AltInterpreters() map[string]bool {
+var AltInterpreters = sync.OnceValue(func() map[string]bool {
 	return map[string]bool{
 		"csh":    true,
 		"elvish": true,
@@ -476,10 +480,10 @@ func AltInterpreters() map[string]bool {
 		"tcsh":   true,
 		"tsh":    true,
 	}
-}
+})
 
 // AltExtensions provides some alternative shell script file extensions.
-func AltExtensions() map[string]bool {
+var AltExtensions = sync.OnceValue(func() map[string]bool {
 	return map[string]bool{
 		".csh":    true,
 		".cshrc":  true,
@@ -496,16 +500,16 @@ func AltExtensions() map[string]bool {
 		".tcshrc": true,
 		".tsh":    true,
 	}
-}
+})
 
 // AltFilenames provides some alternative shell script profile filenames.
-func AltFilenames() map[string]bool {
+var AltFilenames = sync.OnceValue(func() map[string]bool {
 	return map[string]bool{
 		"csh.login":  true,
 		"csh.logout": true,
 		"rc.elv":     true,
 	}
-}
+})
 
 // IsAltShellScript returns whether a smell represents a non-POSIX, but nonetheless similar kind of lowlevel shell script language.
 func (o Sniffer) IsAltShellScript(smell Smell) bool {
@@ -563,57 +567,59 @@ func GNUAwkCheckSyntax(smell Smell) error {
 }
 
 // Interpreter2SyntaxValidator provides syntax validator delegates, if one is available.
-var Interpreter2SyntaxValidator = map[string]func(Smell) error{
-	"ash":        UnixCheckSyntax,
-	"bash":       UnixCheckSyntax,
-	"bash4":      UnixCheckSyntax,
-	"bmake":      UnixCheckSyntax,
-	"bosh":       UnixCheckSyntax,
-	"csh":        UnixCheckSyntax,
-	"dash":       UnixCheckSyntax,
-	"elvish":     UnixCheckSyntax,
-	"fish":       UnixCheckSyntax,
-	"gawk":       GNUAwkCheckSyntax,
-	"generic-sh": POSIXShCheckSyntax,
-	"gmake":      UnixCheckSyntax,
-	"go":         GoCheckSyntax,
-	"iojs":       PerlishCheckSyntax,
-	"ksh":        UnixCheckSyntax,
-	"ksh88":      UnixCheckSyntax,
-	"ksh93":      UnixCheckSyntax,
-	"lksh":       UnixCheckSyntax,
-	"make":       UnixCheckSyntax,
-	"mksh":       UnixCheckSyntax,
-	"node":       PerlishCheckSyntax,
-	"oksh":       UnixCheckSyntax,
-	"oil":        UnixCheckSyntax,
-	"osh":        UnixCheckSyntax,
-	"pdksh":      UnixCheckSyntax,
-	"perl":       PerlishCheckSyntax,
-	"perl6":      PerlishCheckSyntax,
-	"php":        PHPCheckSyntax,
-	"pmake":      UnixCheckSyntax,
-	"posh":       UnixCheckSyntax,
-	"python":     PythonCheckSyntax,
-	"python3":    PythonCheckSyntax,
-	"rc":         UnixCheckSyntax,
-	"rksh":       UnixCheckSyntax,
-	"ruby":       PerlishCheckSyntax,
-	"sh":         POSIXShCheckSyntax,
-	"tcsh":       UnixCheckSyntax,
-	"yash":       UnixCheckSyntax,
-	"ysh":        UnixCheckSyntax,
-	"zsh":        UnixCheckSyntax,
-}
+var Interpreter2SyntaxValidator = sync.OnceValue(func() map[string]func(Smell) error {
+	return map[string]func(Smell) error{
+		"ash":        UnixCheckSyntax,
+		"bash":       UnixCheckSyntax,
+		"bash4":      UnixCheckSyntax,
+		"bmake":      UnixCheckSyntax,
+		"bosh":       UnixCheckSyntax,
+		"csh":        UnixCheckSyntax,
+		"dash":       UnixCheckSyntax,
+		"elvish":     UnixCheckSyntax,
+		"fish":       UnixCheckSyntax,
+		"gawk":       GNUAwkCheckSyntax,
+		"generic-sh": POSIXShCheckSyntax,
+		"gmake":      UnixCheckSyntax,
+		"go":         GoCheckSyntax,
+		"iojs":       PerlishCheckSyntax,
+		"ksh":        UnixCheckSyntax,
+		"ksh88":      UnixCheckSyntax,
+		"ksh93":      UnixCheckSyntax,
+		"lksh":       UnixCheckSyntax,
+		"make":       UnixCheckSyntax,
+		"mksh":       UnixCheckSyntax,
+		"node":       PerlishCheckSyntax,
+		"oksh":       UnixCheckSyntax,
+		"oil":        UnixCheckSyntax,
+		"osh":        UnixCheckSyntax,
+		"pdksh":      UnixCheckSyntax,
+		"perl":       PerlishCheckSyntax,
+		"perl6":      PerlishCheckSyntax,
+		"php":        PHPCheckSyntax,
+		"pmake":      UnixCheckSyntax,
+		"posh":       UnixCheckSyntax,
+		"python":     PythonCheckSyntax,
+		"python3":    PythonCheckSyntax,
+		"rc":         UnixCheckSyntax,
+		"rksh":       UnixCheckSyntax,
+		"ruby":       PerlishCheckSyntax,
+		"sh":         POSIXShCheckSyntax,
+		"tcsh":       UnixCheckSyntax,
+		"yash":       UnixCheckSyntax,
+		"ysh":        UnixCheckSyntax,
+		"zsh":        UnixCheckSyntax,
+	}
+})
 
 // LowerMachineExtensions() provides a rather truncated survey of
 // machine-generated file extensions likely to not be edited directly
 // by most shell script authors.
-func LowerMachineExtensions() map[string]bool {
+var LowerMachineExtensions = sync.OnceValue(func() map[string]bool {
 	return map[string]bool{
 		".sample": true, // git hooks, which violate every known shell script virtue
 	}
-}
+})
 
 // Sniffer analyzes files.
 type Sniffer struct {

@@ -85,28 +85,71 @@ import (
 // Languages with duplicate names (e.g. oil shell osh vs. OpenSolaris oil shell) are generally assumed not to be POSIXy.
 // Unable to disambiguate without more specific information (shebang names, file extentions).
 type Smell struct {
-	Path              string      `json:"path"`
-	Filename          string      `json:"filename"`
-	Basename          string      `json:"basename"`
-	Extension         string      `json:"extension"`
-	Symlink           bool        `json:"symlink"`
-	Shebang           string      `json:"shebang"`
-	Interpreter       string      `json:"interpreter"`
-	InterpreterFlags  []string    `json:"interpreter_flags"`
-	LineEnding        string      `json:"line_ending"`
-	FinalEOL          *bool       `json:"final_eol"`
-	ContainsCR        bool        `json:"contains_cr"`
-	Permissions       os.FileMode `json:"permissions"`
-	Directory         bool        `json:"directory"`
-	OwnerExecutable   bool        `json:"owner_executable"`
-	Library           bool        `json:"library"`
-	BOM               bool        `json:"bom"`
-	POSIXy            bool        `json:"posixy"`
-	Bash              bool        `json:"bash"`
-	Ksh               bool        `json:"ksh"`
-	AltShellScript    bool        `json:"alt_shell_script"`
-	CoreConfiguration bool        `json:"core_configuration"`
-	MachineGenerated  bool        `json:"machine_generated"`
+	// Path denotes a file path.
+	Path string `json:"path"`
+
+	// Filename denotes a relative file path.
+	Filename string `json:"filename"`
+
+	// Basename denotes filename component to the left of extensions.
+	Basename string `json:"basename"`
+
+	// Extension denotes a file extension.
+	Extension string `json:"extension"`
+
+	// Symlink denotes whether an entry is a symbolic link.
+	Symlink bool `json:"symlink"`
+
+	// Shebang denotes an interpreter line.
+	Shebang string `json:"shebang"`
+
+	// Interpreter denotes a REPL.
+	Interpreter string `json:"interpreter"`
+
+	// InterpreterFlags collects CLI arguments supplied to interpreters.
+	InterpreterFlags []string `json:"interpreter_flags"`
+
+	// LineEnding denotes line terminators.
+	LineEnding string `json:"line_ending"`
+
+	// FinalEOL denotes whether the file applies a final End Of Line terminator.
+	FinalEOL *bool `json:"final_eol"`
+
+	// ContainsCR denotes whether the file contains carriage returns.
+	ContainsCR bool `json:"contains_cr"`
+
+	// Permissions dentotes chmod bits.
+	Permissions os.FileMode `json:"permissions"`
+
+	// Directory denotes whether the file path is a directory.
+	Directory bool `json:"directory"`
+
+	// OwnerExecutable denotes whether the file has owner executable chmod bits.
+	OwnerExecutable bool `json:"owner_executable"`
+
+	// Library denotes whether the script seems to be a library / sourceable script.
+	Library bool `json:"library"`
+
+	// BOM denotes whether the file contents feature an opening BOM marker.
+	BOM bool `json:"bom"`
+
+	// POSIXy denotes whether the file path appears to be a POSIX family shell script.
+	POSIXy bool `json:"posixy"`
+
+	// Bash denotes whether the file path appers to be a bash family script.
+	Bash bool `json:"bash"`
+
+	// Ksh denotes whether the file path appears to be a ksh family script.
+	Ksh bool `json:"ksh"`
+
+	// AltShellScript denotes whether the file path appears to be a non-POSIX family shell script.
+	AltShellScript bool `json:"alt_shell_script"`
+
+	// CoreConfiguration denotes whether the file path represents configuration files.
+	CoreConfiguration bool `json:"core_configuration"`
+
+	// MachineGenerated denotes whether the code is likely to have nonmanual origins.
+	MachineGenerated bool `json:"machine_generated"`
 }
 
 // smellAlias encodes fields with poor serialization support.
