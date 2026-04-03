@@ -4,9 +4,7 @@ We follow standard, `go` based operations for compiling and unit testing Go code
 
 For advanced operations, such as linting, we further supplement with some software industry tools.
 
-# DEV ENVIRONMENT
-
-## Prerequisites
+# PREREQUISITES
 
 * [Go](https://go.dev/)
 * [make](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/make.html)
