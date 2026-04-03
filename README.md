@@ -8,7 +8,7 @@ stank recursively lints shell scripts.
 
 # EXAMPLES
 
-The stank system includes the stank Go library as well as several command line utilities for convenience. The `stank` application scans directories and files for POSIX-derived shell scripts and prints their paths, designed as a convenient standalone filter for linting large collections of source code.
+## Identify Shell Scripts
 
 ```console
 % cd examples
@@ -20,9 +20,7 @@ The stank system includes the stank Go library as well as several command line u
 ...
 ```
 
-The `stank` command line utility searches file paths for shell scripts that may warrant linting.
-
-stank integrates with external linters, helping to feed them a more focused set of file paths to analyze within larger project directories.
+## Recurse External Linters
 
 ```console
 % stank -print0 . | xargs -0 -n 1 shellcheck
@@ -33,8 +31,6 @@ In welcome.sh line 1:
 For more information:
   https://www.shellcheck.net/wiki/SC2239 -- Ensure the shebang uses an absolu...
 ```
-
-Machine-generated files, including git hook default `*.sample` files, are automatically skipped.
 
 For details on tuning stank, run `stank -help`.
 
@@ -52,7 +48,7 @@ go install github.com/mcandre/stank/cmd/...@latest
 
 Register output of `go env GOBIN` to `PATH` environment variable.
 
-For details on building from source, see [development](DEVELOPMENT.md).
+For details on building from source, see [DEVELOPMENT](DEVELOPMENT.md).
 
 # ABOUT
 

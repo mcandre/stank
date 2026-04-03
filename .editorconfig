@@ -18,9 +18,9 @@ indent_size = none
 [*.{txt,md,cob,emacs,el,lisp,lsp,scm,setup,meta,clj,rkt,ecl,sbcl,abcl,eclrc,sbclrc,asd,snusp}]
 indent_size = none
 
-# Fix cmake
+# cmake
 [CMakeLists.txt]
-indent_size = 4 # bash8
+indent_size = 4
 
 # Align YAML keys
 [*.{yaml,yml,reek,.yamllint}]
@@ -34,9 +34,7 @@ indent_size = 2
 [*.{gitkeep,__init__.py}]
 insert_final_newline = none
 
-#
-# Windows junk
-#
+# Windows centric
 [*.{cmd,bat,reg,ps1,vbs,cs,fs,fsx,ahk,psenvrc}]
 end_of_line = crlf
 insert_final_newline = false
@@ -50,6 +48,10 @@ insert_final_newline = false
 [{makefile,Makefile,GNUmakefile,BSDmakefile}]
 indent_style = tab
 [*.{makefile,Makefile,mk,GNUmakefile,BSDmakefile,go,gitmodules}]
+indent_style = tab
+
+# Linus
+[.gitconfig]
 indent_style = tab
 
 # Natural HTML nesting
