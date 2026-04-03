@@ -23,6 +23,7 @@ var Ignores = sync.OnceValue(func() []string {
 		".venv",
 		"node_modules",
 		"vendor",
+		"vendor-rust",
 	}
 })
 
