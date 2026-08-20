@@ -10,6 +10,7 @@ import (
 	"go/types"
 	"go/version"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"honnef.co/go/tools/analysis/facts/generated"
@@ -91,15 +92,18 @@ func SelectorName(pass *analysis.Pass, expr *ast.SelectorExpr) string {
 	info := pass.TypesInfo
 	sel := info.Selections[expr]
 	if sel == nil {
-		if x, ok := expr.X.(*ast.Ident); ok {
+		switch x := expr.X.(type) {
+		case *ast.Ident:
 			pkg, ok := info.ObjectOf(x).(*types.PkgName)
 			if !ok {
-				// This shouldn't happen
-				return fmt.Sprintf("%s.%s", x.Name, expr.Sel.Name)
+				return fmt.Sprintf("(%s).%s", info.TypeOf(x), expr.Sel.Name)
 			}
 			return fmt.Sprintf("%s.%s", pkg.Imported().Path(), expr.Sel.Name)
+		case *ast.SelectorExpr:
+			return fmt.Sprintf("(%s).%s", SelectorName(pass, x), expr.Sel.Name)
+		default:
+			panic(fmt.Sprintf("unsupported selector: %v", expr))
 		}
-		panic(fmt.Sprintf("unsupported selector: %v", expr))
 	}
 	if v, ok := sel.Obj().(*types.Var); ok && v.IsField() {
 		return fmt.Sprintf("(%s).%s", typeutil.DereferenceR(sel.Recv()), sel.Obj().Name())
@@ -222,12 +226,7 @@ func IsCallToAny(pass *analysis.Pass, node ast.Node, names ...string) bool {
 		return false
 	}
 	q := CallName(pass, call)
-	for _, name := range names {
-		if q == name {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(names, q)
 }
 
 func File(pass *analysis.Pass, node Positioner) *ast.File {
