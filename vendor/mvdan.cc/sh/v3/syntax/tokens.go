@@ -4,6 +4,7 @@
 package syntax
 
 //go:generate go tool stringer -type token -linecomment -trimprefix _
+//go:generate go run gen_token_parse.go
 
 type token uint32
 
@@ -170,6 +171,10 @@ const (
 	globAt    // @(
 	globExcl  // !(
 )
+
+func (t token) isLit() bool {
+	return t == _Lit || t == _LitWord || t == _LitRedir
+}
 
 type RedirOperator token
 

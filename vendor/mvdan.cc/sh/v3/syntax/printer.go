@@ -205,6 +205,13 @@ func (c *colCounter) WriteByte(b byte) error {
 	return c.Writer.WriteByte(b)
 }
 
+func (c *colCounter) Write(b []byte) (int, error) {
+	for _, x := range b {
+		c.addByte(x)
+	}
+	return c.Writer.Write(b)
+}
+
 func (c *colCounter) WriteString(s string) (int, error) {
 	for _, b := range []byte(s) {
 		c.addByte(b)
@@ -359,7 +366,7 @@ func (p *Printer) spacedToken(s string, pos Pos) {
 }
 
 func (p *Printer) semiOrNewl(s string, pos Pos) {
-	if p.wantsNewline(Pos{}, false) {
+	if p.wantsNewline(Pos{}, false) || len(p.pendingHdocs) > 0 {
 		p.newline(pos)
 		p.indent()
 	} else {
@@ -376,10 +383,9 @@ func (p *Printer) semiOrNewl(s string, pos Pos) {
 }
 
 func (p *Printer) writeLit(s string) {
-	// If p.tabWriter is nil, this is the nested printer being used to print
-	// <<- heredoc bodies, so the parent printer will add the escape bytes
-	// later.
-	if p.tabWriter != nil && strings.Contains(s, "\t") {
+	// When writing to an extraIndenter, it escapes any tabs itself while
+	// reindenting '<<-' heredoc body lines.
+	if _, ok := p.w.(*extraIndenter); !ok && strings.Contains(s, "\t") {
 		p.w.WriteByte(tabwriter.Escape)
 		defer p.w.WriteByte(tabwriter.Escape)
 	}
@@ -436,9 +442,7 @@ func (p *Printer) newline(pos Pos) {
 }
 
 func (p *Printer) advanceLine(line uint) {
-	if p.line < line {
-		p.line = line
-	}
+	p.line = max(p.line, line)
 }
 
 func (p *Printer) flushHeredocs() {
@@ -469,7 +473,7 @@ func (p *Printer) flushHeredocs() {
 		p.line++
 		p.w.WriteByte('\n')
 		p.wantSpace = spaceWritten
-		p.wantNewline, p.wantNewline = false, false
+		p.wantNewline, p.mustNewline = false, false
 		if r.Op == DashHdoc && p.indentSpaces == 0 && !p.minify {
 			if r.Hdoc != nil {
 				extra := extraIndenter{
@@ -494,10 +498,23 @@ func (p *Printer) flushHeredocs() {
 				p.tabsPrinter.wordParts(r.Hdoc.Parts, true)
 			}
 			p.indent()
-		} else if r.Hdoc != nil {
-			p.wordParts(r.Hdoc.Parts, true)
+			p.unquotedWord(r.Word)
+		} else {
+			w := p.w
+			if e, ok := p.w.(*extraIndenter); ok {
+				// We are a nested printer inside a '<<-' heredoc
+				// body, and this heredoc has no dashes: its body and
+				// delimiter must not gain any indentation, so print
+				// them directly to the writer behind the indenters,
+				// just like a top-level heredoc without dashes.
+				p.w = e.sink()
+			}
+			if r.Hdoc != nil {
+				p.wordParts(r.Hdoc.Parts, true)
+			}
+			p.unquotedWord(r.Word)
+			p.w = w
 		}
-		p.unquotedWord(r.Word)
 		if r.Hdoc != nil {
 			// Overwrite p.line, since printing r.Word again can set
 			// p.line to the beginning of the heredoc again.
@@ -542,6 +559,19 @@ func (p *Printer) rightParen(pos Pos) {
 	p.wantSpace = spaceRequired
 }
 
+// closingParen prints a closing parenthesis at closePos, separating it from a
+// preceding closing parenthesis on the same line to mirror the `( (` spacing
+// that startsWithLparen adds to the matching opening parenthesis.
+func (p *Printer) closingParen(stmts []*Stmt, last []Comment, openPos, closePos Pos) {
+	p.wantSpace = spaceNotRequired
+	if len(last) == 0 && len(stmts) == 1 && endsWithRparen(stmts[0]) &&
+		(p.singleLine || openPos.Line() == closePos.Line()) {
+		p.wantSpace = spaceRequired
+	}
+	p.spacePad(closePos)
+	p.rightParen(closePos)
+}
+
 func (p *Printer) semiRsrv(s string, pos Pos) {
 	if p.wantsNewline(pos, false) {
 		p.newlines(pos)
@@ -558,12 +588,14 @@ func (p *Printer) semiRsrv(s string, pos Pos) {
 }
 
 func (p *Printer) flushComments() {
+	if len(p.pendingComments) > 0 {
+		// Flush any pending heredocs first. Otherwise, the comments would
+		// become part of a heredoc body. flushHeredocs may print and consume
+		// an inline comment, so range over pendingComments only after flushing,
+		// not over a stale copy that would reprint it after the heredoc.
+		p.flushHeredocs()
+	}
 	for i, c := range p.pendingComments {
-		if i == 0 {
-			// Flush any pending heredocs first. Otherwise, the
-			// comments would become part of a heredoc body.
-			p.flushHeredocs()
-		}
 		p.firstLine = false
 		// We can't call any of the newline methods, as they call this
 		// function and we'd recurse forever.
@@ -643,6 +675,13 @@ func (p *Printer) wordPart(wp, next WordPart) {
 	switch wp := wp.(type) {
 	case *Lit:
 		p.writeLit(wp.Value)
+		// An odd number of trailing backslashes would escape whatever
+		// follows, such as the newline ending a file; escape the last
+		// backslash to keep the literal value intact. Parsed source can
+		// only hit this case via a lone backslash at the end of a file.
+		if n := len(wp.Value) - len(strings.TrimRight(wp.Value, `\`)); n%2 == 1 {
+			p.w.WriteByte('\\')
+		}
 	case *SglQuoted:
 		if wp.Dollar {
 			p.w.WriteByte('$')
@@ -719,7 +758,9 @@ func (p *Printer) wroteIndex(index ArithmExpr) bool {
 	p.w.WriteByte('[')
 	// Note that e.g. foo[1,3]=$bar in Zsh does not allow any spaces around the comma,
 	// as that breaks the assignment word.
-	p.arithmExpr(index, true, false)
+	binary, ok := index.(*BinaryArithm)
+	compact := ok && binary.Op == Comma
+	p.arithmExpr(index, compact, false)
 	p.w.WriteByte(']')
 	return true
 }
@@ -749,9 +790,26 @@ func (p *Printer) paramExp(pe *ParamExp) {
 	case pe.Excl:
 		p.w.WriteByte('!')
 	}
-	if pe.Param != nil {
+	for _, pre := range [...]struct {
+		c     byte
+		state OptState
+	}{
+		{'=', pe.Split},
+		{'~', pe.GlobSubst},
+		{'^', pe.RcExpand},
+	} {
+		if pre.state == OptUnset {
+			continue
+		}
+		p.w.WriteByte(pre.c)
+		if pre.state == OptOff {
+			p.w.WriteByte(pre.c)
+		}
+	}
+	switch {
+	case pe.Param != nil:
 		p.writeLit(pe.Param.Value)
-	} else {
+	case pe.NestedParam != nil:
 		// Note that Zsh supports ${${nested}} but not ${$nested},
 		// so we need to avoid that simplification here.
 		saved := p.minify
@@ -825,7 +883,7 @@ func (p *Printer) cmdSubst(cs *CmdSubst) {
 			p.wantSpace = spaceNotRequired
 		}
 		p.nestedStmts(cs.Stmts, cs.Last, cs.Right)
-		p.rightParen(cs.Right)
+		p.closingParen(cs.Stmts, cs.Last, cs.Left, cs.Right)
 	}
 }
 
@@ -888,6 +946,11 @@ func (p *Printer) arithmExprRecurse(expr ArithmExpr, compact, spacePlusMinus boo
 				}
 			}
 			p.w.WriteString(expr.Op.String())
+			if expr.Op == Not && !compact {
+				// "!" followed by a word triggers history expansion
+				// in interactive shells; a space prevents that.
+				p.space()
+			}
 			p.arithmExprRecurse(expr.X, compact, false)
 		}
 	case *ParenArithm:
@@ -1178,9 +1241,7 @@ func (p *Printer) command(cmd Command, redirs []*Redirect) (startRedirs int) {
 
 		p.spacePad(stmtsPos(cmd.Stmts, cmd.Last))
 		p.nestedStmts(cmd.Stmts, cmd.Last, cmd.Rparen)
-		p.wantSpace = spaceNotRequired
-		p.spacePad(cmd.Rparen)
-		p.rightParen(cmd.Rparen)
+		p.closingParen(cmd.Stmts, cmd.Last, cmd.Lparen, cmd.Rparen)
 	case *WhileClause:
 		if cmd.Until {
 			p.spacedString("until", cmd.Pos())
@@ -1297,14 +1358,10 @@ func (p *Printer) command(cmd Command, redirs []*Redirect) (startRedirs int) {
 				p.wantSpace = spaceNotRequired
 			}
 
-			bodyPos := stmtsPos(ci.Stmts, ci.Last)
-			bodyEnd := stmtsEnd(ci.Stmts, ci.Last)
-			sep := len(ci.Stmts) > 1 || bodyPos.Line() > p.line ||
-				(bodyEnd.IsValid() && ci.OpPos.Line() > bodyEnd.Line())
 			p.nestedStmts(ci.Stmts, ci.Last, ci.OpPos)
 			p.level++
 			if !p.minify || i != len(cmd.Items)-1 {
-				if sep {
+				if p.wantsNewline(ci.OpPos, false) {
 					p.newlines(ci.OpPos)
 					p.wantNewline = true
 				}
@@ -1559,7 +1616,7 @@ func (e *extraIndenter) WriteByte(b byte) error {
 	} else if lineIndent < e.firstIndent {
 		// This line did not have enough indentation; simply indent it
 		// like the first line.
-		lineIndent = e.firstIndent
+		lineIndent = e.baseIndent
 	} else {
 		// This line had plenty of indentation. Add the extra
 		// indentation that the first line had, for consistency.
@@ -1570,9 +1627,41 @@ func (e *extraIndenter) WriteByte(b byte) error {
 		e.bufWriter.WriteByte('\t')
 	}
 	e.bufWriter.WriteByte(tabwriter.Escape)
-	e.bufWriter.Write(trimmed)
+	e.writeEscapingTabs(trimmed)
 	e.curLine = e.curLine[:0]
 	return nil
+}
+
+// writeEscapingTabs writes a line, wrapping any tab outside an existing
+// escape sequence in [tabwriter.Escape] so that the tabwriter treats it as
+// literal content rather than a column separator turned into spaces.
+func (e *extraIndenter) writeEscapingTabs(line []byte) {
+	escaped := false
+	for _, b := range line {
+		switch b {
+		case tabwriter.Escape:
+			escaped = !escaped
+		case '\t':
+			if !escaped {
+				e.bufWriter.WriteByte(tabwriter.Escape)
+				e.bufWriter.WriteByte('\t')
+				e.bufWriter.WriteByte(tabwriter.Escape)
+				continue
+			}
+		}
+		e.bufWriter.WriteByte(b)
+	}
+}
+
+// sink returns the writer that this indenter, and any enclosing indenters
+// from outer '<<-' heredocs, ultimately write to. Note that all of them
+// only ever write entire lines to it, so as long as the current output ends
+// with a newline, writing to the sink directly cannot reorder any bytes.
+func (e *extraIndenter) sink() bufWriter {
+	if outer, ok := e.bufWriter.(*extraIndenter); ok {
+		return outer.sink()
+	}
+	return e.bufWriter
 }
 
 func (e *extraIndenter) WriteString(s string) (int, error) {
@@ -1580,6 +1669,13 @@ func (e *extraIndenter) WriteString(s string) (int, error) {
 		e.WriteByte(s[i])
 	}
 	return len(s), nil
+}
+
+func (e *extraIndenter) Write(b []byte) (int, error) {
+	for i := range len(b) {
+		e.WriteByte(b[i])
+	}
+	return len(b), nil
 }
 
 func startsWithLparen(node Node) bool {
@@ -1592,6 +1688,23 @@ func startsWithLparen(node Node) bool {
 		return true // keep ( (
 	case *ArithmCmd:
 		return true // keep ( ((
+	}
+	return false
+}
+
+func endsWithRparen(node Node) bool {
+	switch node := node.(type) {
+	case *Stmt:
+		if node.Background || node.Coprocess || node.Disown || len(node.Redirs) > 0 {
+			return false
+		}
+		return endsWithRparen(node.Cmd)
+	case *BinaryCmd:
+		return endsWithRparen(node.Y)
+	case *Subshell:
+		return true // keep ) )
+	case *ArithmCmd:
+		return true // keep )) )
 	}
 	return false
 }
